@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark" data-style="unico">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hugo Signes Sisternes — DAM · IA · Robótica</title>
+<meta name="description" content="Marca personal de Hugo Signes Sisternes. SMX, 1º DAM, Erasmus en ESSEPI Tech (Italia), Volver a Encender en The Challenge de la Caixa. Próxima parada: IA.">
+<meta name="theme-color" content="#0A0A0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script>
+(function(){try{var t=localStorage.getItem('hugo-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');var s=localStorage.getItem('hugo-style')||'unico';document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-style',s);}catch(e){}})();
+</script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="wing" viewBox="0 0 120 120">
+    <path d="M60 14 L16 58 L60 58 Z"/><path d="M60 106 L16 62 L60 62 Z"/>
+    <path d="M60 14 L104 58 L60 58 Z"/><path d="M60 106 L104 62 L60 62 Z"/>
+    <rect x="50" y="50" width="20" height="20" transform="rotate(45 60 60)"/>
+  </symbol>
+</svg>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="spotlight" aria-hidden="true"></div>
+<div class="embers" aria-hidden="true"></div>
+<div class="ripples" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><span></span></div>
+<div class="cursor" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="trail" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a href="#inicio" class="logo" data-magnetic aria-label="Inicio">
+      <svg class="logo__mark" aria-hidden="true"><use href="#wing"/></svg>
+      <span class="logo__txt"><b>hugo</b>.signes</span>
+    </a>
+    <nav class="topnav" aria-label="Secciones">
+      <a href="#sobre">Sobre</a>
+      <a href="#trabajo">Trayectoria</a>
+      <a href="#gusta">Me gusta</a>
+      <a href="#futuro">Futuro</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <div class="tools">
+      <div class="style-switch">
+        <button class="style-switch__btn" id="styleToggle" aria-haspopup="true" aria-expanded="false" aria-label="Cambiar estilo">
+          <svg aria-hidden="true"><use href="#wing"/></svg><span>Estilo</span>
+        </button>
+        <div class="style-switch__panel" id="stylePanel" hidden role="menu" aria-label="Opciones de estilo">
+          <button role="menuitemradio" data-set-style="unico" aria-checked="true"><i class="sw sw--unico"></i>Único · Yveltal</button>
+          <button role="menuitemradio" data-set-style="professional" aria-checked="false"><i class="sw sw--pro"></i>Profesional</button>
+          <button role="menuitemradio" data-set-style="gamer" aria-checked="false"><i class="sw sw--gamer"></i>Gamer</button>
+          <button role="menuitemradio" data-set-style="retro" aria-checked="false"><i class="sw sw--retro"></i>Retro · Pixel</button>
+        </div>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema" aria-pressed="false">
+        <span class="theme-toggle__ico theme-toggle__ico--sun" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></g></svg></span>
+        <span class="theme-toggle__ico theme-toggle__ico--moon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z"/></svg></span>
+      </button>
+      <button class="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" hidden>
+  <ul>
+    <li><a href="#sobre">Sobre mí</a></li>
+    <li><a href="#trabajo">Trayectoria</a></li>
+    <li><a href="#gusta">Me gusta</a></li>
+    <li><a href="#futuro">Futuro · IA</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+</div>
+
+<aside class="rail" aria-hidden="true">
+  <span class="rail__top">Hugo Signes · 2024→2026</span>
+  <nav class="rail__nav" aria-label="Índice">
+    <a href="#inicio" data-label="Inicio" class="is-active">00<i class="rail__dot"></i></a>
+    <a href="#sobre" data-label="Sobre mí">01<i class="rail__dot"></i></a>
+    <a href="#trabajo" data-label="Trayectoria">02<i class="rail__dot"></i></a>
+    <a href="#gusta" data-label="Me gusta">03<i class="rail__dot"></i></a>
+    <a href="#futuro" data-label="Futuro IA">04<i class="rail__dot"></i></a>
+    <a href="#contacto" data-label="Contacto">05<i class="rail__dot"></i></a>
+  </nav>
+  <div class="rail__bottom"><span class="rail__line"></span><svg class="rail__wing"><use href="#wing"/></svg></div>
+</aside>
+
+<div class="page">
+<main>
+
+  <section class="hero" id="inicio">
+    <div class="hero__bg" aria-hidden="true">
+      <div class="hero__grid"></div>
+      <div class="hero__glow"></div>
+      <svg class="hero__wing hero__wing--l"><use href="#wing"/></svg>
+      <svg class="hero__wing hero__wing--r"><use href="#wing"/></svg>
+    </div>
+    <div class="hero__inner">
+      <div class="hero__main">
+        <p class="kicker"><span class="dot"></span> Xàtiva · València · Abierto a FCT</p>
+        <h1 class="hero__name">
+          <span class="hero__name-line" data-text="HUGO">HUGO</span>
+          <span class="hero__name-line hero__name-line--accent" data-text="SIGNES">SIGNES</span>
+          <span class="hero__name-line" data-text="SISTERNES">SISTERNES</span>
+        </h1>
+        <p class="hero__phrase">Estudiante de DAM. Técnico en SMX. Ex becario Erasmus en <b>ESSEPI Tech</b> (Italia). Cofundador de <em>Volver a Encender</em> en The Challenge. Próxima parada: IA.</p>
+        <div class="hero__cta">
+          <a href="#trabajo" class="btn btn--solid" data-magnetic>Ver trayectoria</a>
+          <a href="#contacto" class="btn btn--ghost" data-magnetic>Contactar <span aria-hidden="true">→</span></a>
+        </div>
+        <ul class="hero__chips"><li>1º DAM</li><li>SMX</li><li>Erasmus IT</li><li>The Challenge</li><li>IA</li></ul>
+      </div>
+      <aside class="spec" data-tilt>
+        <div class="spec__head"><span>Ficha · 2024</span><span class="live"><i></i>Disponible</span></div>
+        <figure class="spec__photo">
+          <img src="https://picsum.photos/seed/hugo-signes-dev-desk/720/450" alt="Retrato de Hugo Signes Sisternes">
+          <figcaption>hugo_signes.jpg</figcaption>
+        </figure>
+        <dl>
+          <dt>Estado</dt><dd>1º DAM · en curso</dd>
+          <dt>Italia</dt><dd><span class="num" data-count="3">0</span> meses</dd>
+          <dt>Equipo VAE</dt><dd><span class="num" data-count="4">0</span> personas</dd>
+          <dt>Siguiente</dt><dd>Especialización IA</dd>
+        </dl>
+        <svg class="spec__wing" aria-hidden="true"><use href="#wing"/></svg>
+      </aside>
+    </div>
+  </section>
+
+  <div class="drum" aria-hidden="true"><div class="drum__stage" id="drum"></div></div>
+  <div class="marquee" aria-hidden="true"><div class="marquee__track" id="marquee"></div></div>
+
+  <section class="section" id="sobre" data-reveal>
+    <div class="section__inner">
+      <div class="section__head">
+        <p class="section__num">01 — Sobre mí</p>
+        <h2 class="section__title mask"><span>Quién soy</span></h2>
+      </div>
+      <div class="about">
+        <div class="about__sticky">
+          <figure class="about__portrait">
+            <img src="https://picsum.photos/seed/hugo-signes-studio-portrait/600/750" alt="Retrato de Hugo Signes Sisternes" loading="lazy">
+            <figcaption><span>hugo_signes.jpg</span><span>· 2024</span></figcaption>
+          </figure>
+          <div class="about__badge"><span>SMX</span><span>DAM</span><span>Erasmus</span><span>IA</span></div>
+        </div>
+        <div class="about__text">
+          <p class="about__lead">Empecé en el grado medio de <strong>SMX</strong> montando y reparando equipos. Hice un <strong>Erasmus de 3 meses en Italia</strong> en la empresa <strong>ESSEPI Tech</strong>. Ahora curso <strong>1º de DAM</strong> en el IES Simarro, donde programo a diario.</p>
+          <p class="about__p">Mi proyecto más significativo: <strong>Volver a Encender</strong>, creado con 3 compañeros. Llevamos la idea hasta <strong>The Challenge de la Fundación «la Caixa»</strong>. Vengo del hardware, pero mi sitio está en el código.</p>
+          <blockquote class="about__quote">“No quiero solo usar la tecnología que viene. Quiero programarla.”</blockquote>
+          <div class="about__stats">
+            <div class="stat"><span class="stat__num" data-count="3">0</span><span class="stat__label">meses en Italia</span></div>
+            <div class="stat"><span class="stat__num" data-count="4">0</span><span class="stat__label">personas en VAE</span></div>
+            <div class="stat"><span class="stat__num" data-count="1">0</span><span class="stat__label">grados superados</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wing-div" aria-hidden="true"><svg><use href="#wing"/></svg></div>
+
+  <section class="section" id="trabajo" data-reveal>
+    <div class="section__inner">
+      <div class="section__head">
+        <p class="section__num">02 — Trayectoria</p>
+        <h2 class="section__title mask"><span>Lo que he hecho</span></h2>
+        <p class="section__sub">Del banco de montaje al pitch público. Cuatro hitos.</p>
+      </div>
+      <div class="work">
+        <div class="work__stack" id="workStack">
+          <article class="work__card">
+            <div class="work__body">
+              <div class="work__top"><span class="work__n">01</span><span class="work__date">Titulado</span></div>
+              <h3 class="work__title">Grado medio SMX</h3>
+              <p class="work__desc">Sistemas Microinformáticos y Redes. Montaje, mantenimiento, SO y redes. Mi base de hardware: saber qué pasa físicamente cuando algo falla me hace escribir mejor código.</p>
+              <ul class="work__tags"><li>Hardware</li><li>Redes</li><li>Linux</li><li>Windows Server</li></ul>
+            </div>
+            <figure class="work__media"><span class="tag">SMX</span><img src="https://picsum.photos/seed/motherboard-pc-repair-bench/900/700" alt="Montaje y reparación de hardware" loading="lazy"></figure>
+          </article>
+
+          <article class="work__card">
+            <div class="work__body">
+              <div class="work__top"><span class="work__n">02</span><span class="work__date">The Challenge</span></div>
+              <h3 class="work__title">Volver a Encender</h3>
+              <p class="work__desc">Proyecto con 3 compañeros, equipo de 4. De la idea al pitch público. Lo mejor no fue el escenario: fue acordar, priorizar y defenderlo delante de gente que no te conoce.</p>
+              <ul class="work__tags"><li>Equipo</li><li>Producto</li><li>Comunicación</li><li>Pitch</li></ul>
+              <div class="challenge">
+                <p class="challenge__lead"><strong>The Challenge</strong> es el reto nacional de innovación y emprendimiento para estudiantes de Formación Profesional, organizado por la <strong>Fundación «la Caixa»</strong>. Nuestro proyecto llegó a la fase de presentación.</p>
+                <ul class="challenge__facts">
+                  <li><b>Convoca</b>Fundación «la Caixa»</li>
+                  <li><b>Ámbito</b>Nacional · FP</li>
+                  <li><b>Formato</b>Equipo · idea · pitch</li>
+                </ul>
+                <div class="official">
+                  <!-- ⚠️ Revisa/actualiza estas URLs oficiales -->
+                  <a href="https://www.thechallenge.es/" target="_blank" rel="noopener">Web The Challenge ↗</a>
+                  <a href="https://www.fundacionlacaixa.es/" target="_blank" rel="noopener">Fundación «la Caixa» ↗</a>
+                  <a href="https://www.lacaixa.es/" target="_blank" rel="noopener">Obra Social «la Caixa» ↗</a>
+                </div>
+              </div>
+            </div>
+            <figure class="work__media"><span class="tag">VAE</span><img src="https://picsum.photos/seed/team-pitch-stage-la-caixa/900/700" alt="Equipo presentando el proyecto" loading="lazy"></figure>
+          </article>
+
+          <article class="work__card">
+            <div class="work__body">
+              <div class="work__top"><span class="work__n">03</span><span class="work__date">3 meses</span></div>
+              <h3 class="work__title">Erasmus en Italia</h3>
+              <p class="work__desc">Beca de movilidad europea. Trabajo real en empresa, en otro idioma, con otro equipo. Aprendí a adaptarme rápido y a comunicar en contextos que no controlaba.</p>
+              <ul class="work__tags"><li>Movilidad</li><li>Inglés</li><li>Italiano</li><li>Entorno laboral</li></ul>
+              <div class="extra">
+                <p class="extra__k">Empresa de acogida</p>
+                <p class="extra__v">ESSEPI Tech · Italia</p>
+                <div class="map">
+                  <!-- ⚠️ Cambia las coordenadas por la ciudad real de ESSEPI Tech (ahora es un marcador de ejemplo en Florencia) -->
+                  <iframe title="Ubicación de ESSEPI Tech en Italia" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=6.6%2C36.6%2C18.6%2C47.1&layer=mapnik&marker=43.7696%2C11.2558"></iframe>
+                </div>
+                <a class="extra__link" href="https://www.openstreetmap.org/?mlat=43.7696&mlon=11.2558#map=6/43.7696/11.2558" target="_blank" rel="noopener">Ver en OpenStreetMap ↗</a>
+              </div>
+            </div>
+            <figure class="work__media"><span class="tag">Erasmus</span><img src="https://picsum.photos/seed/italy-street-work-erasmus/900/700" alt="Prácticas Erasmus en Italia" loading="lazy"></figure>
+          </article>
+
+          <article class="work__card">
+            <div class="work__body">
+              <div class="work__top"><span class="work__n">04</span><span class="work__date">En curso</span></div>
+              <h3 class="work__title">1º DAM · Simarro</h3>
+              <p class="work__desc">Desarrollo de Aplicaciones Multiplataforma. Programación, BD, POO, interfaces. El salto de “arreglar máquinas” a “construir sistemas”.</p>
+              <ul class="work__tags"><li>Java</li><li>SQL</li><li>Git</li><li>UML</li></ul>
+            </div>
+            <figure class="work__media"><span class="tag">DAM</span><img src="https://picsum.photos/seed/java-code-terminal-ide/900/700" alt="Escritorio programando en Java" loading="lazy"></figure>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wing-div" aria-hidden="true"><svg><use href="#wing"/></svg></div>
+
+  <section class="section" id="gusta" data-reveal>
+    <div class="section__inner">
+      <div class="section__head">
+        <p class="section__num">03 — Off the record</p>
+        <h2 class="section__title mask"><span>Me gusta</span></h2>
+        <p class="section__sub">Rock, turnos y motores.</p>
+      </div>
+      <div class="likes">
+        <article class="cell cell--rock" data-tilt data-reveal>
+          <span class="cell__idx">A</span>
+          <h3 class="cell__title">Rock</h3>
+          <p class="cell__desc">Guitarra, volumen alto, directo y sin sintetizar. El sonido con el que estudio, programo y desconecto.</p>
+          <div class="eq" id="eq" aria-hidden="true"></div>
+          <ul class="tags"><li>Clásico</li><li>Hard rock</li><li>Grunge</li><li>Directo</li></ul>
+        </article>
+        <article class="cell cell--games" data-tilt data-reveal data-d="1">
+          <span class="cell__idx">B</span>
+          <h3 class="cell__title">Por turnos y con historia</h3>
+          <p class="cell__desc">Estrategia, narrativa y decisiones que importan. Juegos que te obligan a pensar, no a reaccionar.</p>
+          <figure class="cell__img"><img src="https://picsum.photos/seed/turn-based-tactics-game/700/380" alt="Juego de estrategia por turnos" loading="lazy"></figure>
+          <ul class="glist"><li><strong>Táctico</strong> — cada turno cuenta</li><li><strong>RPG</strong> — arcos largos</li><li><strong>Elecciones</strong> — finales que cambian</li></ul>
+          <div class="turn" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+        </article>
+        <article class="cell cell--robot" data-tilt data-reveal data-d="2">
+          <span class="cell__idx">C</span>
+          <h3 class="cell__title">Robótica</h3>
+          <p class="cell__desc">Donde el código toca el mundo real: sensores, motores, cables y pruebas que fallan.</p>
+          <figure class="cell__img"><img src="https://picsum.photos/seed/robotic-arm-soldering/700/400" alt="Brazo robótico con Arduino" loading="lazy"></figure>
+          <ul class="tags"><li>Arduino</li><li>Sensores</li><li>Motores</li><li>Prototipos</li></ul>
+          <svg class="gear" aria-hidden="true"><use href="#wing"/></svg>
+        </article>
+        <article class="cell cell--stack" data-tilt data-reveal data-d="3">
+          <span class="cell__idx">D</span>
+          <h3 class="cell__title">Mi stack de bolsillo</h3>
+          <ul class="stack-list">
+            <li><span>01</span> Java <em>POO en DAM</em></li>
+            <li><span>02</span> SQL <em>bases de datos</em></li>
+            <li><span>03</span> Git <em>versionado siempre</em></li>
+            <li><span>04</span> Linux <em>herencia de SMX</em></li>
+            <li><span>05</span> Python <em>el próximo salto</em></li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="wing-div" aria-hidden="true"><svg><use href="#wing"/></svg></div>
+
+  <section class="section future" id="futuro" data-reveal>
+    <svg class="watermark" aria-hidden="true"><use href="#wing"/></svg>
+    <div class="section__inner">
+      <div class="section__head">
+        <p class="section__num">04 — Qué quiero ser</p>
+        <h2 class="section__title mask"><span>Futuro · IA</span></h2>
+        <p class="section__sub">Curso de especialización en IA: interesante, útil y con muchísimas salidas. El siguiente paso natural.</p>
+      </div>
+      <div class="future__grid">
+        <div class="terminal" data-reveal>
+          <div class="terminal__bar"><i></i><i></i><i></i> hugo@simarro: ~/ia <span id="termStatus">listo</span></div>
+          <div class="terminal__body" id="termBody"><span class="prompt">$</span> <span class="caret"></span></div>
+        </div>
+        <div class="tabs" data-reveal data-d="1">
+          <div class="tabs__bar" role="tablist" aria-label="Líneas de interés">
+            <button class="tabs__btn is-active" role="tab" aria-selected="true" data-tab="tab-ia">IA aplicada</button>
+            <button class="tabs__btn" role="tab" aria-selected="false" data-tab="tab-vision">Visión</button>
+            <button class="tabs__btn" role="tab" aria-selected="false" data-tab="tab-robotica">IA + Robot</button>
+          </div>
+          <div class="tabs__panels">
+            <article class="tabs__panel" id="tab-ia" role="tabpanel"><h3>Que el modelo trabaje para alguien</h3><p>No me interesa la IA como concepto: me interesa integrada. Modelos que detectan averías, clasifican documentos, asisten en un turno. Encajo porque sé montar el sistema, sé programarlo y quiero saber entrenarlo.</p><ul class="tags"><li>Python</li><li>Datos</li><li>APIs</li><li>Despliegue</li></ul></article>
+            <article class="tabs__panel" id="tab-vision" role="tabpanel" hidden><h3>Máquinas que miran</h3><p>Cámaras, inspección, lectura de placas, control de calidad. Donde mi base de SMX y la robótica se encuentran con el aprendizaje automático.</p><ul class="tags"><li>Cámaras</li><li>CNN</li><li>Edge AI</li></ul></article>
+            <article class="tabs__panel" id="tab-robotica" role="tabpanel" hidden><h3>El robot deja de repetir y empieza a decidir</h3><p>Robótica con IA: brazos que se adaptan, navegación autónoma, control por sensores. Mi afición de siempre con una capa nueva encima.</p><ul class="tags"><li>Sensores</li><li>Autonomía</li><li>ROS</li><li>Control</li></ul></article>
+          </div>
+        </div>
+      </div>
+      <ol class="road" id="road">
+        <span class="road__fill" id="roadFill" aria-hidden="true"></span>
+        <li class="road__step on"><b>AHORA</b><span>1º DAM · reforzar Python y mates</span></li>
+        <li class="road__step"><b>2025</b><span>2º DAM + FCT · datos reales</span></li>
+        <li class="road__step"><b>2026</b><span>Curso de especialización en IA</span></li>
+        <li class="road__step"><b>DESPUÉS</b><span>IA aplicada a industria</span></li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer" id="contacto" data-reveal>
+  <svg class="footer__wing" aria-hidden="true"><use href="#wing"/></svg>
+  <div class="footer__inner">
+    <p class="section__num">05 — Contacto</p>
+    <h2 class="footer__title mask"><span>Hablemos de código, robots o IA</span></h2>
+    <p class="footer__note">Abierto a prácticas (FCT), proyectos de equipo y cualquier conversación técnica.</p>
+    <div class="mailrow">
+      <a id="mail" href="mailto:hugo.signes@example.com">hugo.signes@example.com</a>
+      <button id="copy" class="btn btn--solid" type="button" data-magnetic>Copiar correo</button>
+    </div>
+    <ul class="social"><li><a href="#" rel="me">GitHub</a></li><li><a href="#" rel="me">LinkedIn</a></li><li><a href="#" rel="me">CV / Porfolio</a></li><li><a href="#" rel="me">Discord</a></li></ul>
+    <div class="colophon"><p>© <span id="year">2025</span> Hugo Signes Sisternes · Hecho a mano con HTML, CSS y JS.</p><a href="#inicio">Volver arriba ↑</a></div>
+  </div>
+</footer>
+</div>
+
+<button class="to-top" id="toTop" aria-label="Volver arriba"><svg><use href="#wing"/></svg></button>
+<div class="toast" id="toast" role="status" aria-live="polite">Correo copiado ✓</div>
+
+<script src="script.js"></script>
+</body>
+</html>
