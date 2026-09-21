@@ -1,5 +1,5 @@
 /* =====================================================================
-   HUGO SIGNES SISTERNES · interacciones
+   HUGO SIGNES SISTERNES · interacciones mejoradas
    ===================================================================== */
 (function () {
   "use strict";
@@ -160,29 +160,30 @@
     marquee.appendChild(grp()); marquee.appendChild(grp());
   }
 
-  /* ---------- Scramble del nombre ---------- */
+  /* ---------- Scramble del nombre más orgánico ---------- */
   var CH = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&/";
   function scramble(el) {
     var target = el.dataset.text || el.textContent, frame = 0;
     var q = target.split("").map(function (c, i) {
-      return { c: c, s: Math.floor(Math.random() * 12), e: Math.floor(Math.random() * 12) + 14 + i * 2 };
+      return { c: c, s: Math.floor(Math.random() * 12), e: Math.floor(Math.random() * 12) + 14 + (i * 2.5) }; // Slightly smoother iteration
     });
     (function tick() {
       var out = "", done = 0;
       q.forEach(function (o) {
         if (frame >= o.e) { out += o.c; done++; }
         else if (frame >= o.s) out += CH[Math.floor(Math.random() * CH.length)];
+        else out += " ";
       });
       el.textContent = out;
       if (done !== q.length) { frame++; requestAnimationFrame(tick); }
     })();
   }
-  if (!reduce) setTimeout(function () { $$(".hero__name-line").forEach(scramble); }, 650);
+  if (!reduce) setTimeout(function () { $$(".hero__name-line").forEach(scramble); }, 550);
 
   /* ---------- Reveal on scroll ---------- */
   var io = new IntersectionObserver(function (es) {
     es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); } });
-  }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
+  }, { threshold: 0.12, rootMargin: "0px 0px -10% 0px" });
   $$("[data-reveal]").forEach(function (el) { io.observe(el); });
 
   /* ---------- Contadores ---------- */
@@ -263,9 +264,9 @@
     });
   });
 
-  /* ---------- Terminal typewriter ---------- */
-  var termBody = $("#termBody"), termStatus = $("#termStatus");
-  if (termBody) {
+  /* ---------- Terminal typewriter (Triggered by Scroll) ---------- */
+  var termBody = $("#termBody"), termStatus = $("#termStatus"), termBlock = $("#terminalBlock");
+  if (termBody && termBlock) {
     var lines = [
       "whoami → hugo_signes",
       "cat ~/dam/plan.md → IA aplicada a industria",
@@ -275,25 +276,41 @@
     if (reduce) {
       termBody.innerHTML = '<span class="prompt">$</span> ' + lines[0];
     } else {
-      var li = 0, ci = 0, del = false;
-      (function type() {
-        var line = lines[li], shown = line.slice(0, ci);
-        termBody.innerHTML = '<span class="prompt">$</span> ' + shown + '<span class="caret"></span>';
-        if (termStatus) termStatus.textContent = "ejecutando";
-        if (!del) { ci++; if (ci > line.length) { del = true; setTimeout(type, 1200); return; } }
-        else { ci--; if (ci < 0) { del = false; ci = 0; li = (li + 1) % lines.length; } }
-        setTimeout(type, del ? 26 : 46 + Math.random() * 40);
-      })();
+      var typeStarted = false;
+      var termObserver = new IntersectionObserver(function(entries) {
+        if(entries[0].isIntersecting && !typeStarted) {
+          typeStarted = true;
+          startTyping();
+          termObserver.disconnect();
+        }
+      }, { threshold: 0.5 });
+      termObserver.observe(termBlock);
+
+      function startTyping() {
+        var li = 0, ci = 0, del = false;
+        (function type() {
+          var line = lines[li], shown = line.slice(0, ci);
+          termBody.innerHTML = '<span class="prompt">$</span> ' + shown + '<span class="caret"></span>';
+          if (termStatus) termStatus.textContent = "ejecutando";
+          if (!del) { ci++; if (ci > line.length) { del = true; setTimeout(type, 1800); return; } }
+          else { ci--; if (ci < 0) { del = false; ci = 0; li = (li + 1) % lines.length; } }
+          setTimeout(type, del ? 20 : 46 + Math.random() * 40);
+        })();
+      }
     }
   }
 
-  /* ---------- Tilt (spec + celdas) ---------- */
+  /* ---------- Tilt y Glare Dinámico (spec, celdas y work cards) ---------- */
   if (!reduce && fine) {
-    $$("[data-tilt]").forEach(function (c) {
+    $$("[data-tilt], .work__card, .cell").forEach(function (c) {
       c.addEventListener("pointermove", function (e) {
         var r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
-        var strong = c.classList.contains("spec") ? 4 : 3;
-        c.style.transform = "perspective(900px) rotateY(" + (x * strong) + "deg) rotateX(" + (-y * strong) + "deg)";
+        // Solo tilt si tiene el atributo explicito
+        if (c.hasAttribute('data-tilt')) {
+            var strong = c.classList.contains("spec") ? 4 : 2;
+            c.style.transform = "perspective(900px) rotateY(" + (x * strong) + "deg) rotateX(" + (-y * strong) + "deg)";
+        }
+        // Glare dinamico que sigue al raton
         c.style.setProperty("--mx", (x + 0.5) * 100 + "%");
         c.style.setProperty("--my", (y + 0.5) * 100 + "%");
       });
