@@ -1,5 +1,5 @@
 /* =====================================================================
-   HUGO SIGNES SISTERNES · interacciones + MOTOR RPG UNDERTALE
+   HUGO SIGNES SISTERNES · interacciones + MOTOR RPG MEJORADO
    ===================================================================== */
 (function () {
   "use strict";
@@ -23,6 +23,7 @@
   /* ---------- Selector de estilo & Toggle RPG ---------- */
   var rpgModeActive = false;
   var sBtn = $("#styleToggle"), sPanel = $("#stylePanel"), sOpts = $$("[data-set-style]");
+  var btnExitRpg = $("#btn-exit-rpg");
   
   function applyStyle(s) {
     root.setAttribute("data-style", s);
@@ -34,7 +35,6 @@
     });
     updateCursor();
 
-    // Arrancar / Parar Motor RPG y ocultar/mostrar la vista correcta
     var rpgContainer = $("#rpg-mode");
     if (s === "rpg") {
       rpgModeActive = true;
@@ -47,7 +47,10 @@
     }
   }
   
-  applyStyle(root.getAttribute("data-style") || "unico");
+  // Siempre que cargues, asegúrate de forzar la vista normal o cargar de localstorage
+  var initialStyle = localStorage.getItem('hugo-style') || "unico";
+  applyStyle(initialStyle);
+
   sBtn.addEventListener("click", function (e) {
     e.stopPropagation();
     var o = sPanel.hidden; sPanel.hidden = !o; sBtn.setAttribute("aria-expanded", String(o));
@@ -60,6 +63,12 @@
   });
   document.addEventListener("click", function () { sPanel.hidden = true; sBtn.setAttribute("aria-expanded", "false"); });
   sPanel.addEventListener("click", function (e) { e.stopPropagation(); });
+
+  if (btnExitRpg) {
+    btnExitRpg.addEventListener("click", function() {
+      applyStyle("unico"); // Vuelve al modo Yveltal por defecto
+    });
+  }
 
   /* ---------- Cursor custom ---------- */
   var cur = $(".cursor"), ring = $(".cursor-ring"), trail = $(".trail");
@@ -94,10 +103,10 @@
   /* =====================================================================
      MOTOR MINIJUEGO 2D (RPG)
      ===================================================================== */
-  var mapEl, playerEl, modalEl, modalContent, modalClose;
-  // Posición inicial del jugador en el cruce de caminos
+  var mapEl, playerEl, modalEl, modalContent, modalClose, modalOverlay;
+  // Posición inicial del jugador en el cruce de caminos del mapa verde
   var pX = 430, pY = 430; 
-  var speed = 5.5; // píxeles por frame
+  var speed = 6; // píxeles por frame
   var keys = {};
   var rpgLoopId = null;
   var isModalOpen = false;
@@ -109,14 +118,16 @@
     modalEl = $("#rpg-modal");
     modalContent = $(".rpg-modal-content");
     modalClose = $(".rpg-modal-close");
+    modalOverlay = $(".rpg-modal-overlay");
 
     if(!mapEl) return;
 
     window.addEventListener("keydown", rpgKeyDown);
     window.addEventListener("keyup", rpgKeyUp);
     modalClose.addEventListener("click", closeRPGModal);
+    if(modalOverlay) modalOverlay.addEventListener("click", closeRPGModal);
 
-    // Identificar todos los NPCs/puntos y asignar click
+    // Asignar click a los personajes del mapa
     $$(".rpg-obj").forEach(function(objEl) {
       objEl.onclick = function() {
         if (objEl.classList.contains("is-near")) {
@@ -138,6 +149,8 @@
   }
 
   function rpgKeyDown(e) {
+    if(!rpgModeActive) return;
+    
     keys[e.key.toLowerCase()] = true;
     if (e.key === "Enter" && currentNear && !isModalOpen) {
       var srcId = "#" + currentNear.id.replace("obj-", "");
@@ -168,25 +181,23 @@
 
       playerEl.style.transform = "translate(" + pX + "px, " + pY + "px)";
 
-      // La cámara sigue al jugador
+      // La cámara sigue al jugador suavemente
       var camX = (window.innerWidth / 2) - pX - 20;
       var camY = (window.innerHeight / 2) - pY - 20;
       mapEl.style.transform = "translate(" + camX + "px, " + camY + "px)";
 
-      // Detección de proximidad con objetos interactivos
+      // Detección de proximidad
       var foundNear = null;
       $$(".rpg-obj").forEach(function(objEl) {
-        // Obtenemos la posición absoluta calculando la del parent (rpg-building) + su propio offset css
         var parentRect = objEl.parentElement.getBoundingClientRect();
         var mapRect = mapEl.getBoundingClientRect();
         
-        // Coordenadas absolutas del objeto en el mapa
-        var objX = (parentRect.left - mapRect.left) + 60; // offset central estimado
+        var objX = (parentRect.left - mapRect.left) + 60; 
         var objY = (parentRect.top - mapRect.top) + 150; 
         
         var dist = Math.sqrt(Math.pow(pX - objX, 2) + Math.pow(pY - objY, 2));
         
-        if (dist < 100) { // Rango de interacción
+        if (dist < 110) { 
           if (!objEl.classList.contains("is-near")) objEl.classList.add("is-near");
           foundNear = objEl;
         } else {
@@ -205,7 +216,20 @@
     isModalOpen = true;
     modalContent.innerHTML = srcEl.innerHTML;
     modalEl.hidden = false;
-    keys = {}; // Resetea el movimiento
+    keys = {}; // Resetea el movimiento al abrir
+    
+    // Reactivar las tabs dentro del modal clonado
+    var tabs = $$(".tabs__btn", modalContent);
+    tabs.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var panelId = btn.dataset.tab;
+        $$(".tabs__btn", modalContent).forEach(function (x) { x.classList.remove("is-active"); x.setAttribute("aria-selected", "false"); });
+        $$(".tabs__panel", modalContent).forEach(function (p) { p.hidden = true; p.classList.remove("is-active"); });
+        btn.classList.add("is-active"); btn.setAttribute("aria-selected", "true");
+        var p = $("#" + panelId, modalContent) || modalContent.querySelector("#" + panelId); 
+        if(p) { p.hidden = false; p.classList.add("is-active"); }
+      });
+    });
   }
 
   function closeRPGModal() {
@@ -213,7 +237,6 @@
     modalEl.hidden = true;
     modalContent.innerHTML = "";
   }
-
 
   /* =====================================================================
      RESTO DE INTERACCIONES DE LA WEB CLÁSICA
@@ -306,7 +329,7 @@
   }
   if (!reduce) setTimeout(function () { $$(".hero__name-line").forEach(scramble); }, 550);
 
-  /* Menú móvil y Tabs */
+  /* Menú móvil y Tabs principales */
   var burger = $(".burger"), drawer = $("#drawer");
   function toggleMenu(open) {
     if(drawer) drawer.hidden = !open;
@@ -316,11 +339,11 @@
   if(burger) burger.addEventListener("click", function () { toggleMenu(drawer.hidden); });
   if(drawer) $$("a", drawer).forEach(function (a) { a.addEventListener("click", function () { toggleMenu(false); }); });
 
-  var tabs = $$(".tabs__btn");
+  var tabs = $$(".tabs__btn", $("#mainWeb")); // Solo vincula los de la web normal
   tabs.forEach(function (btn) {
     btn.addEventListener("click", function () {
       var panelId = btn.dataset.tab;
-      var parent = btn.closest(".future__grid") || btn.closest(".rpg-modal-content");
+      var parent = btn.closest(".future__grid");
       if(!parent) return;
       
       $$(".tabs__btn", parent).forEach(function (x) { x.classList.remove("is-active"); x.setAttribute("aria-selected", "false"); });
