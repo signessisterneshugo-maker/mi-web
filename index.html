@@ -15,7 +15,6 @@
   try{
     var t=localStorage.getItem('hugo-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
     var s=localStorage.getItem('hugo-style')||'unico';
-    // Si la última vez estabas en RPG, forzamos a arrancar en 'unico' para no quedarte atrapado
     if(s === 'rpg') s = 'unico'; 
     document.documentElement.setAttribute('data-theme',t);
     document.documentElement.setAttribute('data-style',s);
@@ -234,6 +233,9 @@
 
   <div class="wing-div" aria-hidden="true"><svg><use href="#wing"/></svg></div>
 
+  <!-- ==============================================
+       NUEVA SECCIÓN ME GUSTA (BENTO GRID INMERSIVO)
+       ============================================== -->
   <section class="section" id="gusta" data-reveal>
     <div class="section__inner">
       <div class="section__head">
@@ -242,37 +244,80 @@
         <p class="section__sub">Rock, turnos y motores.</p>
       </div>
       <div class="likes">
+        
+        <!-- Tarjeta: Rock -->
         <article class="cell cell--rock" data-tilt data-reveal>
+          <div class="cell__bg">
+            <!-- Imagen HD de concierto / guitarra -->
+            <img src="https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=800&auto=format&fit=crop" alt="Guitarra eléctrica" loading="lazy">
+            <div class="cell__overlay" style="background: linear-gradient(to top, var(--bg-3) 25%, transparent 90%);"></div>
+          </div>
           <span class="cell__idx">A</span>
-          <h3 class="cell__title">Rock</h3>
-          <p class="cell__desc">Guitarra, volumen alto, directo y sin sintetizar. El sonido con el que estudio, programo y desconecto.</p>
-          <div class="eq" id="eq" aria-hidden="true"></div>
-          <ul class="tags"><li>Clásico</li><li>Hard rock</li><li>Grunge</li><li>Directo</li></ul>
+          <div class="cell__content">
+            <h3 class="cell__title">Rock</h3>
+            <p class="cell__desc">Guitarra, volumen alto, directo y sin sintetizar. El sonido con el que estudio, programo y desconecto.</p>
+            <div class="eq" id="eq" aria-hidden="true">
+              <span style="--h:40%; animation-delay:0.1s"></span>
+              <span style="--h:80%; animation-delay:0.2s"></span>
+              <span style="--h:50%; animation-delay:0.3s"></span>
+              <span style="--h:90%; animation-delay:0.4s"></span>
+              <span style="--h:30%; animation-delay:0.5s"></span>
+              <span style="--h:70%; animation-delay:0.6s"></span>
+              <span style="--h:45%; animation-delay:0.7s"></span>
+            </div>
+            <ul class="tags"><li>Clásico</li><li>Hard rock</li><li>Grunge</li><li>Directo</li></ul>
+          </div>
         </article>
+
+        <!-- Tarjeta: Juegos -->
         <article class="cell cell--games" data-tilt data-reveal data-d="1">
+          <div class="cell__bg">
+            <!-- Imagen HD de ajedrez / estrategia -->
+            <img src="https://images.unsplash.com/photo-1611996575749-79a3a250f563?q=80&w=800&auto=format&fit=crop" alt="Tablero de estrategia" loading="lazy">
+            <div class="cell__overlay" style="background: linear-gradient(to right, var(--bg-3) 35%, transparent 100%);"></div>
+          </div>
           <span class="cell__idx">B</span>
-          <h3 class="cell__title">Por turnos y con historia</h3>
-          <p class="cell__desc">Estrategia, narrativa y decisiones que importan. Juegos que te obligan a pensar, no a reaccionar.</p>
-          <figure class="cell__img"><img src="https://picsum.photos/seed/turn-based-tactics-game/700/380" alt="Juego de estrategia por turnos" loading="lazy"></figure>
+          <div class="cell__content">
+            <h3 class="cell__title">Por turnos y con historia</h3>
+            <p class="cell__desc" style="max-width: 75%">Estrategia, narrativa y decisiones que importan. Juegos que te obligan a pensar, no a reaccionar.</p>
+          </div>
         </article>
+
+        <!-- Tarjeta: Robótica -->
         <article class="cell cell--robot" data-tilt data-reveal data-d="2">
+          <div class="cell__bg">
+            <!-- Imagen HD de robot/brazo -->
+            <img src="https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=800&auto=format&fit=crop" alt="Brazo robótico" loading="lazy">
+            <div class="cell__overlay" style="background: linear-gradient(to right, var(--bg-3) 35%, transparent 100%);"></div>
+          </div>
           <span class="cell__idx">C</span>
-          <h3 class="cell__title">Robótica</h3>
-          <p class="cell__desc">Donde el código toca el mundo real: sensores, motores, cables y pruebas que fallan.</p>
-          <figure class="cell__img"><img src="https://picsum.photos/seed/robotic-arm-soldering/700/400" alt="Brazo robótico con Arduino" loading="lazy"></figure>
-          <svg class="gear" aria-hidden="true"><use href="#wing"/></svg>
+          <div class="cell__content">
+            <h3 class="cell__title">Robótica</h3>
+            <p class="cell__desc" style="max-width: 75%">Donde el código toca el mundo real: sensores, motores, cables y pruebas que fallan.</p>
+            <svg class="gear" aria-hidden="true"><use href="#wing"/></svg>
+          </div>
         </article>
+
+        <!-- Tarjeta: Stack -->
         <article class="cell cell--stack" data-tilt data-reveal data-d="3">
+          <div class="cell__bg">
+            <!-- Imagen HD de código en pantalla -->
+            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop" alt="Stack tecnológico" loading="lazy">
+            <div class="cell__overlay" style="background: linear-gradient(to left, transparent 0%, var(--bg-3) 65%);"></div>
+          </div>
           <span class="cell__idx">D</span>
-          <h3 class="cell__title">Mi stack de bolsillo</h3>
-          <ul class="stack-list">
-            <li><span>01</span> Java <em>POO en DAM</em></li>
-            <li><span>02</span> SQL <em>bases de datos</em></li>
-            <li><span>03</span> Git <em>versionado siempre</em></li>
-            <li><span>04</span> Linux <em>herencia de SMX</em></li>
-            <li><span>05</span> Python <em>el próximo salto</em></li>
-          </ul>
+          <div class="cell__content" style="max-width: 55%">
+            <h3 class="cell__title">Mi stack de bolsillo</h3>
+            <ul class="stack-list">
+              <li><span>01</span> Java <em>POO en DAM</em></li>
+              <li><span>02</span> SQL <em>bases de datos</em></li>
+              <li><span>03</span> Git <em>versionado siempre</em></li>
+              <li><span>04</span> Linux <em>herencia de SMX</em></li>
+              <li><span>05</span> Python <em>el próximo salto</em></li>
+            </ul>
+          </div>
         </article>
+
       </div>
     </div>
   </section>
