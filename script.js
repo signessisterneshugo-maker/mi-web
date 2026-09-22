@@ -1,5 +1,5 @@
 /* =====================================================================
-   HUGO SIGNES SISTERNES · interacciones mejoradas
+   HUGO SIGNES SISTERNES · interacciones + MOTOR RPG
    ===================================================================== */
 (function () {
   "use strict";
@@ -20,8 +20,10 @@
     syncTheme();
   });
 
-  /* ---------- Selector de estilo ---------- */
+  /* ---------- Selector de estilo & Toggle RPG ---------- */
+  var rpgModeActive = false;
   var sBtn = $("#styleToggle"), sPanel = $("#stylePanel"), sOpts = $$("[data-set-style]");
+  
   function applyStyle(s) {
     root.setAttribute("data-style", s);
     try { localStorage.setItem("hugo-style", s); } catch (e) {}
@@ -31,7 +33,17 @@
       b.setAttribute("aria-checked", on);
     });
     updateCursor();
+
+    // Arrancar / Parar Motor RPG
+    if (s === "rpg") {
+      rpgModeActive = true;
+      initRPG();
+    } else {
+      rpgModeActive = false;
+      stopRPG();
+    }
   }
+  
   applyStyle(root.getAttribute("data-style") || "unico");
   sBtn.addEventListener("click", function (e) {
     e.stopPropagation();
@@ -46,29 +58,17 @@
   document.addEventListener("click", function () { sPanel.hidden = true; sBtn.setAttribute("aria-expanded", "false"); });
   sPanel.addEventListener("click", function (e) { e.stopPropagation(); });
 
-  /* ---------- Progreso + topbar + to-top ---------- */
-  var bar = $(".progress span"), topbar = $(".topbar"), toTop = $("#toTop");
-  function onScroll() {
-    var h = document.documentElement, p = h.scrollTop / ((h.scrollHeight - h.clientHeight) || 1);
-    bar.style.transform = "scaleX(" + p + ")";
-    topbar.classList.toggle("is-scrolled", h.scrollTop > 30);
-    toTop.classList.toggle("is-show", h.scrollTop > 600);
-  }
-  addEventListener("scroll", onScroll, { passive: true }); onScroll();
-  toTop.addEventListener("click", function () { scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); });
-
-  /* ---------- Cursor custom + rastro de brasas ---------- */
+  /* ---------- Cursor custom ---------- */
   var cur = $(".cursor"), ring = $(".cursor-ring"), trail = $(".trail");
   var mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my, lastTrail = 0;
   function updateCursor() {
     var s = root.getAttribute("data-style");
-    document.body.classList.toggle("has-cursor", fine && !reduce && s !== "professional");
+    document.body.classList.toggle("has-cursor", fine && !reduce && s !== "professional" && s !== "rpg");
   }
-  updateCursor();
   if (fine && !reduce) {
     addEventListener("pointermove", function (e) {
       mx = e.clientX; my = e.clientY;
-      cur.style.transform = "translate(" + (mx - 3.5) + "px," + (my - 3.5) + "px)";
+      if(cur) cur.style.transform = "translate(" + (mx - 3.5) + "px," + (my - 3.5) + "px)";
       var s = root.getAttribute("data-style");
       if ((s === "gamer" || s === "unico" || s === "retro") && performance.now() - lastTrail > 45) {
         lastTrail = performance.now();
@@ -80,191 +80,166 @@
     });
     (function loop() {
       rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
-      ring.style.transform = "translate(" + (rx - 19) + "px," + (ry - 19) + "px)";
+      if(ring) ring.style.transform = "translate(" + (rx - 19) + "px," + (ry - 19) + "px)";
       requestAnimationFrame(loop);
     })();
     var hov = "a,button,[data-magnetic],[data-tilt],.work__card,.cell,.official a";
-    addEventListener("pointerover", function (e) { if (e.target.closest(hov)) ring.classList.add("is-hover"); });
-    addEventListener("pointerout",  function (e) { if (e.target.closest(hov)) ring.classList.remove("is-hover"); });
+    addEventListener("pointerover", function (e) { if (e.target.closest(hov) && ring) ring.classList.add("is-hover"); });
+    addEventListener("pointerout",  function (e) { if (e.target.closest(hov) && ring) ring.classList.remove("is-hover"); });
   }
 
-  /* ---------- Ripple al click ---------- */
-  var ripples = $(".ripples");
-  if (ripples && !reduce) {
-    addEventListener("pointerdown", function (e) {
-      var s = document.createElement("span");
-      s.style.left = e.clientX + "px"; s.style.top = e.clientY + "px";
-      ripples.appendChild(s);
-      setTimeout(function () { s.remove(); }, 700);
+  /* =====================================================================
+     MOTOR MINIJUEGO 2D (RPG)
+     ===================================================================== */
+  var mapEl, playerEl, modalEl, modalContent, modalClose;
+  // Jugador empieza en casilla X:2, Y:2. Tamaño tile = 64px.
+  var pX = 2, pY = 2, pRealX = 2 * 64, pRealY = 2 * 64; 
+  var speed = 4.5; // píxeles por frame
+  var keys = {};
+  var rpgLoopId = null;
+  var isModalOpen = false;
+  var tileSize = 64;
+  var maxTiles = 23; // El mapa tiene aprox 1500px -> ~23 tiles
+  var currentNear = null;
+
+  // Lista de entidades y con qué bloque HTML se enlazan
+  var npcs = [
+    { id: "sobre", tx: 5, ty: 5, el: null, src: "#sobre" },
+    { id: "trabajo", tx: 12, ty: 4, el: null, src: "#trabajo" },
+    { id: "gusta", tx: 15, ty: 10, el: null, src: "#gusta" },
+    { id: "futuro", tx: 7, ty: 13, el: null, src: "#futuro" },
+    { id: "contacto", tx: 12, ty: 16, el: null, src: "#contacto" }
+  ];
+
+  function initRPG() {
+    mapEl = $("#rpg-map");
+    playerEl = $("#rpg-player");
+    modalEl = $("#rpg-modal");
+    modalContent = $(".rpg-modal-content");
+    modalClose = $(".rpg-modal-close");
+
+    if(!mapEl) return;
+
+    window.addEventListener("keydown", rpgKeyDown);
+    window.addEventListener("keyup", rpgKeyUp);
+    modalClose.addEventListener("click", closeRPGModal);
+
+    // Conectar eventos click a los emojis
+    npcs.forEach(function(obj) {
+      if(!obj.el) obj.el = $("#obj-" + obj.id);
+      if(obj.el) {
+        obj.el.onclick = function() {
+          if (obj.isNear) openRPGModal(obj.src);
+        };
+      }
     });
+
+    if(!rpgLoopId) rpgLoopId = requestAnimationFrame(rpgGameLoop);
   }
 
-  /* ---------- Spotlight + parallax alas + grid ---------- */
-  var spot = $(".spotlight"), wl = $(".hero__wing--l"), wr = $(".hero__wing--r"), glow = $(".hero__glow"), hgrid = $(".hero__grid");
-  if (!reduce && fine) {
-    addEventListener("pointermove", function (e) {
-      spot.style.opacity = "1"; spot.style.left = e.clientX + "px"; spot.style.top = e.clientY + "px";
-      var x = (e.clientX / innerWidth - 0.5), y = (e.clientY / innerHeight - 0.5);
-      if (wl) wl.style.transform = "translateY(calc(-50% + " + (y * 26) + "px)) translateX(" + (x * 26) + "px) scaleX(-1)";
-      if (wr) wr.style.transform = "translateY(calc(-50% + " + (y * 26) + "px)) translateX(" + (x * 26) + "px)";
-      if (glow) glow.style.transform = "translate(" + (x * -40) + "px," + (y * -40) + "px)";
-      if (hgrid) hgrid.style.transform = "translate(" + (x * 14) + "px," + (y * 14) + "px)";
-    });
+  function stopRPG() {
+    window.removeEventListener("keydown", rpgKeyDown);
+    window.removeEventListener("keyup", rpgKeyUp);
+    if(rpgLoopId) cancelAnimationFrame(rpgLoopId);
+    rpgLoopId = null;
+    keys = {};
   }
 
-  /* ---------- Embers (brasas) ---------- */
-  var embers = $(".embers");
-  if (embers && !reduce) {
-    for (var i = 0; i < 22; i++) {
-      var e = document.createElement("i");
-      e.style.left = Math.random() * 100 + "%";
-      e.style.setProperty("--dx", (Math.random() * 60 - 30) + "px");
-      e.style.animationDuration = (7 + Math.random() * 8) + "s";
-      e.style.animationDelay = (-Math.random() * 12) + "s";
-      e.style.width = e.style.height = (3 + Math.random() * 4) + "px";
-      embers.appendChild(e);
+  function rpgKeyDown(e) {
+    keys[e.key.toLowerCase()] = true;
+    if (e.key === "Enter" && currentNear && !isModalOpen) {
+      openRPGModal(currentNear.src);
+    }
+    // Prevenir scroll de la página si tocas las flechas en el juego
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.key) > -1) {
+      e.preventDefault();
     }
   }
+  function rpgKeyUp(e) { keys[e.key.toLowerCase()] = false; }
 
-  /* ---------- Tambor 3D (marquesina que gira) ---------- */
-  var drum = $("#drum");
-  if (drum) {
-    var items = [
-      ["GRADO MEDIO SMX", 1], ["VOLVER A ENCENDER", 0], ["ESSEPI TECH · IT", 0],
-      ["1º DAM · SIMARRO", 0], ["THE CHALLENGE", 1], ["IA", 0], ["ROBÓTICA", 0], ["ROCK", 0]
-    ];
-    var N = items.length;
-    items.forEach(function (it, idx) {
-      var el = document.createElement("div");
-      el.className = "drum__item";
-      el.style.setProperty("--a", (360 / N) * idx + "deg");
-      el.innerHTML = '<span class="' + (it[1] ? "" : "w") + '">' + it[0] + '</span><span class="x">✦</span>';
-      drum.appendChild(el);
-    });
-    drum.addEventListener("pointerenter", function () { $(".drum__stage").style.animationPlayState = "paused"; });
-    drum.addEventListener("pointerleave", function () { $(".drum__stage").style.animationPlayState = "running"; });
-  }
+  function rpgGameLoop() {
+    if (!rpgModeActive) return;
 
-  /* ---------- Marquee fino ---------- */
-  var marquee = $("#marquee");
-  if (marquee) {
-    var words = ["ERASMUS · ESSEPI TECH", "SMX", "DAM", "VOLVER A ENCENDER", "THE CHALLENGE", "IA", "ROBÓTICA", "ROCK", "XÀTIVA", "SIMARRO"];
-    function grp() {
-      var g = document.createElement("div"); g.className = "marquee__group";
-      words.forEach(function (w) {
-        var s = document.createElement("span"); s.textContent = w; g.appendChild(s);
-        var x = document.createElement("span"); x.className = "x"; x.textContent = "✦"; g.appendChild(x);
-      });
-      return g;
-    }
-    marquee.appendChild(grp()); marquee.appendChild(grp());
-  }
+    if (!isModalOpen) {
+      var dx = 0, dy = 0;
+      
+      // Controles WASD y Flechas
+      if (keys["arrowup"] || keys["w"]) dy = -speed;
+      if (keys["arrowdown"] || keys["s"]) dy = speed;
+      if (keys["arrowleft"] || keys["a"]) dx = -speed;
+      if (keys["arrowright"] || keys["d"]) dx = speed;
 
-  /* ---------- Scramble del nombre más orgánico ---------- */
-  var CH = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&/";
-  function scramble(el) {
-    var target = el.dataset.text || el.textContent, frame = 0;
-    var q = target.split("").map(function (c, i) {
-      return { c: c, s: Math.floor(Math.random() * 12), e: Math.floor(Math.random() * 12) + 14 + (i * 2.5) }; // Slightly smoother iteration
-    });
-    (function tick() {
-      var out = "", done = 0;
-      q.forEach(function (o) {
-        if (frame >= o.e) { out += o.c; done++; }
-        else if (frame >= o.s) out += CH[Math.floor(Math.random() * CH.length)];
-        else out += " ";
-      });
-      el.textContent = out;
-      if (done !== q.length) { frame++; requestAnimationFrame(tick); }
-    })();
-  }
-  if (!reduce) setTimeout(function () { $$(".hero__name-line").forEach(scramble); }, 550);
+      // Colisión básica con los bordes del mapa (Grid de 23x23, 1472px)
+      var nextX = pRealX + dx;
+      var nextY = pRealY + dy;
+      if (nextX >= 0 && nextX <= (maxTiles * tileSize - 48)) pRealX = nextX;
+      if (nextY >= 0 && nextY <= (maxTiles * tileSize - 48)) pRealY = nextY;
 
-  /* ---------- Reveal on scroll ---------- */
-  var io = new IntersectionObserver(function (es) {
-    es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); } });
-  }, { threshold: 0.12, rootMargin: "0px 0px -10% 0px" });
-  $$("[data-reveal]").forEach(function (el) { io.observe(el); });
+      // Actualizar posición del jugador en pantalla
+      playerEl.style.transform = "translate(" + pRealX + "px, " + pRealY + "px)";
 
-  /* ---------- Contadores ---------- */
-  var cio = new IntersectionObserver(function (es) {
-    es.forEach(function (en) {
-      if (!en.isIntersecting) return;
-      var el = en.target, t = +el.dataset.count;
-      if (reduce) { el.textContent = t; cio.unobserve(el); return; }
-      var c = 0;
-      (function step() {
-        c += Math.max(1, Math.round(t / 16));
-        if (c >= t) el.textContent = t; else { el.textContent = c; requestAnimationFrame(step); }
-      })();
-      cio.unobserve(el);
-    });
-  }, { threshold: 0.6 });
-  $$("[data-count]").forEach(function (el) { cio.observe(el); });
+      // Cámara sigue al jugador (centrar pantalla)
+      var camX = (window.innerWidth / 2) - pRealX - 24;
+      var camY = (window.innerHeight / 2) - pRealY - 24;
+      mapEl.style.transform = "translate(" + camX + "px, " + camY + "px)";
 
-  /* ---------- Ecualizador de rock ---------- */
-  var eq = $("#eq");
-  if (eq) for (var b = 0; b < 26; b++) {
-    var s = document.createElement("span");
-    s.style.setProperty("--h", (22 + Math.random() * 78) + "%");
-    s.style.animationDuration = (0.5 + Math.random() * 0.9) + "s";
-    s.style.animationDelay = (-Math.random() * 2) + "s";
-    eq.appendChild(s);
-  }
+      // Detección de proximidad con objetos
+      var foundNear = null;
+      var pGridX = pRealX / tileSize;
+      var pGridY = pRealY / tileSize;
 
-  /* ---------- Tarjetas apiladas (scale por profundidad) ---------- */
-  var cards = $$(".work__card");
-  function stackScale() {
-    var top = 100;
-    cards.forEach(function (card) {
-      var i = cards.indexOf(card), next = cards[i + 1], sc = 1;
-      if (next) {
-        var nr = next.getBoundingClientRect(), cr = card.getBoundingClientRect();
-        if (cr.top <= top + 2 && nr.top > top) {
-          var ov = (top - cr.top) / cr.height;
-          sc = 1 - Math.min(Math.max(ov, 0), 1) * 0.08;
+      npcs.forEach(function(obj) {
+        // Calcular distancia euclidiana entre jugador y objeto
+        var dist = Math.sqrt(Math.pow(pGridX - obj.tx, 2) + Math.pow(pGridY - obj.ty, 2));
+        
+        if (dist < 1.8) { // Rango de interacción
+          if (!obj.isNear) obj.el.classList.add("is-near");
+          obj.isNear = true;
+          foundNear = obj;
+        } else {
+          if (obj.isNear) obj.el.classList.remove("is-near");
+          obj.isNear = false;
         }
-      }
-      card.style.setProperty("--sc", sc.toFixed(3));
-    });
+      });
+      currentNear = foundNear;
+    }
+    
+    rpgLoopId = requestAnimationFrame(rpgGameLoop);
   }
-  if (!reduce) { addEventListener("scroll", stackScale, { passive: true }); stackScale(); }
 
-  /* ---------- Scrollspy (topnav + rail) ---------- */
-  var navLinks = $$(".topnav a, .rail__nav a"), map = new Map();
-  navLinks.forEach(function (l) { var sec = $(l.getAttribute("href")); if (sec) map.set(sec, l); });
-  var sio = new IntersectionObserver(function (es) {
-    es.forEach(function (en) {
-      if (en.isIntersecting) {
-        navLinks.forEach(function (l) { l.classList.remove("is-active"); });
-        var lk = map.get(en.target); if (lk) lk.classList.add("is-active");
-      }
-    });
-  }, { rootMargin: "-45% 0px -50% 0px" });
-  map.forEach(function (_, sec) { sio.observe(sec); });
-
-  /* ---------- Menú móvil ---------- */
-  var burger = $(".burger"), drawer = $("#drawer");
-  function toggleMenu(open) {
-    drawer.hidden = !open;
-    burger.setAttribute("aria-expanded", String(open));
-    document.body.style.overflow = open ? "hidden" : "";
+  function openRPGModal(srcId) {
+    var srcEl = $(srcId);
+    if (!srcEl) return;
+    isModalOpen = true;
+    
+    // Clonamos el HTML original para no romper la web normal
+    modalContent.innerHTML = srcEl.innerHTML;
+    modalEl.hidden = false;
+    keys = {}; // Reseteamos teclas para no seguir moviéndonos al cerrar
   }
-  burger.addEventListener("click", function () { toggleMenu(drawer.hidden); });
-  $$("a", drawer).forEach(function (a) { a.addEventListener("click", function () { toggleMenu(false); }); });
 
-  /* ---------- Tabs ---------- */
-  var tabs = $$(".tabs__btn");
-  tabs.forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      tabs.forEach(function (x) { x.classList.remove("is-active"); x.setAttribute("aria-selected", "false"); });
-      $$(".tabs__panel").forEach(function (p) { p.hidden = true; p.classList.remove("is-active"); });
-      btn.classList.add("is-active"); btn.setAttribute("aria-selected", "true");
-      var p = $("#" + btn.dataset.tab); p.hidden = false; p.classList.add("is-active");
-    });
-  });
+  function closeRPGModal() {
+    isModalOpen = false;
+    modalEl.hidden = true;
+    modalContent.innerHTML = "";
+  }
 
-  /* ---------- Terminal typewriter (Triggered by Scroll) ---------- */
+
+  /* =====================================================================
+     RESTO DE INTERACCIONES DE LA WEB CLÁSICA
+     ===================================================================== */
+  var bar = $(".progress span"), topbar = $(".topbar"), toTop = $("#toTop");
+  function onScroll() {
+    if(rpgModeActive) return;
+    var h = document.documentElement, p = h.scrollTop / ((h.scrollHeight - h.clientHeight) || 1);
+    if(bar) bar.style.transform = "scaleX(" + p + ")";
+    if(topbar) topbar.classList.toggle("is-scrolled", h.scrollTop > 30);
+    if(toTop) toTop.classList.toggle("is-show", h.scrollTop > 600);
+  }
+  addEventListener("scroll", onScroll, { passive: true }); onScroll();
+  if(toTop) toTop.addEventListener("click", function () { scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); });
+
+  /* Terminal typewriter (Scroll Trigger) */
   var termBody = $("#termBody"), termStatus = $("#termStatus"), termBlock = $("#terminalBlock");
   if (termBody && termBlock) {
     var lines = [
@@ -300,56 +275,85 @@
     }
   }
 
-  /* ---------- Tilt y Glare Dinámico (spec, celdas y work cards) ---------- */
-  if (!reduce && fine) {
-    $$("[data-tilt], .work__card, .cell").forEach(function (c) {
-      c.addEventListener("pointermove", function (e) {
-        var r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
-        // Solo tilt si tiene el atributo explicito
-        if (c.hasAttribute('data-tilt')) {
-            var strong = c.classList.contains("spec") ? 4 : 2;
-            c.style.transform = "perspective(900px) rotateY(" + (x * strong) + "deg) rotateX(" + (-y * strong) + "deg)";
-        }
-        // Glare dinamico que sigue al raton
-        c.style.setProperty("--mx", (x + 0.5) * 100 + "%");
-        c.style.setProperty("--my", (y + 0.5) * 100 + "%");
-      });
-      c.addEventListener("pointerleave", function () { c.style.transform = ""; });
+  /* Reveal on scroll y Contadores */
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); } });
+  }, { threshold: 0.12, rootMargin: "0px 0px -10% 0px" });
+  $$("[data-reveal]").forEach(function (el) { io.observe(el); });
+
+  var cio = new IntersectionObserver(function (es) {
+    es.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      var el = en.target, t = +el.dataset.count;
+      if (reduce) { el.textContent = t; cio.unobserve(el); return; }
+      var c = 0;
+      (function step() {
+        c += Math.max(1, Math.round(t / 16));
+        if (c >= t) el.textContent = t; else { el.textContent = c; requestAnimationFrame(step); }
+      })();
+      cio.unobserve(el);
     });
-  }
+  }, { threshold: 0.6 });
+  $$("[data-count]").forEach(function (el) { cio.observe(el); });
 
-  /* ---------- Botones magnéticos ---------- */
-  if (!reduce && fine) {
-    $$("[data-magnetic]").forEach(function (b) {
-      b.addEventListener("pointermove", function (e) {
-        var r = b.getBoundingClientRect();
-        b.style.transform = "translate(" + ((e.clientX - r.left - r.width / 2) * 0.18) + "px," + ((e.clientY - r.top - r.height / 2) * 0.3) + "px)";
-      });
-      b.addEventListener("pointerleave", function () { b.style.transform = ""; });
+  /* Scramble del nombre */
+  var CH = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&/";
+  function scramble(el) {
+    var target = el.dataset.text || el.textContent, frame = 0;
+    var q = target.split("").map(function (c, i) {
+      return { c: c, s: Math.floor(Math.random() * 12), e: Math.floor(Math.random() * 12) + 14 + (i * 2.5) };
     });
+    (function tick() {
+      var out = "", done = 0;
+      q.forEach(function (o) {
+        if (frame >= o.e) { out += o.c; done++; }
+        else if (frame >= o.s) out += CH[Math.floor(Math.random() * CH.length)];
+        else out += " ";
+      });
+      el.textContent = out;
+      if (done !== q.length) { frame++; requestAnimationFrame(tick); }
+    })();
   }
+  if (!reduce) setTimeout(function () { $$(".hero__name-line").forEach(scramble); }, 550);
 
-  /* ---------- Roadmap progreso por scroll ---------- */
-  var road = $("#road"), roadFill = $("#roadFill"), steps = $$(".road__step");
-  function roadProgress() {
-    if (!road) return;
-    var r = road.getBoundingClientRect(), vh = innerHeight;
-    var p = Math.min(Math.max((vh * 0.7 - r.top) / (r.height + vh * 0.3), 0), 1);
-    if (roadFill) roadFill.style.width = (p * 88) + "%";
-    steps.forEach(function (st, i) { st.classList.toggle("on", p >= (i / (steps.length - 1)) * 0.9); });
+  /* Menú móvil y Tabs */
+  var burger = $(".burger"), drawer = $("#drawer");
+  function toggleMenu(open) {
+    if(drawer) drawer.hidden = !open;
+    if(burger) burger.setAttribute("aria-expanded", String(open));
+    document.body.style.overflow = open ? "hidden" : "";
   }
-  if (road) { addEventListener("scroll", roadProgress, { passive: true }); roadProgress(); }
+  if(burger) burger.addEventListener("click", function () { toggleMenu(drawer.hidden); });
+  if(drawer) $$("a", drawer).forEach(function (a) { a.addEventListener("click", function () { toggleMenu(false); }); });
 
-  /* ---------- Copiar correo ---------- */
-  var toast = $("#toast");
-  $("#copy").addEventListener("click", function () {
-    var mail = $("#mail").textContent.trim();
-    function ok() { toast.classList.add("is-show"); setTimeout(function () { toast.classList.remove("is-show"); }, 2200); }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(mail).then(ok, function () { location.href = "mailto:" + mail; });
-    } else { location.href = "mailto:" + mail; }
+  var tabs = $$(".tabs__btn");
+  tabs.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      // Como el tab puede venir del modal clonado o del original, buscamos el contenedor local
+      var panelId = btn.dataset.tab;
+      var parent = btn.closest(".future__grid") || btn.closest(".rpg-modal-content");
+      if(!parent) return;
+      
+      $$(".tabs__btn", parent).forEach(function (x) { x.classList.remove("is-active"); x.setAttribute("aria-selected", "false"); });
+      $$(".tabs__panel", parent).forEach(function (p) { p.hidden = true; p.classList.remove("is-active"); });
+      
+      btn.classList.add("is-active"); btn.setAttribute("aria-selected", "true");
+      var p = $("#" + panelId, parent) || parent.querySelector("#" + panelId); 
+      if(p) { p.hidden = false; p.classList.add("is-active"); }
+    });
   });
 
-  /* ---------- Año dinámico ---------- */
-  $("#year").textContent = new Date().getFullYear();
+  /* Copiar correo y año dinámico */
+  var toast = $("#toast"), copyBtn = $("#copy"), mailEl = $("#mail");
+  if(copyBtn && mailEl) {
+    copyBtn.addEventListener("click", function () {
+      var mail = mailEl.textContent.trim();
+      function ok() { if(toast){toast.classList.add("is-show"); setTimeout(function () { toast.classList.remove("is-show"); }, 2200);} }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(mail).then(ok, function () { location.href = "mailto:" + mail; });
+      } else { location.href = "mailto:" + mail; }
+    });
+  }
+  if($("#year")) $("#year").textContent = new Date().getFullYear();
+
 })();

@@ -58,6 +58,7 @@
           <button role="menuitemradio" data-set-style="professional" aria-checked="false"><i class="sw sw--pro"></i>Profesional</button>
           <button role="menuitemradio" data-set-style="gamer" aria-checked="false"><i class="sw sw--gamer"></i>Gamer</button>
           <button role="menuitemradio" data-set-style="retro" aria-checked="false"><i class="sw sw--retro"></i>Retro · Pixel</button>
+          <button role="menuitemradio" data-set-style="rpg" aria-checked="false"><i class="sw sw--rpg"></i>Minijuego RPG</button>
         </div>
       </div>
       <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema" aria-pressed="false">
@@ -92,9 +93,11 @@
   <div class="rail__bottom"><span class="rail__line"></span><svg class="rail__wing"><use href="#wing"/></svg></div>
 </aside>
 
-<div class="page">
+<!-- ==============================================
+     WEB TRADICIONAL
+     ============================================== -->
+<div class="page" id="mainWeb">
 <main>
-
   <section class="hero" id="inicio">
     <div class="hero__bg" aria-hidden="true">
       <div class="hero__grid"></div>
@@ -185,7 +188,6 @@
             </div>
             <figure class="work__media"><span class="tag">SMX</span><img src="https://picsum.photos/seed/motherboard-pc-repair-bench/900/700" alt="Montaje y reparación de hardware" loading="lazy"></figure>
           </article>
-
           <article class="work__card" data-tilt>
             <div class="work__body">
               <div class="work__top"><span class="work__n">02</span><span class="work__date">The Challenge</span></div>
@@ -194,38 +196,19 @@
               <ul class="work__tags"><li>Equipo</li><li>Producto</li><li>Comunicación</li><li>Pitch</li></ul>
               <div class="challenge">
                 <p class="challenge__lead"><strong>The Challenge</strong> es el reto nacional de innovación y emprendimiento para estudiantes de Formación Profesional, organizado por la <strong>Fundación «la Caixa»</strong>. Nuestro proyecto llegó a la fase de presentación.</p>
-                <ul class="challenge__facts">
-                  <li><b>Convoca</b>Fundación «la Caixa»</li>
-                  <li><b>Ámbito</b>Nacional · FP</li>
-                  <li><b>Formato</b>Equipo · idea · pitch</li>
-                </ul>
-                <div class="official">
-                  <a href="https://www.thechallenge.es/" target="_blank" rel="noopener">Web The Challenge ↗</a>
-                  <a href="https://www.fundacionlacaixa.es/" target="_blank" rel="noopener">Fundación «la Caixa» ↗</a>
-                </div>
               </div>
             </div>
             <figure class="work__media"><span class="tag">VAE</span><img src="https://picsum.photos/seed/team-pitch-stage-la-caixa/900/700" alt="Equipo presentando el proyecto" loading="lazy"></figure>
           </article>
-
           <article class="work__card" data-tilt>
             <div class="work__body">
               <div class="work__top"><span class="work__n">03</span><span class="work__date">3 meses</span></div>
               <h3 class="work__title">Erasmus en Italia</h3>
               <p class="work__desc">Beca de movilidad europea. Trabajo real en empresa, en otro idioma, con otro equipo. Aprendí a adaptarme rápido y a comunicar en contextos que no controlaba.</p>
               <ul class="work__tags"><li>Movilidad</li><li>Inglés</li><li>Italiano</li><li>Entorno laboral</li></ul>
-              <div class="extra">
-                <p class="extra__k">Empresa de acogida</p>
-                <p class="extra__v">ESSEPI Tech · Italia</p>
-                <div class="map">
-                  <iframe title="Ubicación de ESSEPI Tech en Italia" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=6.6%2C36.6%2C18.6%2C47.1&layer=mapnik&marker=43.7696%2C11.2558"></iframe>
-                </div>
-                <a class="extra__link" href="https://www.openstreetmap.org/?mlat=43.7696&mlon=11.2558#map=6/43.7696/11.2558" target="_blank" rel="noopener">Ver en OpenStreetMap ↗</a>
-              </div>
             </div>
             <figure class="work__media"><span class="tag">Erasmus</span><img src="https://picsum.photos/seed/italy-street-work-erasmus/900/700" alt="Prácticas Erasmus en Italia" loading="lazy"></figure>
           </article>
-
           <article class="work__card" data-tilt>
             <div class="work__body">
               <div class="work__top"><span class="work__n">04</span><span class="work__date">En curso</span></div>
@@ -262,15 +245,12 @@
           <h3 class="cell__title">Por turnos y con historia</h3>
           <p class="cell__desc">Estrategia, narrativa y decisiones que importan. Juegos que te obligan a pensar, no a reaccionar.</p>
           <figure class="cell__img"><img src="https://picsum.photos/seed/turn-based-tactics-game/700/380" alt="Juego de estrategia por turnos" loading="lazy"></figure>
-          <ul class="glist"><li><strong>Táctico</strong> — cada turno cuenta</li><li><strong>RPG</strong> — arcos largos</li><li><strong>Elecciones</strong> — finales que cambian</li></ul>
-          <div class="turn" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
         </article>
         <article class="cell cell--robot" data-tilt data-reveal data-d="2">
           <span class="cell__idx">C</span>
           <h3 class="cell__title">Robótica</h3>
           <p class="cell__desc">Donde el código toca el mundo real: sensores, motores, cables y pruebas que fallan.</p>
           <figure class="cell__img"><img src="https://picsum.photos/seed/robotic-arm-soldering/700/400" alt="Brazo robótico con Arduino" loading="lazy"></figure>
-          <ul class="tags"><li>Arduino</li><li>Sensores</li><li>Motores</li><li>Prototipos</li></ul>
           <svg class="gear" aria-hidden="true"><use href="#wing"/></svg>
         </article>
         <article class="cell cell--stack" data-tilt data-reveal data-d="3">
@@ -311,8 +291,8 @@
           </div>
           <div class="tabs__panels">
             <article class="tabs__panel" id="tab-ia" role="tabpanel"><h3>Que el modelo trabaje para alguien</h3><p>No me interesa la IA como concepto: me interesa integrada. Modelos que detectan averías, clasifican documentos, asisten en un turno. Encajo porque sé montar el sistema, sé programarlo y quiero saber entrenarlo.</p><ul class="tags"><li>Python</li><li>Datos</li><li>APIs</li><li>Despliegue</li></ul></article>
-            <article class="tabs__panel" id="tab-vision" role="tabpanel" hidden><h3>Máquinas que miran</h3><p>Cámaras, inspección, lectura de placas, control de calidad. Donde mi base de SMX y la robótica se encuentran con el aprendizaje automático.</p><ul class="tags"><li>Cámaras</li><li>CNN</li><li>Edge AI</li></ul></article>
-            <article class="tabs__panel" id="tab-robotica" role="tabpanel" hidden><h3>El robot deja de repetir y empieza a decidir</h3><p>Robótica con IA: brazos que se adaptan, navegación autónoma, control por sensores. Mi afición de siempre con una capa nueva encima.</p><ul class="tags"><li>Sensores</li><li>Autonomía</li><li>ROS</li><li>Control</li></ul></article>
+            <article class="tabs__panel" id="tab-vision" role="tabpanel" hidden><h3>Máquinas que miran</h3><p>Cámaras, inspección, lectura de placas, control de calidad.</p></article>
+            <article class="tabs__panel" id="tab-robotica" role="tabpanel" hidden><h3>El robot deja de repetir y empieza a decidir</h3><p>Robótica con IA: brazos que se adaptan, navegación autónoma.</p></article>
           </div>
         </div>
       </div>
@@ -338,10 +318,49 @@
       <a id="mail" href="mailto:hugo.signes@example.com">hugo.signes@example.com</a>
       <button id="copy" class="btn btn--solid" type="button" data-magnetic>Copiar correo</button>
     </div>
-    <ul class="social"><li><a href="#" rel="me">GitHub</a></li><li><a href="#" rel="me">LinkedIn</a></li><li><a href="#" rel="me">CV / Porfolio</a></li><li><a href="#" rel="me">Discord</a></li></ul>
-    <div class="colophon"><p>© <span id="year">2025</span> Hugo Signes Sisternes · Hecho a mano con HTML, CSS y JS.</p><a href="#inicio">Volver arriba ↑</a></div>
   </div>
 </footer>
+</div>
+
+<!-- ==============================================
+     MOTOR MINIJUEGO RPG (Oculto por defecto)
+     ============================================== -->
+<div id="rpg-mode" hidden>
+  <div id="rpg-camera">
+    <div id="rpg-map">
+      <!-- Decoraciones del mapa -->
+      <div class="rpg-dec" style="--tx:2; --ty:2;">🌲</div>
+      <div class="rpg-dec" style="--tx:18; --ty:4;">🌲</div>
+      <div class="rpg-dec" style="--tx:4; --ty:14;">🌲</div>
+      <div class="rpg-dec" style="--tx:16; --ty:16;">🌲</div>
+      
+      <!-- NPCs / Objetos Interactivos -->
+      <div class="rpg-obj" id="obj-sobre" data-label="Sobre Mí" style="--tx: 5; --ty: 5;">🖥️</div>
+      <div class="rpg-obj" id="obj-trabajo" data-label="Trayectoria" style="--tx: 12; --ty: 4;">🎒</div>
+      <div class="rpg-obj" id="obj-gusta" data-label="Me gusta" style="--tx: 15; --ty: 10;">🎸</div>
+      <div class="rpg-obj" id="obj-futuro" data-label="Futuro IA" style="--tx: 7; --ty: 13;">🧠</div>
+      <div class="rpg-obj" id="obj-contacto" data-label="Contacto" style="--tx: 12; --ty: 16;">📨</div>
+      
+      <!-- Jugador -->
+      <div id="rpg-player">🧑‍💻</div>
+    </div>
+  </div>
+  
+  <!-- Interfaz -->
+  <div id="rpg-ui">
+    <div class="rpg-controls-hint">
+      <p>Mueve con <b>W A S D</b> o <b>Flechas</b>.</p>
+      <p>Acércate a los objetos y pulsa <b>ENTER</b> o haz <b>CLIC</b>.</p>
+    </div>
+  </div>
+
+  <!-- Modal del Minijuego -->
+  <div id="rpg-modal" hidden>
+    <div class="rpg-modal-inner">
+      <button class="rpg-modal-close" aria-label="Cerrar">X</button>
+      <div class="rpg-modal-content"></div>
+    </div>
+  </div>
 </div>
 
 <button class="to-top" id="toTop" aria-label="Volver arriba"><svg><use href="#wing"/></svg></button>
