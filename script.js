@@ -1,5 +1,5 @@
 /* =====================================================================
-   HUGO SIGNES SISTERNES · interacciones + MOTOR RPG MEJORADO
+   HUGO SIGNES SISTERNES · interacciones + MOTOR RPG MEJORADO (MOBILE & ANIMATION)
    ===================================================================== */
 (function () {
   "use strict";
@@ -27,12 +27,9 @@
   
   function applyStyle(s) {
     root.setAttribute("data-style", s);
-    
-    // No guardamos el estilo RPG para no obligar a la web a empezar siempre aquí.
     if (s !== "rpg") {
       try { localStorage.setItem("hugo-style", s); } catch (e) {}
     }
-    
     sOpts.forEach(function (b) {
       var on = b.dataset.setStyle === s;
       b.classList.toggle("is-active", on);
@@ -52,7 +49,6 @@
     }
   }
   
-  // Fuerza a cargar el estilo, previniendo RPG por si se quedo atascado
   var initialStyle = localStorage.getItem('hugo-style') || "unico";
   if (initialStyle === "rpg") initialStyle = "unico";
   applyStyle(initialStyle);
@@ -72,7 +68,6 @@
 
   if (btnExitRpg) {
     btnExitRpg.addEventListener("click", function() {
-      // Vuelve al estilo almacenado o al único
       var stored = localStorage.getItem('hugo-style') || "unico";
       applyStyle(stored === "rpg" ? "unico" : stored);
     });
@@ -109,19 +104,30 @@
   }
 
   /* =====================================================================
-     MOTOR MINIJUEGO 2D (RPG)
+     MOTOR MINIJUEGO 2D (RPG) CON CONTROLES MÓVILES Y ANIMACIÓN
      ===================================================================== */
-  var mapEl, playerEl, modalEl, modalContent, modalClose, modalOverlay;
+  var mapEl, playerEl, playerInner, modalEl, modalContent, modalClose, modalOverlay;
   var pX = 430, pY = 430; 
   var speed = 6; 
   var keys = {};
   var rpgLoopId = null;
   var isModalOpen = false;
   var currentNear = null;
+  var playerDir = 1; // 1 = derecha, -1 = izquierda
+
+  // Bindeo de botones táctiles
+  function bindTouch(id, key) {
+    var btn = $(id);
+    if(!btn) return;
+    btn.addEventListener("touchstart", function(e){ e.preventDefault(); keys[key] = true; });
+    btn.addEventListener("touchend", function(e){ e.preventDefault(); keys[key] = false; });
+    btn.addEventListener("touchcancel", function(e){ e.preventDefault(); keys[key] = false; });
+  }
 
   function initRPG() {
     mapEl = $("#rpg-map");
     playerEl = $("#rpg-player");
+    playerInner = $(".rpg-player-inner");
     modalEl = $("#rpg-modal");
     modalContent = $(".rpg-modal-content");
     modalClose = $(".rpg-modal-close");
@@ -133,6 +139,13 @@
     window.addEventListener("keyup", rpgKeyUp);
     modalClose.addEventListener("click", closeRPGModal);
     if(modalOverlay) modalOverlay.addEventListener("click", closeRPGModal);
+
+    // Activar controles móviles
+    bindTouch("#t-up", "arrowup");
+    bindTouch("#t-down", "arrowdown");
+    bindTouch("#t-left", "arrowleft");
+    bindTouch("#t-right", "arrowright");
+    bindTouch("#t-enter", "enter");
 
     $$(".rpg-obj").forEach(function(objEl) {
       objEl.onclick = function() {
@@ -179,15 +192,32 @@
       if (keys["arrowleft"] || keys["a"]) dx = -speed;
       if (keys["arrowright"] || keys["d"]) dx = speed;
 
+      // Disparador de Acción Móvil
+      if (keys["enter"] && currentNear && !isModalOpen) {
+        keys["enter"] = false; // evitar spam
+        var srcId = "#" + currentNear.id.replace("obj-", "");
+        openRPGModal(srcId);
+      }
+
       var nextX = pX + dx;
       var nextY = pY + dy;
       if (nextX >= 0 && nextX <= 1560) pX = nextX;
       if (nextY >= 0 && nextY <= 1560) pY = nextY;
 
-      playerEl.style.transform = "translate(" + pX + "px, " + pY + "px)";
+      // Animación de caminar y girar sprite
+      var isMoving = (dx !== 0 || dy !== 0);
+      if (dx < 0) playerDir = -1;
+      else if (dx > 0) playerDir = 1;
 
-      var camX = (window.innerWidth / 2) - pX - 20;
-      var camY = (window.innerHeight / 2) - pY - 20;
+      if (isMoving) playerInner.classList.add("is-walking");
+      else playerInner.classList.remove("is-walking");
+
+      // Aplicar posiciones y escala
+      playerEl.style.transform = "translate(" + pX + "px, " + pY + "px)";
+      playerInner.style.transform = "scaleX(" + playerDir + ")";
+
+      var camX = (window.innerWidth / 2) - pX - 24; // centrar segun width 48
+      var camY = (window.innerHeight / 2) - pY - 32; // centrar segun height 64
       mapEl.style.transform = "translate(" + camX + "px, " + camY + "px)";
 
       var foundNear = null;
@@ -195,8 +225,8 @@
         var parentRect = objEl.parentElement.getBoundingClientRect();
         var mapRect = mapEl.getBoundingClientRect();
         
-        var objX = (parentRect.left - mapRect.left) + 60; 
-        var objY = (parentRect.top - mapRect.top) + 150; 
+        var objX = (parentRect.left - mapRect.left) + parseInt(getComputedStyle(objEl).getPropertyValue('--ox')); 
+        var objY = (parentRect.top - mapRect.top) + parseInt(getComputedStyle(objEl).getPropertyValue('--oy')); 
         
         var dist = Math.sqrt(Math.pow(pX - objX, 2) + Math.pow(pY - objY, 2));
         
@@ -244,14 +274,11 @@
      RESTO DE INTERACCIONES (ScrollSpy y Menús)
      ===================================================================== */
   var bar = $(".progress span"), topbar = $(".topbar"), toTop = $("#toTop");
-  
-  // Elementos para el ScrollSpy
   var sections = $$("#inicio, #sobre, #trabajo, #gusta, #futuro, #contacto");
   var navLinks = $$(".topnav a, .rail__nav a");
 
   function onScroll() {
     if(rpgModeActive) return;
-    
     var st = window.scrollY || window.pageYOffset;
     var h = document.documentElement;
     var p = st / ((h.scrollHeight - h.clientHeight) || 1);
@@ -260,50 +287,30 @@
     if(topbar) topbar.classList.toggle("is-scrolled", st > 30);
     if(toTop) toTop.classList.toggle("is-show", st > 600);
 
-    // Lógica del ScrollSpy (iluminar menús al bajar)
     var currentId = "inicio";
     sections.forEach(function(sec) {
-      // Ajustamos el offset (150px) para que cambie justo al llegar a la sección
-      if (st >= sec.offsetTop - 150) {
-        currentId = sec.getAttribute("id");
-      }
+      if (st >= sec.offsetTop - 150) currentId = sec.getAttribute("id");
     });
 
     navLinks.forEach(function(a) {
-      // Comprobamos si el enlace apunta a la sección actual
-      if (a.getAttribute("href") === "#" + currentId) {
-        a.classList.add("is-active");
-      } else {
-        a.classList.remove("is-active");
-      }
+      if (a.getAttribute("href") === "#" + currentId) a.classList.add("is-active");
+      else a.classList.remove("is-active");
     });
   }
   
   addEventListener("scroll", onScroll, { passive: true }); onScroll();
   if(toTop) toTop.addEventListener("click", function () { scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); });
 
-  /* Terminal typewriter (Scroll Trigger) */
+  /* Terminal typewriter */
   var termBody = $("#termBody"), termStatus = $("#termStatus"), termBlock = $("#terminalBlock");
   if (termBody && termBlock) {
-    var lines = [
-      "whoami → hugo_signes",
-      "cat ~/dam/plan.md → IA aplicada a industria",
-      "git log --oneline → smx · vae · erasmus · dam",
-      "echo $SIGUIENTE → especialización en IA"
-    ];
-    if (reduce) {
-      termBody.innerHTML = '<span class="prompt">$</span> ' + lines[0];
-    } else {
+    var lines = ["whoami → hugo_signes", "cat ~/dam/plan.md → IA aplicada a industria", "git log --oneline → smx · vae · erasmus · dam", "echo $SIGUIENTE → especialización en IA"];
+    if (reduce) { termBody.innerHTML = '<span class="prompt">$</span> ' + lines[0]; } else {
       var typeStarted = false;
       var termObserver = new IntersectionObserver(function(entries) {
-        if(entries[0].isIntersecting && !typeStarted) {
-          typeStarted = true;
-          startTyping();
-          termObserver.disconnect();
-        }
+        if(entries[0].isIntersecting && !typeStarted) { typeStarted = true; startTyping(); termObserver.disconnect(); }
       }, { threshold: 0.5 });
       termObserver.observe(termBlock);
-
       function startTyping() {
         var li = 0, ci = 0, del = false;
         (function type() {
@@ -318,10 +325,8 @@
     }
   }
 
-  /* Reveal on scroll y Contadores */
-  var io = new IntersectionObserver(function (es) {
-    es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); } });
-  }, { threshold: 0.12, rootMargin: "0px 0px -10% 0px" });
+  /* Reveal y Contadores */
+  var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); } }); }, { threshold: 0.12, rootMargin: "0px 0px -10% 0px" });
   $$("[data-reveal]").forEach(function (el) { io.observe(el); });
 
   var cio = new IntersectionObserver(function (es) {
@@ -339,13 +344,10 @@
   }, { threshold: 0.6 });
   $$("[data-count]").forEach(function (el) { cio.observe(el); });
 
-  /* Scramble del nombre */
   var CH = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&/";
   function scramble(el) {
     var target = el.dataset.text || el.textContent, frame = 0;
-    var q = target.split("").map(function (c, i) {
-      return { c: c, s: Math.floor(Math.random() * 12), e: Math.floor(Math.random() * 12) + 14 + (i * 2.5) };
-    });
+    var q = target.split("").map(function (c, i) { return { c: c, s: Math.floor(Math.random() * 12), e: Math.floor(Math.random() * 12) + 14 + (i * 2.5) }; });
     (function tick() {
       var out = "", done = 0;
       q.forEach(function (o) {
@@ -359,7 +361,6 @@
   }
   if (!reduce) setTimeout(function () { $$(".hero__name-line").forEach(scramble); }, 550);
 
-  /* Menú móvil y Tabs principales */
   var burger = $(".burger"), drawer = $("#drawer");
   function toggleMenu(open) {
     if(drawer) drawer.hidden = !open;
@@ -375,27 +376,21 @@
       var panelId = btn.dataset.tab;
       var parent = btn.closest(".future__grid");
       if(!parent) return;
-      
       $$(".tabs__btn", parent).forEach(function (x) { x.classList.remove("is-active"); x.setAttribute("aria-selected", "false"); });
       $$(".tabs__panel", parent).forEach(function (p) { p.hidden = true; p.classList.remove("is-active"); });
-      
       btn.classList.add("is-active"); btn.setAttribute("aria-selected", "true");
       var p = $("#" + panelId, parent) || parent.querySelector("#" + panelId); 
       if(p) { p.hidden = false; p.classList.add("is-active"); }
     });
   });
 
-  /* Copiar correo y año dinámico */
   var toast = $("#toast"), copyBtn = $("#copy"), mailEl = $("#mail");
   if(copyBtn && mailEl) {
     copyBtn.addEventListener("click", function () {
       var mail = mailEl.textContent.trim();
       function ok() { if(toast){toast.classList.add("is-show"); setTimeout(function () { toast.classList.remove("is-show"); }, 2200);} }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(mail).then(ok, function () { location.href = "mailto:" + mail; });
-      } else { location.href = "mailto:" + mail; }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(mail).then(ok, function () { location.href = "mailto:" + mail; });
+      else location.href = "mailto:" + mail;
     });
   }
-  if($("#year")) $("#year").textContent = new Date().getFullYear();
-
 })();
