@@ -323,40 +323,75 @@
 </div>
 
 <!-- ==============================================
-     MOTOR MINIJUEGO RPG (Oculto por defecto)
+     MOTOR MINIJUEGO RPG (Estilo Undertale)
      ============================================== -->
 <div id="rpg-mode" hidden>
   <div id="rpg-camera">
     <div id="rpg-map">
-      <!-- Decoraciones del mapa -->
-      <div class="rpg-dec" style="--tx:2; --ty:2;">🌲</div>
-      <div class="rpg-dec" style="--tx:18; --ty:4;">🌲</div>
-      <div class="rpg-dec" style="--tx:4; --ty:14;">🌲</div>
-      <div class="rpg-dec" style="--tx:16; --ty:16;">🌲</div>
       
-      <!-- NPCs / Objetos Interactivos -->
-      <div class="rpg-obj" id="obj-sobre" data-label="Sobre Mí" style="--tx: 5; --ty: 5;">🖥️</div>
-      <div class="rpg-obj" id="obj-trabajo" data-label="Trayectoria" style="--tx: 12; --ty: 4;">🎒</div>
-      <div class="rpg-obj" id="obj-gusta" data-label="Me gusta" style="--tx: 15; --ty: 10;">🎸</div>
-      <div class="rpg-obj" id="obj-futuro" data-label="Futuro IA" style="--tx: 7; --ty: 13;">🧠</div>
-      <div class="rpg-obj" id="obj-contacto" data-label="Contacto" style="--tx: 12; --ty: 16;">📨</div>
+      <!-- Caminos / Suelo del pueblo -->
+      <div class="rpg-path" style="left: 128px; top: 384px; width: 1280px; height: 128px;"></div>
+      <div class="rpg-path" style="left: 384px; top: 128px; width: 128px; height: 1024px;"></div>
+      <div class="rpg-path" style="left: 896px; top: 128px; width: 128px; height: 1024px;"></div>
+
+      <!-- Decoraciones de Bosque -->
+      <div class="rpg-tree" style="left: 100px; top: 100px;">🌲</div>
+      <div class="rpg-tree" style="left: 150px; top: 180px;">🌲</div>
+      <div class="rpg-tree" style="left: 1200px; top: 200px;">🌲</div>
+      <div class="rpg-tree" style="left: 1250px; top: 260px;">🌲</div>
+      <div class="rpg-tree" style="left: 200px; top: 800px;">🌲</div>
+      <div class="rpg-tree" style="left: 1100px; top: 850px;">🌲</div>
       
-      <!-- Jugador -->
-      <div id="rpg-player">🧑‍💻</div>
+      <!-- EDIFICIOS Y PERSONAJES -->
+      <!-- 1. Sobre mí -->
+      <div class="rpg-building" style="left: 200px; top: 180px;">
+        <span class="building-sprite">🏠</span>
+        <div class="rpg-obj" id="obj-sobre" data-label="Casa de Hugo" style="--ox: 60px; --oy: 150px;">🧍🏻‍♂️</div>
+      </div>
+
+      <!-- 2. Trabajo / Trayectoria -->
+      <div class="rpg-building" style="left: 600px; top: 100px;">
+        <span class="building-sprite">🏫</span>
+        <div class="rpg-obj" id="obj-trabajo" data-label="Instituto" style="--ox: 60px; --oy: 150px;">🎒</div>
+      </div>
+
+      <!-- 3. Me Gusta -->
+      <div class="rpg-building" style="left: 1050px; top: 500px;">
+        <span class="building-sprite">🕹️</span>
+        <div class="rpg-obj" id="obj-gusta" data-label="Arcade" style="--ox: 60px; --oy: 150px;">🎮</div>
+      </div>
+
+      <!-- 4. Futuro IA -->
+      <div class="rpg-building" style="left: 200px; top: 600px;">
+        <span class="building-sprite">🏭</span>
+        <div class="rpg-obj" id="obj-futuro" data-label="Lab IA" style="--ox: 60px; --oy: 150px;">🤖</div>
+      </div>
+
+      <!-- 5. Contacto -->
+      <div class="rpg-building" style="left: 700px; top: 750px;">
+        <span class="building-sprite">🏤</span>
+        <div class="rpg-obj" id="obj-contacto" data-label="Buzón" style="--ox: 60px; --oy: 150px;">✉️</div>
+      </div>
+
+      <!-- Jugador (El Corazón de Undertale) -->
+      <div id="rpg-player">
+        <span class="player-sprite">❤️</span>
+      </div>
+
     </div>
   </div>
   
-  <!-- Interfaz -->
-  <div id="rpg-ui">
+  <!-- Interfaz de Diálogo Undertale -->
+  <div id="rpg-ui" class="undertale-box">
     <div class="rpg-controls-hint">
-      <p>Mueve con <b>W A S D</b> o <b>Flechas</b>.</p>
-      <p>Acércate a los objetos y pulsa <b>ENTER</b> o haz <b>CLIC</b>.</p>
+      <p>* Usa W A S D o Flechas para moverte.</p>
+      <p>* Acércate a los personajes/objetos y pulsa ENTER o CLIC.</p>
     </div>
   </div>
 
   <!-- Modal del Minijuego -->
   <div id="rpg-modal" hidden>
-    <div class="rpg-modal-inner">
+    <div class="rpg-modal-inner undertale-box">
       <button class="rpg-modal-close" aria-label="Cerrar">X</button>
       <div class="rpg-modal-content"></div>
     </div>

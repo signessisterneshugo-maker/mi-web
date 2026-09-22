@@ -1,5 +1,5 @@
 /* =====================================================================
-   HUGO SIGNES SISTERNES · interacciones + MOTOR RPG
+   HUGO SIGNES SISTERNES · interacciones + MOTOR RPG UNDERTALE
    ===================================================================== */
 (function () {
   "use strict";
@@ -34,16 +34,15 @@
     });
     updateCursor();
 
-    // Arrancar / Parar Motor RPG
+    // Arrancar / Parar Motor RPG y ocultar/mostrar la vista correcta
+    var rpgContainer = $("#rpg-mode");
     if (s === "rpg") {
       rpgModeActive = true;
-      var rpgContainer = document.getElementById("rpg-mode");
-      if (rpgContainer) rpgContainer.hidden = false; // <-- Mostrar el juego
+      if (rpgContainer) rpgContainer.hidden = false;
       initRPG();
     } else {
       rpgModeActive = false;
-      var rpgContainer = document.getElementById("rpg-mode");
-      if (rpgContainer) rpgContainer.hidden = true; // <-- Ocultar el juego
+      if (rpgContainer) rpgContainer.hidden = true;
       stopRPG();
     }
   }
@@ -96,24 +95,13 @@
      MOTOR MINIJUEGO 2D (RPG)
      ===================================================================== */
   var mapEl, playerEl, modalEl, modalContent, modalClose;
-  // Jugador empieza en casilla X:2, Y:2. Tamaño tile = 64px.
-  var pX = 2, pY = 2, pRealX = 2 * 64, pRealY = 2 * 64; 
-  var speed = 4.5; // píxeles por frame
+  // Posición inicial del jugador en el cruce de caminos
+  var pX = 430, pY = 430; 
+  var speed = 5.5; // píxeles por frame
   var keys = {};
   var rpgLoopId = null;
   var isModalOpen = false;
-  var tileSize = 64;
-  var maxTiles = 23; // El mapa tiene aprox 1500px -> ~23 tiles
   var currentNear = null;
-
-  // Lista de entidades y con qué bloque HTML se enlazan
-  var npcs = [
-    { id: "sobre", tx: 5, ty: 5, el: null, src: "#sobre" },
-    { id: "trabajo", tx: 12, ty: 4, el: null, src: "#trabajo" },
-    { id: "gusta", tx: 15, ty: 10, el: null, src: "#gusta" },
-    { id: "futuro", tx: 7, ty: 13, el: null, src: "#futuro" },
-    { id: "contacto", tx: 12, ty: 16, el: null, src: "#contacto" }
-  ];
 
   function initRPG() {
     mapEl = $("#rpg-map");
@@ -128,14 +116,14 @@
     window.addEventListener("keyup", rpgKeyUp);
     modalClose.addEventListener("click", closeRPGModal);
 
-    // Conectar eventos click a los emojis
-    npcs.forEach(function(obj) {
-      if(!obj.el) obj.el = $("#obj-" + obj.id);
-      if(obj.el) {
-        obj.el.onclick = function() {
-          if (obj.isNear) openRPGModal(obj.src);
-        };
-      }
+    // Identificar todos los NPCs/puntos y asignar click
+    $$(".rpg-obj").forEach(function(objEl) {
+      objEl.onclick = function() {
+        if (objEl.classList.contains("is-near")) {
+           var srcId = "#" + objEl.id.replace("obj-", "");
+           openRPGModal(srcId);
+        }
+      };
     });
 
     if(!rpgLoopId) rpgLoopId = requestAnimationFrame(rpgGameLoop);
@@ -152,9 +140,9 @@
   function rpgKeyDown(e) {
     keys[e.key.toLowerCase()] = true;
     if (e.key === "Enter" && currentNear && !isModalOpen) {
-      openRPGModal(currentNear.src);
+      var srcId = "#" + currentNear.id.replace("obj-", "");
+      openRPGModal(srcId);
     }
-    // Prevenir scroll de la página si tocas las flechas en el juego
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.key) > -1) {
       e.preventDefault();
     }
@@ -167,42 +155,42 @@
     if (!isModalOpen) {
       var dx = 0, dy = 0;
       
-      // Controles WASD y Flechas
       if (keys["arrowup"] || keys["w"]) dy = -speed;
       if (keys["arrowdown"] || keys["s"]) dy = speed;
       if (keys["arrowleft"] || keys["a"]) dx = -speed;
       if (keys["arrowright"] || keys["d"]) dx = speed;
 
-      // Colisión básica con los bordes del mapa (Grid de 23x23, 1472px)
-      var nextX = pRealX + dx;
-      var nextY = pRealY + dy;
-      if (nextX >= 0 && nextX <= (maxTiles * tileSize - 48)) pRealX = nextX;
-      if (nextY >= 0 && nextY <= (maxTiles * tileSize - 48)) pRealY = nextY;
+      // Actualizar limites del mapa (1600x1600)
+      var nextX = pX + dx;
+      var nextY = pY + dy;
+      if (nextX >= 0 && nextX <= 1560) pX = nextX;
+      if (nextY >= 0 && nextY <= 1560) pY = nextY;
 
-      // Actualizar posición del jugador en pantalla
-      playerEl.style.transform = "translate(" + pRealX + "px, " + pRealY + "px)";
+      playerEl.style.transform = "translate(" + pX + "px, " + pY + "px)";
 
-      // Cámara sigue al jugador (centrar pantalla)
-      var camX = (window.innerWidth / 2) - pRealX - 24;
-      var camY = (window.innerHeight / 2) - pRealY - 24;
+      // La cámara sigue al jugador
+      var camX = (window.innerWidth / 2) - pX - 20;
+      var camY = (window.innerHeight / 2) - pY - 20;
       mapEl.style.transform = "translate(" + camX + "px, " + camY + "px)";
 
-      // Detección de proximidad con objetos
+      // Detección de proximidad con objetos interactivos
       var foundNear = null;
-      var pGridX = pRealX / tileSize;
-      var pGridY = pRealY / tileSize;
-
-      npcs.forEach(function(obj) {
-        // Calcular distancia euclidiana entre jugador y objeto
-        var dist = Math.sqrt(Math.pow(pGridX - obj.tx, 2) + Math.pow(pGridY - obj.ty, 2));
+      $$(".rpg-obj").forEach(function(objEl) {
+        // Obtenemos la posición absoluta calculando la del parent (rpg-building) + su propio offset css
+        var parentRect = objEl.parentElement.getBoundingClientRect();
+        var mapRect = mapEl.getBoundingClientRect();
         
-        if (dist < 1.8) { // Rango de interacción
-          if (!obj.isNear) obj.el.classList.add("is-near");
-          obj.isNear = true;
-          foundNear = obj;
+        // Coordenadas absolutas del objeto en el mapa
+        var objX = (parentRect.left - mapRect.left) + 60; // offset central estimado
+        var objY = (parentRect.top - mapRect.top) + 150; 
+        
+        var dist = Math.sqrt(Math.pow(pX - objX, 2) + Math.pow(pY - objY, 2));
+        
+        if (dist < 100) { // Rango de interacción
+          if (!objEl.classList.contains("is-near")) objEl.classList.add("is-near");
+          foundNear = objEl;
         } else {
-          if (obj.isNear) obj.el.classList.remove("is-near");
-          obj.isNear = false;
+          if (objEl.classList.contains("is-near")) objEl.classList.remove("is-near");
         }
       });
       currentNear = foundNear;
@@ -215,11 +203,9 @@
     var srcEl = $(srcId);
     if (!srcEl) return;
     isModalOpen = true;
-    
-    // Clonamos el HTML original para no romper la web normal
     modalContent.innerHTML = srcEl.innerHTML;
     modalEl.hidden = false;
-    keys = {}; // Reseteamos teclas para no seguir moviéndonos al cerrar
+    keys = {}; // Resetea el movimiento
   }
 
   function closeRPGModal() {
@@ -333,7 +319,6 @@
   var tabs = $$(".tabs__btn");
   tabs.forEach(function (btn) {
     btn.addEventListener("click", function () {
-      // Como el tab puede venir del modal clonado o del original, buscamos el contenedor local
       var panelId = btn.dataset.tab;
       var parent = btn.closest(".future__grid") || btn.closest(".rpg-modal-content");
       if(!parent) return;
