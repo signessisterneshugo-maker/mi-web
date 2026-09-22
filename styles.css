@@ -161,6 +161,7 @@ html[data-style="professional"] .cursor,html[data-style="professional"] .cursor-
 .sw--pro{background:linear-gradient(135deg,#2E5FA3,#E03A4C)}
 .sw--gamer{background:linear-gradient(135deg,#FF1E45,#21E6C1)}
 .sw--retro{background:linear-gradient(135deg,#ff2e4c,#3ddc84)}
+.sw--rpg{background:linear-gradient(135deg,#10B981,#3b82f6)}
 .theme-toggle{position:relative;width:42px;height:42px;border:1px solid var(--line-strong);background:transparent;color:var(--text);display:grid;place-items:center;border-radius:var(--r-btn);transition:.3s var(--ease)}
 .theme-toggle:hover{border-color:var(--accent);color:var(--accent);box-shadow:var(--glow); transform: translateY(-2px)}
 .theme-toggle__ico{position:absolute;display:grid;place-items:center;transition:transform .5s var(--ease-b),opacity .4s}
@@ -511,12 +512,22 @@ html[data-style="retro"] .cell,html[data-style="retro"] .work__card,html[data-st
 }
 
 /* =====================================================================
-   5) ESTILO RPG MINIJUEGO (Undertale Vibe)
+   5) ESTILO RPG MINIJUEGO (Césped Verde + Modal de Alta Calidad)
    ===================================================================== */
-.sw--rpg{background:linear-gradient(135deg,#000000,#E4172B)} /* Negro y Rojo Undertale */
+.sw--rpg{background:linear-gradient(135deg,#325929,#4a752c)}
 
-/* Ocultar web normal y efectos si está activo el RPG */
-html[data-style="rpg"] body { overflow: hidden; background: #000; margin: 0; padding: 0; }
+/* Variables para que el contenido del modal sea hermoso (Estilo Dark por defecto) */
+html[data-style="rpg"] {
+  --bg:#0A0A0C; --bg-2:#121217; --bg-3:#1B1B22; --text:#F4F1EA; --muted:#9A9CA6; --bone:#E9E4D6;
+  --accent:#10B981; --accent-2:#34D399; --accent-3:#059669; --accent-soft:rgba(16, 185, 129, 0.16);
+  --line:rgba(244,241,234,.12); --line-strong:rgba(244,241,234,.24); --on-accent:#fff;
+  --r:20px; --r-lg:30px; --r-btn:999px;
+  --img-filter:grayscale(.1) contrast(1.1);
+  --card-shadow:0 30px 60px -30px rgba(0,0,0,.8);
+}
+
+/* Ocultar web normal y UI molesta */
+html[data-style="rpg"] body { overflow: hidden; background: #3e7033; margin: 0; padding: 0; }
 html[data-style="rpg"] #mainWeb, 
 html[data-style="rpg"] .rail, 
 html[data-style="rpg"] .to-top,
@@ -526,39 +537,46 @@ html[data-style="rpg"] .ripples,
 html[data-style="rpg"] .cursor,
 html[data-style="rpg"] .cursor-ring,
 html[data-style="rpg"] .grain, 
-html[data-style="rpg"] .scanlines { display: none !important; }
-
-html[data-style="rpg"] .topbar { background: rgba(0,0,0,0.9); border-bottom: 2px solid #333; }
+html[data-style="rpg"] .scanlines,
+html[data-style="rpg"] .topbar { display: none !important; } /* Adiós Topbar aquí */
 
 /* Contenedor del Juego */
 #rpg-mode {
   position: fixed; inset: 0; z-index: 50;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Press Start 2P', monospace;
-  background-color: #000;
+  font-family: var(--font-body);
 }
 html:not([data-style="rpg"]) #rpg-mode { display: none !important; }
 
-/* Cámara y Mapa */
+/* Cámara y Mapa (Césped) */
 #rpg-camera { position: absolute; inset: 0; overflow: hidden; }
 #rpg-map {
   position: absolute;
   width: 1600px; height: 1600px;
-  background-color: #050505; /* Un negro casi puro para el fondo (Estilo Undertale) */
+  background-color: #3e7033;
+  /* Patrón de césped con gradientes */
+  background-image: 
+    radial-gradient(#325929 15%, transparent 16%),
+    radial-gradient(#325929 15%, transparent 16%);
+  background-size: 60px 60px;
+  background-position: 0 0, 30px 30px;
   transform-origin: center center;
 }
 
-/* Caminos (Paths) */
+/* Caminos de Tierra (Dirt Paths) */
 .rpg-path {
   position: absolute;
-  background-color: #1a1a1a;
-  border: 4px dashed #333;
+  background-color: #a0764c;
+  background-image: radial-gradient(#8c653f 20%, transparent 20%);
+  background-size: 20px 20px;
+  border: 4px solid #785431;
+  border-radius: 12px;
 }
 
 /* Decoraciones y Edificios */
 .rpg-tree {
   position: absolute; font-size: 80px; z-index: 5;
-  filter: grayscale(0.5) brightness(0.6);
+  filter: drop-shadow(0 15px 5px rgba(0,0,0,0.4));
 }
 
 .rpg-building {
@@ -566,92 +584,108 @@ html:not([data-style="rpg"]) #rpg-mode { display: none !important; }
   display: flex; flex-direction: column; align-items: center;
 }
 .building-sprite {
-  font-size: 130px; /* Hacemos que el Emoji sea un edificio gigante */
-  line-height: 1; filter: drop-shadow(0 10px 0px rgba(0,0,0,0.5));
+  font-size: 130px; 
+  line-height: 1; filter: drop-shadow(0 20px 10px rgba(0,0,0,0.5));
 }
 
 /* Objeto de Interacción (NPC/Punto) */
 .rpg-obj {
   position: absolute; 
-  left: var(--ox); top: var(--oy); /* Offset respecto al edificio */
+  left: var(--ox); top: var(--oy);
   font-size: 40px; z-index: 15;
   transition: transform 0.2s, filter 0.2s;
+  background: rgba(0,0,0,0.2);
+  border-radius: 50%; width: 60px; height: 60px;
+  display: grid; place-items: center;
 }
 .rpg-obj::after {
   content: attr(data-label);
   position: absolute; top: -35px; left: 50%; transform: translateX(-50%) translateY(10px);
-  background: #000; color: #fff;
-  border: 2px solid #fff; font-family: 'Press Start 2P', monospace;
-  font-size: 10px; padding: 6px 10px; white-space: nowrap;
+  background: var(--bg); color: var(--text);
+  border: 2px solid var(--accent); font-family: var(--font-label);
+  font-size: 12px; font-weight: bold; padding: 6px 12px; white-space: nowrap;
+  border-radius: var(--r-btn);
   opacity: 0; pointer-events: none;
   transition: opacity 0.3s, transform 0.3s;
 }
 .rpg-obj.is-near {
-  filter: drop-shadow(0 0 15px #FFD700); /* Brillo amarillo de interacción tipo SAVE */
+  filter: drop-shadow(0 0 15px #FFD700); 
   transform: translateY(-5px); cursor: pointer;
+  background: rgba(255,215,0,0.2);
 }
 .rpg-obj.is-near::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* Jugador (Corazón Rojo Undertale) */
+/* Jugador */
 #rpg-player {
   position: absolute; width: 40px; height: 40px; z-index: 20;
   display: flex; justify-content: center; align-items: center;
 }
 .player-sprite {
-  font-size: 30px; color: #ff0000;
-  filter: drop-shadow(0 0 5px rgba(255,0,0,0.8));
-  animation: floatHeart 2s infinite ease-in-out;
+  font-size: 45px;
+  filter: drop-shadow(0 10px 5px rgba(0,0,0,0.5));
+  animation: floatPlayer 0.6s infinite alternate ease-in-out;
 }
-@keyframes floatHeart {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
-/* Cajas de Diálogo y Menús estilo Undertale */
-.undertale-box {
-  background: #000; color: #fff;
-  border: 6px solid #fff; border-radius: 0;
-  font-family: 'Press Start 2P', monospace;
+@keyframes floatPlayer {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
 }
 
+/* Interfaz Inferior (Botonera) */
 #rpg-ui {
   position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-  padding: 20px 30px; width: 90%; max-width: 800px;
-  pointer-events: none; z-index: 100;
+  background: rgba(10, 10, 12, 0.85); backdrop-filter: blur(10px);
+  border: 1px solid var(--line-strong); border-radius: var(--r-lg);
+  padding: 15px 30px; width: 90%; max-width: 600px;
+  display: flex; flex-direction: column; align-items: center; gap: 15px;
+  z-index: 100; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
 }
 .rpg-controls-hint p {
-  margin: 10px 0; font-size: 12px; line-height: 1.8; color: #fff; text-transform: uppercase;
+  margin: 0; font-size: 13px; color: var(--muted); font-family: var(--font-label); text-align: center;
+}
+.rpg-controls-hint b { color: var(--accent); }
+#btn-exit-rpg {
+  pointer-events: auto; /* Para que sea clickeable */
+  font-size: 14px;
 }
 
-/* Modal Videojuego */
+/* Modal Videojuego - DISEÑO HERMOSO Y MODERNO */
 #rpg-modal {
   position: fixed; inset: 0; z-index: 200;
-  background: rgba(0,0,0,0.8);
-  display: flex; align-items: center; justify-content: center; padding: 20px;
+  display: flex; align-items: center; justify-content: center; padding: 2vw;
+}
+.rpg-modal-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
 }
 .rpg-modal-inner {
-  width: 100%; max-width: 800px; max-height: 85vh; padding: 2.5rem; 
-  position: relative; overflow-y: auto; 
-  font-family: 'Space Grotesk', sans-serif; /* Usamos tu fuente para el texto largo */
+  position: relative; z-index: 2;
+  background: var(--bg); border: 1px solid var(--line-strong);
+  width: 100%; max-width: 1100px; max-height: 90vh; 
+  padding: 3rem; border-radius: var(--r-lg);
+  overflow-y: auto; color: var(--text);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px var(--accent-soft);
+  /* Scrollbar bonita */
+  scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg-2);
 }
-.rpg-modal-close {
-  position: absolute; top: 1rem; right: 1rem;
-  background: #000; color: #fff;
-  border: 2px solid #fff; font-family: 'Press Start 2P', monospace;
-  font-size: 14px; padding: 8px 12px; cursor: pointer; transition: 0.2s; z-index: 20;
-}
-.rpg-modal-close:hover { background: #fff; color: #000; }
+.rpg-modal-inner::-webkit-scrollbar { width: 8px; }
+.rpg-modal-inner::-webkit-scrollbar-track { background: var(--bg-2); border-radius: 10px; }
+.rpg-modal-inner::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
-/* Arreglos internos del modal (para adaptar el HTML original) */
-.rpg-modal-content .section__head { text-align: center; margin-bottom: 2rem; }
-.rpg-modal-content .section__num { display: none; }
+.rpg-modal-close {
+  position: sticky; top: 0; float: right; margin-top: -1rem; margin-right: -1rem;
+  background: var(--bg-2); color: var(--muted);
+  border: 1px solid var(--line-strong); font-family: var(--font-label);
+  font-size: 12px; font-weight: bold; padding: 10px 16px; border-radius: var(--r-btn);
+  cursor: pointer; transition: 0.2s; z-index: 50; text-transform: uppercase;
+}
+.rpg-modal-close:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); transform: scale(1.05); }
+
+/* Ajustes para que el HTML clonado se vea de 10 en el Modal */
+.rpg-modal-content .section__head { text-align: center; margin-bottom: 2rem; max-width: 100%; }
+.rpg-modal-content .section__num { display: none; } /* Ocultamos el '01 - ' */
 .rpg-modal-content .mask > span { transform: none !important; }
 .rpg-modal-content [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
-.rpg-modal-content .about { grid-template-columns: 1fr; }
-.rpg-modal-content .about__sticky { display: none; } 
-.rpg-modal-content .work__card { position: static; min-height: auto; margin-bottom: 2rem; grid-template-columns: 1fr; border-radius: 0; border-width: 2px; }
-.rpg-modal-content .work__card:hover { transform: none; box-shadow: none; }
-.rpg-modal-content .work__media { display: none; }
-.rpg-modal-content .likes { display: flex; flex-direction: column; }
-.rpg-modal-content .cell { grid-column: span 1; border-radius: 0; border-width: 2px; }
-.rpg-modal-content .future__grid { grid-template-columns: 1fr; }
+/* Mantenemos el grid original si cabe, pero permitimos que las fotos se vean */
+.rpg-modal-content .about__sticky { top: 0; } 
+.rpg-modal-content .work__card { position: static; min-height: auto; transform: none !important; margin-bottom: 2rem; }
+.rpg-modal-content .work__card:hover { transform: translateY(-5px) !important; }
