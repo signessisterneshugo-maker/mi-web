@@ -27,7 +27,12 @@
   
   function applyStyle(s) {
     root.setAttribute("data-style", s);
-    try { localStorage.setItem("hugo-style", s); } catch (e) {}
+    
+    // No guardamos el estilo RPG para no obligar a la web a empezar siempre aquí.
+    if (s !== "rpg") {
+      try { localStorage.setItem("hugo-style", s); } catch (e) {}
+    }
+    
     sOpts.forEach(function (b) {
       var on = b.dataset.setStyle === s;
       b.classList.toggle("is-active", on);
@@ -47,8 +52,9 @@
     }
   }
   
-  // Siempre que cargues, asegúrate de forzar la vista normal o cargar de localstorage
+  // Fuerza a cargar el estilo, previniendo RPG por si se quedo atascado
   var initialStyle = localStorage.getItem('hugo-style') || "unico";
+  if (initialStyle === "rpg") initialStyle = "unico";
   applyStyle(initialStyle);
 
   sBtn.addEventListener("click", function (e) {
@@ -66,7 +72,9 @@
 
   if (btnExitRpg) {
     btnExitRpg.addEventListener("click", function() {
-      applyStyle("unico"); // Vuelve al modo Yveltal por defecto
+      // Vuelve al estilo almacenado o al único
+      var stored = localStorage.getItem('hugo-style') || "unico";
+      applyStyle(stored === "rpg" ? "unico" : stored);
     });
   }
 
@@ -104,9 +112,8 @@
      MOTOR MINIJUEGO 2D (RPG)
      ===================================================================== */
   var mapEl, playerEl, modalEl, modalContent, modalClose, modalOverlay;
-  // Posición inicial del jugador en el cruce de caminos del mapa verde
   var pX = 430, pY = 430; 
-  var speed = 6; // píxeles por frame
+  var speed = 6; 
   var keys = {};
   var rpgLoopId = null;
   var isModalOpen = false;
@@ -127,7 +134,6 @@
     modalClose.addEventListener("click", closeRPGModal);
     if(modalOverlay) modalOverlay.addEventListener("click", closeRPGModal);
 
-    // Asignar click a los personajes del mapa
     $$(".rpg-obj").forEach(function(objEl) {
       objEl.onclick = function() {
         if (objEl.classList.contains("is-near")) {
@@ -173,7 +179,6 @@
       if (keys["arrowleft"] || keys["a"]) dx = -speed;
       if (keys["arrowright"] || keys["d"]) dx = speed;
 
-      // Actualizar limites del mapa (1600x1600)
       var nextX = pX + dx;
       var nextY = pY + dy;
       if (nextX >= 0 && nextX <= 1560) pX = nextX;
@@ -181,12 +186,10 @@
 
       playerEl.style.transform = "translate(" + pX + "px, " + pY + "px)";
 
-      // La cámara sigue al jugador suavemente
       var camX = (window.innerWidth / 2) - pX - 20;
       var camY = (window.innerHeight / 2) - pY - 20;
       mapEl.style.transform = "translate(" + camX + "px, " + camY + "px)";
 
-      // Detección de proximidad
       var foundNear = null;
       $$(".rpg-obj").forEach(function(objEl) {
         var parentRect = objEl.parentElement.getBoundingClientRect();
@@ -216,9 +219,8 @@
     isModalOpen = true;
     modalContent.innerHTML = srcEl.innerHTML;
     modalEl.hidden = false;
-    keys = {}; // Resetea el movimiento al abrir
+    keys = {};
     
-    // Reactivar las tabs dentro del modal clonado
     var tabs = $$(".tabs__btn", modalContent);
     tabs.forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -239,16 +241,44 @@
   }
 
   /* =====================================================================
-     RESTO DE INTERACCIONES DE LA WEB CLÁSICA
+     RESTO DE INTERACCIONES (ScrollSpy y Menús)
      ===================================================================== */
   var bar = $(".progress span"), topbar = $(".topbar"), toTop = $("#toTop");
+  
+  // Elementos para el ScrollSpy
+  var sections = $$("#inicio, #sobre, #trabajo, #gusta, #futuro, #contacto");
+  var navLinks = $$(".topnav a, .rail__nav a");
+
   function onScroll() {
     if(rpgModeActive) return;
-    var h = document.documentElement, p = h.scrollTop / ((h.scrollHeight - h.clientHeight) || 1);
+    
+    var st = window.scrollY || window.pageYOffset;
+    var h = document.documentElement;
+    var p = st / ((h.scrollHeight - h.clientHeight) || 1);
+    
     if(bar) bar.style.transform = "scaleX(" + p + ")";
-    if(topbar) topbar.classList.toggle("is-scrolled", h.scrollTop > 30);
-    if(toTop) toTop.classList.toggle("is-show", h.scrollTop > 600);
+    if(topbar) topbar.classList.toggle("is-scrolled", st > 30);
+    if(toTop) toTop.classList.toggle("is-show", st > 600);
+
+    // Lógica del ScrollSpy (iluminar menús al bajar)
+    var currentId = "inicio";
+    sections.forEach(function(sec) {
+      // Ajustamos el offset (150px) para que cambie justo al llegar a la sección
+      if (st >= sec.offsetTop - 150) {
+        currentId = sec.getAttribute("id");
+      }
+    });
+
+    navLinks.forEach(function(a) {
+      // Comprobamos si el enlace apunta a la sección actual
+      if (a.getAttribute("href") === "#" + currentId) {
+        a.classList.add("is-active");
+      } else {
+        a.classList.remove("is-active");
+      }
+    });
   }
+  
   addEventListener("scroll", onScroll, { passive: true }); onScroll();
   if(toTop) toTop.addEventListener("click", function () { scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); });
 
@@ -339,7 +369,7 @@
   if(burger) burger.addEventListener("click", function () { toggleMenu(drawer.hidden); });
   if(drawer) $$("a", drawer).forEach(function (a) { a.addEventListener("click", function () { toggleMenu(false); }); });
 
-  var tabs = $$(".tabs__btn", $("#mainWeb")); // Solo vincula los de la web normal
+  var tabs = $$(".tabs__btn", $("#mainWeb"));
   tabs.forEach(function (btn) {
     btn.addEventListener("click", function () {
       var panelId = btn.dataset.tab;
