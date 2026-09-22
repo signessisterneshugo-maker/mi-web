@@ -667,13 +667,16 @@ html:not([data-style="rpg"]) #rpg-mode { display: none !important; }
 .rpg-modal-close:hover { background: #FF3A4D; transform: scale(1.1); }
 
 /* Arreglos internos del modal (para adaptar el HTML original) */
-.rpg-modal-content .section__head { text-align: center; margin-bottom: 2rem; }
-.rpg-modal-content .section__num { display: none; }
-.rpg-modal-content .mask > span { transform: none !important; }
-.rpg-modal-content [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
-.rpg-modal-content .about { grid-template-columns: 1fr; }
-.rpg-modal-content .about__sticky { display: none; } /* Ocultar foto en el modal para ganar espacio */
-.rpg-modal-content .work__card { position: static; min-height: auto; margin-bottom: 2rem; grid-template-columns: 1fr; }
-.rpg-modal-content .work__media { display: none; }
-.rpg-modal-content .likes { display: flex; flex-direction: column; }
-.rpg-modal-content .cell { grid-column: span 1; }
+/* Ocultar web normal y efectos si está activo el RPG */
+html[data-style="rpg"] #mainWeb, 
+html[data-style="rpg"] .rail, 
+html[data-style="rpg"] .to-top,
+html[data-style="rpg"] .vignette,
+html[data-style="rpg"] .progress,
+html[data-style="rpg"] .ripples,
+html[data-style="rpg"] .cursor,
+html[data-style="rpg"] .cursor-ring,
+html[data-style="rpg"] .grain, 
+html[data-style="rpg"] .scanlines { 
+  display: none !important; 
+}

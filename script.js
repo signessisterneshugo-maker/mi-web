@@ -37,9 +37,13 @@
     // Arrancar / Parar Motor RPG
     if (s === "rpg") {
       rpgModeActive = true;
+      var rpgContainer = document.getElementById("rpg-mode");
+      if (rpgContainer) rpgContainer.hidden = false; // <-- Mostrar el juego
       initRPG();
     } else {
       rpgModeActive = false;
+      var rpgContainer = document.getElementById("rpg-mode");
+      if (rpgContainer) rpgContainer.hidden = true; // <-- Ocultar el juego
       stopRPG();
     }
   }
