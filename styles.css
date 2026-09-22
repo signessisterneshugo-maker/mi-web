@@ -98,7 +98,6 @@ button{font-family:inherit;cursor:pointer}
 ul,ol{margin:0;padding:0}
 ::selection{background:var(--accent);color:var(--on-accent)}
 
-/* ARREGLO DE MENÚS Y SCROLL */
 .hero, .section, .footer { scroll-margin-top: 80px; }
 
 /* ---------- Capas ---------- */
@@ -318,9 +317,8 @@ html[data-style="retro"] .drum{background:var(--bg-2);border-block-color:var(--l
 .work__media::after{content:"";position:absolute;inset:0;background:var(--media-overlay);pointer-events:none}
 .work__media .tag{position:absolute;top:1rem;right:1rem;z-index:2;font-family:var(--font-label);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.5);border:1px solid var(--line);padding:.35rem .6rem;border-radius:var(--r-btn); backdrop-filter: blur(4px)}
 
-/* ---------- ME GUSTA (NUEVO BENTO GRID INMERSIVO) ---------- */
+/* ---------- ME GUSTA (BENTO GRID INMERSIVO) ---------- */
 .likes { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; }
-
 .cell {
   position: relative; border: 1px solid var(--line); background: var(--bg-3);
   border-radius: var(--r-lg); clip-path: var(--clip); overflow: hidden;
@@ -328,38 +326,27 @@ html[data-style="retro"] .drum{background:var(--bg-2);border-block-color:var(--l
   will-change: transform; display: flex; flex-direction: column; min-height: 340px;
 }
 .cell:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); transform: translateY(-5px); }
-
-/* Fondos Fotográficos */
 .cell__bg { position: absolute; inset: 0; z-index: 0; }
 .cell__bg img { width: 100%; height: 100%; object-fit: cover; filter: var(--img-filter); transition: transform 1.5s var(--ease); }
 .cell:hover .cell__bg img { transform: scale(1.06); }
 .cell__overlay { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-
-/* Contenido siempre por encima con buen contraste */
 .cell__content {
   position: relative; z-index: 2; padding: clamp(1.5rem, 3vw, 2.5rem); flex: 1;
   display: flex; flex-direction: column; justify-content: center; text-shadow: 0 2px 10px rgba(0,0,0,0.4);
 }
 .cell--rock .cell__content { justify-content: flex-end; }
-
-/* Dimensiones del Grid */
 .cell--rock { grid-column: span 3; grid-row: span 2; min-height: 520px; }
 .cell--games { grid-column: span 3; }
 .cell--robot { grid-column: span 3; }
 .cell--stack { grid-column: span 6; }
-
-/* Etiquetas de la esquina (A, B, C, D) */
 .cell__idx {
   position: absolute; top: 1.2rem; right: 1.3rem; font-family: var(--font-label);
   font-size: .66rem; color: var(--bg-3); z-index: 3; background: var(--accent);
   padding: 4px 10px; border-radius: var(--r-btn); box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-weight:bold;
 }
-
 .cell__title { font-size: clamp(1.5rem, 2.6vw, 2.1rem); text-transform: uppercase; margin-bottom: .9rem; }
 .cell__desc { color: var(--text); font-weight: 400; line-height: 1.6; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
-html[data-theme="light"] .cell__desc { color: var(--text); } /* Forzamos buena lectura */
-
-/* Ecualizador de Rock */
+html[data-theme="light"] .cell__desc { color: var(--text); } 
 .eq { display: flex; align-items: flex-end; gap: 4px; height: 90px; margin: 1.6rem 0; }
 .eq span {
   flex: 1; min-width: 4px; border-radius: var(--r-btn);
@@ -367,8 +354,6 @@ html[data-theme="light"] .cell__desc { color: var(--text); } /* Forzamos buena l
   height: var(--h, 50%); transform-origin: bottom; animation: eq 1s ease-in-out infinite alternate;
 }
 @keyframes eq { from { transform: scaleY(.15); } to { transform: scaleY(1); } }
-
-/* Etiquetas del estilo musical */
 .tags { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin-top: auto; }
 .tags li {
   font-family: var(--font-label); font-size: .6rem; letter-spacing: .08em; text-transform: uppercase;
@@ -376,18 +361,13 @@ html[data-theme="light"] .cell__desc { color: var(--text); } /* Forzamos buena l
   transition: .3s; background: color-mix(in srgb, var(--bg-2) 75%, transparent); backdrop-filter: blur(4px);
 }
 .tags li:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-3px); }
-
-/* Decoraciones extras (como el engranaje) */
 .gear { position: absolute; right: -20px; bottom: -20px; width: 150px; height: 150px; color: var(--accent); opacity: .15; animation: spinSlow 14s linear infinite; z-index: 0; pointer-events: none; }
-
-/* Lista de Tecnologías */
 .stack-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .4rem 1.4rem; }
 .stack-list li { display: flex; align-items: baseline; gap: .8rem; padding: .7rem 0; border-bottom: 1px solid var(--line-strong); font-weight: 500; transition: .3s var(--ease); text-shadow:none; }
 .stack-list li:hover { padding-left: .6rem; border-bottom-color: var(--accent); }
 .stack-list span { font-family: var(--font-label); font-size: .62rem; color: var(--accent); }
 .stack-list em { margin-left: auto; font-style: normal; font-family: var(--font-label); font-size: .64rem; color: var(--muted); }
 
-/* Ajustes Responsive Especiales para los Gradientes del Bento Grid */
 @media(max-width: 820px) {
   .cell__overlay { background: linear-gradient(to top, var(--bg-3) 45%, transparent 100%) !important; }
   .cell__content { max-width: 100% !important; justify-content: flex-end !important; }
@@ -530,7 +510,7 @@ html[data-style="retro"] .cell,html[data-style="retro"] .work__card,html[data-st
 }
 
 /* =====================================================================
-   5) ESTILO RPG MINIJUEGO (Césped Verde + Modal de Alta Calidad)
+   5) ESTILO RPG MINIJUEGO (Sprites Vectoriales y Controles Móviles)
    ===================================================================== */
 .sw--rpg{background:linear-gradient(135deg,#325929,#4a752c)}
 
@@ -575,34 +555,36 @@ html:not([data-style="rpg"]) #rpg-mode { display: none !important; }
   background-size: 20px 20px; border: 4px solid #785431; border-radius: 12px;
 }
 
-.rpg-tree { position: absolute; font-size: 80px; z-index: 5; filter: drop-shadow(0 15px 5px rgba(0,0,0,0.4)); }
-.rpg-building { position: absolute; z-index: 10; display: flex; flex-direction: column; align-items: center; }
-.building-sprite { font-size: 130px; line-height: 1; filter: drop-shadow(0 20px 10px rgba(0,0,0,0.5)); }
+.rpg-tree { position: absolute; z-index: 5; filter: drop-shadow(0 15px 5px rgba(0,0,0,0.4)); }
+.rpg-building { position: absolute; z-index: 10; display: flex; flex-direction: column; align-items: center; filter: drop-shadow(0 20px 10px rgba(0,0,0,0.5)); }
 
+/* Hitbox interactivo invisible con indicador hover */
 .rpg-obj {
-  position: absolute; left: var(--ox); top: var(--oy); font-size: 40px; z-index: 15;
-  transition: transform 0.2s, filter 0.2s; background: rgba(0,0,0,0.2);
-  border-radius: 50%; width: 60px; height: 60px; display: grid; place-items: center;
+  position: absolute; left: var(--ox); top: var(--oy); z-index: 15;
+  width: 60px; height: 60px; border-radius: 50%;
+  transform: translate(-50%, -50%); transition: background 0.3s;
 }
 .rpg-obj::after {
   content: attr(data-label); position: absolute; top: -35px; left: 50%; transform: translateX(-50%) translateY(10px);
   background: var(--bg); color: var(--text); border: 2px solid var(--accent); font-family: var(--font-label);
   font-size: 12px; font-weight: bold; padding: 6px 12px; white-space: nowrap; border-radius: var(--r-btn);
-  opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
-.rpg-obj.is-near { filter: drop-shadow(0 0 15px #FFD700); transform: translateY(-5px); cursor: pointer; background: rgba(255,215,0,0.2); }
+.rpg-obj.is-near { background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 60%); cursor: pointer; }
 .rpg-obj.is-near::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-#rpg-player {
-  position: absolute; width: 40px; height: 40px; z-index: 20;
-  display: flex; justify-content: center; align-items: center;
-}
-.player-sprite {
-  font-size: 45px; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.5));
-  animation: floatPlayer 0.6s infinite alternate ease-in-out;
-}
-@keyframes floatPlayer { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+/* Jugador Animado */
+#rpg-player { position: absolute; width: 48px; height: 64px; z-index: 20; transform-origin: center bottom;}
+.rpg-player-inner { filter: drop-shadow(0 10px 5px rgba(0,0,0,0.4)); transition: transform 0.1s; }
 
+@keyframes rpgWalk {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-4px) rotate(-6deg); }
+  75% { transform: translateY(-4px) rotate(6deg); }
+}
+.rpg-player-inner.is-walking { animation: rpgWalk 0.35s infinite ease-in-out; }
+
+/* Interfaz UI Escritorio */
 #rpg-ui {
   position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
   background: rgba(10, 10, 12, 0.85); backdrop-filter: blur(10px); border: 1px solid var(--line-strong); border-radius: var(--r-lg);
@@ -613,6 +595,7 @@ html:not([data-style="rpg"]) #rpg-mode { display: none !important; }
 .rpg-controls-hint b { color: var(--accent); }
 #btn-exit-rpg { pointer-events: auto; font-size: 14px; }
 
+/* Modal RPG */
 #rpg-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 2vw; }
 .rpg-modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); }
 .rpg-modal-inner {
@@ -623,14 +606,12 @@ html:not([data-style="rpg"]) #rpg-mode { display: none !important; }
 .rpg-modal-inner::-webkit-scrollbar { width: 8px; }
 .rpg-modal-inner::-webkit-scrollbar-track { background: var(--bg-2); border-radius: 10px; }
 .rpg-modal-inner::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-
 .rpg-modal-close {
   position: sticky; top: 0; float: right; margin-top: -1rem; margin-right: -1rem; background: var(--bg-2); color: var(--muted);
   border: 1px solid var(--line-strong); font-family: var(--font-label); font-size: 12px; font-weight: bold; padding: 10px 16px; border-radius: var(--r-btn);
   cursor: pointer; transition: 0.2s; z-index: 50; text-transform: uppercase;
 }
 .rpg-modal-close:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); transform: scale(1.05); }
-
 .rpg-modal-content .section__head { text-align: center; margin-bottom: 2rem; max-width: 100%; }
 .rpg-modal-content .section__num { display: none; } 
 .rpg-modal-content .mask > span { transform: none !important; }
@@ -638,3 +619,33 @@ html:not([data-style="rpg"]) #rpg-mode { display: none !important; }
 .rpg-modal-content .about__sticky { top: 0; } 
 .rpg-modal-content .work__card { position: static; min-height: auto; transform: none !important; margin-bottom: 2rem; }
 .rpg-modal-content .work__card:hover { transform: translateY(-5px) !important; }
+
+/* Controles Táctiles (Móviles) */
+#rpg-touch-ui { display: none; }
+@media(max-width: 820px) {
+  #rpg-touch-ui {
+    display: block; position: fixed; inset: 0;
+    pointer-events: none; z-index: 150;
+  }
+  .dpad {
+    position: absolute; bottom: 30px; left: 20px; pointer-events: auto;
+    display: grid; grid-template-areas: ". up ." "left . right" ". down ."; gap: 6px;
+  }
+  .action-pad { position: absolute; bottom: 40px; right: 20px; pointer-events: auto; }
+  
+  .dpad-btn {
+    width: 55px; height: 55px; background: rgba(18, 18, 23, 0.85);
+    border: 2px solid var(--accent); border-radius: 12px;
+    color: var(--text); font-size: 22px; display: grid; place-items: center;
+    touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+    backdrop-filter: blur(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  }
+  .dpad-up { grid-area: up; } .dpad-left { grid-area: left; }
+  .dpad-right { grid-area: right; } .dpad-down { grid-area: down; }
+  
+  .action-btn { width: 75px; height: 75px; border-radius: 50%; font-size: 28px; font-family: var(--font-label); font-weight: bold; }
+  .dpad-btn:active { background: var(--accent); color: var(--bg); transform: scale(0.95); }
+  
+  .rpg-controls-hint p { display: none; } /* Oculta el texto "Usa W A S D" en móvil */
+  #rpg-ui { bottom: auto; top: 20px; padding: 10px; width: auto; }
+}

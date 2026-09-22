@@ -24,11 +24,78 @@
 </head>
 <body>
 
+<!-- LIBRERÍA DE SPRITES SVG (DIBUJADOS POR CÓDIGO) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="wing" viewBox="0 0 120 120">
     <path d="M60 14 L16 58 L60 58 Z"/><path d="M60 106 L16 62 L60 62 Z"/>
     <path d="M60 14 L104 58 L60 58 Z"/><path d="M60 106 L104 62 L60 62 Z"/>
     <rect x="50" y="50" width="20" height="20" transform="rotate(45 60 60)"/>
+  </symbol>
+  
+  <!-- Sprite: Árbol -->
+  <symbol id="sprite-tree" viewBox="0 0 64 80">
+    <ellipse cx="32" cy="75" rx="20" ry="5" fill="rgba(0,0,0,0.3)"/>
+    <rect x="26" y="50" width="12" height="25" fill="#5c4033" stroke="#2b1d14" stroke-width="3" rx="2"/>
+    <path d="M32,10 L54,35 L44,35 L60,60 L4,60 L20,35 L10,35 Z" fill="#2d8a4e" stroke="#174f2a" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M32,10 L54,35 L44,35 L60,60 L4,60 L20,35 L10,35 Z" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" transform="translate(-2, -2)"/>
+  </symbol>
+
+  <!-- Sprite: Jugador -->
+  <symbol id="sprite-player" viewBox="0 0 48 64">
+    <ellipse cx="24" cy="60" rx="14" ry="4" fill="rgba(0,0,0,0.3)"/>
+    <rect x="12" y="32" width="24" height="24" rx="8" fill="var(--accent)" stroke="#111" stroke-width="3"/>
+    <path d="M8,36 Q4,36 4,42 L4,50 Q4,54 8,54 Z" fill="#555" stroke="#111" stroke-width="3"/>
+    <circle cx="24" cy="20" r="14" fill="#ffd3b6" stroke="#111" stroke-width="3"/>
+    <path d="M8,20 Q24,0 40,20 Q24,10 8,20 Z" fill="#333" stroke="#111" stroke-width="3"/>
+    <circle cx="30" cy="20" r="2" fill="#111"/>
+  </symbol>
+
+  <!-- Sprite: Casa (Sobre mí) -->
+  <symbol id="sprite-house" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="90" rx="45" ry="10" fill="rgba(0,0,0,0.3)"/>
+    <rect x="20" y="40" width="60" height="50" fill="#e2e8f0" stroke="#1e293b" stroke-width="4"/>
+    <path d="M10,40 L50,10 L90,40 Z" fill="#ef4444" stroke="#1e293b" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="40" y="60" width="20" height="30" fill="#b45309" stroke="#1e293b" stroke-width="4"/>
+    <circle cx="55" cy="75" r="2" fill="#1e293b"/>
+  </symbol>
+
+  <!-- Sprite: Edificio (Trayectoria) -->
+  <symbol id="sprite-school" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="95" rx="45" ry="10" fill="rgba(0,0,0,0.3)"/>
+    <rect x="15" y="30" width="70" height="65" fill="#cbd5e1" stroke="#1e293b" stroke-width="4"/>
+    <rect x="10" y="20" width="80" height="10" fill="#3b82f6" stroke="#1e293b" stroke-width="4"/>
+    <rect x="25" y="45" width="15" height="15" fill="#fde047" stroke="#1e293b" stroke-width="3"/>
+    <rect x="60" y="45" width="15" height="15" fill="#fde047" stroke="#1e293b" stroke-width="3"/>
+    <rect x="40" y="70" width="20" height="25" fill="#1e293b"/>
+  </symbol>
+
+  <!-- Sprite: Arcade (Me Gusta) -->
+  <symbol id="sprite-arcade" viewBox="0 0 100 120">
+    <ellipse cx="50" cy="115" rx="35" ry="8" fill="rgba(0,0,0,0.3)"/>
+    <path d="M25,20 L75,20 L80,60 L85,60 L85,110 L15,110 L15,60 L20,60 Z" fill="#a855f7" stroke="#1e293b" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="30" y="30" width="40" height="30" fill="#1e293b" rx="2"/>
+    <path d="M35,60 L65,60 L65,65 L35,65 Z" fill="#1e293b"/>
+    <circle cx="45" cy="80" r="4" fill="#ef4444"/>
+    <circle cx="55" cy="80" r="4" fill="#3b82f6"/>
+  </symbol>
+
+  <!-- Sprite: Fábrica (Futuro IA) -->
+  <symbol id="sprite-lab" viewBox="0 0 120 100">
+    <ellipse cx="60" cy="95" rx="55" ry="10" fill="rgba(0,0,0,0.3)"/>
+    <path d="M10,95 L10,50 L40,20 L40,50 L70,20 L70,50 L100,20 L100,95 Z" fill="#94a3b8" stroke="#1e293b" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="25" y="10" width="10" height="20" fill="#64748b" stroke="#1e293b" stroke-width="4"/>
+    <circle cx="30" cy="5" r="3" fill="#ef4444"/>
+    <rect x="40" y="60" width="40" height="35" fill="#10b981" stroke="#1e293b" stroke-width="4"/>
+    <circle cx="60" cy="75" r="8" fill="#fde047"/>
+  </symbol>
+
+  <!-- Sprite: Buzón (Contacto) -->
+  <symbol id="sprite-mail" viewBox="0 0 80 100">
+    <ellipse cx="40" cy="95" rx="20" ry="6" fill="rgba(0,0,0,0.3)"/>
+    <rect x="35" y="50" width="10" height="45" fill="#64748b" stroke="#1e293b" stroke-width="4"/>
+    <path d="M20,50 L20,30 Q40,10 60,30 L60,50 Z" fill="#ef4444" stroke="#1e293b" stroke-width="4"/>
+    <rect x="20" y="30" width="40" height="10" fill="#f8fafc" stroke="#1e293b" stroke-width="3"/>
+    <rect x="65" y="35" width="5" height="15" fill="#ef4444" stroke="#1e293b" stroke-width="2" transform="rotate(20 65 35)"/>
   </symbol>
 </svg>
 
@@ -131,7 +198,6 @@
       <aside class="spec" data-tilt>
         <div class="spec__head"><span>Ficha · 2024</span><span class="live"><i></i>Disponible</span></div>
         <figure class="spec__photo">
-          <!-- Setup de programación oscuro con pantallas -->
           <img src="https://images.unsplash.com/photo-1607799279861-4dd99b8b0244?q=80&w=720&auto=format&fit=crop" alt="Setup de programación con luces led">
           <figcaption>hugo_workspace.jpg</figcaption>
         </figure>
@@ -158,7 +224,6 @@
       <div class="about">
         <div class="about__sticky">
           <figure class="about__portrait">
-            <!-- Persona programando o concentrada frente al ordenador -->
             <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=600&auto=format&fit=crop" alt="Programador trabajando en equipo" loading="lazy">
             <figcaption><span>hugo_dev.jpg</span><span>· 2024</span></figcaption>
           </figure>
@@ -198,7 +263,6 @@
             </div>
             <figure class="work__media">
               <span class="tag">SMX</span>
-              <!-- Placa base de ordenador / Hardware -->
               <img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?q=80&w=900&auto=format&fit=crop" alt="Placa base de un ordenador" loading="lazy">
             </figure>
           </article>
@@ -214,7 +278,6 @@
             </div>
             <figure class="work__media">
               <span class="tag">VAE</span>
-              <!-- Escenario iluminado / Pitch -->
               <img src="https://images.unsplash.com/photo-1559223607-a43c990c692c?q=80&w=900&auto=format&fit=crop" alt="Escenario y público durante un evento" loading="lazy">
             </figure>
           </article>
@@ -227,7 +290,6 @@
             </div>
             <figure class="work__media">
               <span class="tag">Erasmus</span>
-              <!-- Vista de Italia / Arquitectura -->
               <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=900&auto=format&fit=crop" alt="Paisaje de la costa en Italia" loading="lazy">
             </figure>
           </article>
@@ -240,7 +302,6 @@
             </div>
             <figure class="work__media">
               <span class="tag">DAM</span>
-              <!-- Pantalla con código -->
               <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=900&auto=format&fit=crop" alt="Programación y código en pantalla" loading="lazy">
             </figure>
           </article>
@@ -251,9 +312,6 @@
 
   <div class="wing-div" aria-hidden="true"><svg><use href="#wing"/></svg></div>
 
-  <!-- ==============================================
-       NUEVA SECCIÓN ME GUSTA (BENTO GRID INMERSIVO)
-       ============================================== -->
   <section class="section" id="gusta" data-reveal>
     <div class="section__inner">
       <div class="section__head">
@@ -263,10 +321,8 @@
       </div>
       <div class="likes">
         
-        <!-- Tarjeta: Rock -->
         <article class="cell cell--rock" data-tilt data-reveal>
           <div class="cell__bg">
-            <!-- Imagen HD de concierto de rock en directo -->
             <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=800&auto=format&fit=crop" alt="Concierto de rock en directo" loading="lazy">
             <div class="cell__overlay" style="background: linear-gradient(to top, var(--bg-3) 25%, transparent 90%);"></div>
           </div>
@@ -287,10 +343,8 @@
           </div>
         </article>
 
-        <!-- Tarjeta: Juegos (UNDERTALE) -->
         <article class="cell cell--games" data-tilt data-reveal data-d="1">
           <div class="cell__bg">
-            <!-- Imagen oficial del banner de UNDERTALE desde los servidores de Steam -->
             <img src="https://cdn.akamai.steamstatic.com/steam/apps/391540/header.jpg" alt="Undertale Game" loading="lazy">
             <div class="cell__overlay" style="background: linear-gradient(to right, var(--bg-3) 35%, transparent 100%);"></div>
           </div>
@@ -301,10 +355,8 @@
           </div>
         </article>
 
-        <!-- Tarjeta: Robótica -->
         <article class="cell cell--robot" data-tilt data-reveal data-d="2">
           <div class="cell__bg">
-            <!-- Imagen de robótica y tecnología -->
             <img src="https://images.unsplash.com/photo-1485827404727-7a4ce43d2629?q=80&w=800&auto=format&fit=crop" alt="Robot en funcionamiento" loading="lazy">
             <div class="cell__overlay" style="background: linear-gradient(to right, var(--bg-3) 35%, transparent 100%);"></div>
           </div>
@@ -316,10 +368,8 @@
           </div>
         </article>
 
-        <!-- Tarjeta: Stack -->
         <article class="cell cell--stack" data-tilt data-reveal data-d="3">
           <div class="cell__bg">
-            <!-- Imagen HD de código en un editor moderno -->
             <img src="https://images.unsplash.com/photo-1526379095098-d400fd0bf935?q=80&w=1200&auto=format&fit=crop" alt="Código de programación en Python" loading="lazy">
             <div class="cell__overlay" style="background: linear-gradient(to left, transparent 0%, var(--bg-3) 65%);"></div>
           </div>
@@ -395,7 +445,7 @@
 </div>
 
 <!-- ==============================================
-     MOTOR MINIJUEGO RPG (Césped y Diseño Hermoso)
+     MOTOR MINIJUEGO RPG (Sprites Dibujados + Mobile)
      ============================================== -->
 <div id="rpg-mode" hidden>
   <div id="rpg-camera">
@@ -406,55 +456,54 @@
       <div class="rpg-path" style="left: 384px; top: 128px; width: 160px; height: 1024px;"></div>
       <div class="rpg-path" style="left: 896px; top: 128px; width: 160px; height: 1024px;"></div>
 
-      <!-- Decoraciones de Bosque -->
-      <div class="rpg-tree" style="left: 100px; top: 100px;">🌲</div>
-      <div class="rpg-tree" style="left: 150px; top: 180px;">🌲</div>
-      <div class="rpg-tree" style="left: 220px; top: 80px;">🌲</div>
-      
-      <div class="rpg-tree" style="left: 1200px; top: 200px;">🌲</div>
-      <div class="rpg-tree" style="left: 1250px; top: 260px;">🌲</div>
-      <div class="rpg-tree" style="left: 1320px; top: 180px;">🌲</div>
-
-      <div class="rpg-tree" style="left: 150px; top: 800px;">🌲</div>
-      <div class="rpg-tree" style="left: 200px; top: 850px;">🌲</div>
-      
-      <div class="rpg-tree" style="left: 1100px; top: 850px;">🌲</div>
-      <div class="rpg-tree" style="left: 1180px; top: 800px;">🌲</div>
+      <!-- Decoraciones de Bosque (Árboles SVG) -->
+      <svg class="rpg-tree" style="left: 100px; top: 100px;" width="80" height="100"><use href="#sprite-tree"/></svg>
+      <svg class="rpg-tree" style="left: 150px; top: 180px;" width="80" height="100"><use href="#sprite-tree"/></svg>
+      <svg class="rpg-tree" style="left: 220px; top: 80px;" width="80" height="100"><use href="#sprite-tree"/></svg>
+      <svg class="rpg-tree" style="left: 1200px; top: 200px;" width="80" height="100"><use href="#sprite-tree"/></svg>
+      <svg class="rpg-tree" style="left: 1250px; top: 260px;" width="80" height="100"><use href="#sprite-tree"/></svg>
+      <svg class="rpg-tree" style="left: 1320px; top: 180px;" width="80" height="100"><use href="#sprite-tree"/></svg>
+      <svg class="rpg-tree" style="left: 150px; top: 800px;" width="80" height="100"><use href="#sprite-tree"/></svg>
+      <svg class="rpg-tree" style="left: 200px; top: 850px;" width="80" height="100"><use href="#sprite-tree"/></svg>
+      <svg class="rpg-tree" style="left: 1100px; top: 850px;" width="80" height="100"><use href="#sprite-tree"/></svg>
+      <svg class="rpg-tree" style="left: 1180px; top: 800px;" width="80" height="100"><use href="#sprite-tree"/></svg>
       
       <!-- EDIFICIOS Y PERSONAJES -->
       <!-- 1. Sobre mí -->
       <div class="rpg-building" style="left: 180px; top: 150px;">
-        <span class="building-sprite">🏠</span>
-        <div class="rpg-obj" id="obj-sobre" data-label="Casa de Hugo" style="--ox: 60px; --oy: 150px;">🧍🏻‍♂️</div>
+        <svg width="120" height="120"><use href="#sprite-house"/></svg>
+        <div class="rpg-obj" id="obj-sobre" data-label="Sobre mí" style="--ox: 60px; --oy: 100px;"></div>
       </div>
 
       <!-- 2. Trabajo / Trayectoria -->
       <div class="rpg-building" style="left: 600px; top: 100px;">
-        <span class="building-sprite">🏫</span>
-        <div class="rpg-obj" id="obj-trabajo" data-label="Trayectoria" style="--ox: 60px; --oy: 150px;">🎒</div>
+        <svg width="140" height="140"><use href="#sprite-school"/></svg>
+        <div class="rpg-obj" id="obj-trabajo" data-label="Trayectoria" style="--ox: 70px; --oy: 120px;"></div>
       </div>
 
       <!-- 3. Me Gusta -->
       <div class="rpg-building" style="left: 1050px; top: 480px;">
-        <span class="building-sprite">🕹️</span>
-        <div class="rpg-obj" id="obj-gusta" data-label="Me gusta" style="--ox: 60px; --oy: 150px;">🎮</div>
+        <svg width="100" height="120"><use href="#sprite-arcade"/></svg>
+        <div class="rpg-obj" id="obj-gusta" data-label="Me gusta" style="--ox: 50px; --oy: 90px;"></div>
       </div>
 
       <!-- 4. Futuro IA -->
       <div class="rpg-building" style="left: 180px; top: 600px;">
-        <span class="building-sprite">🏭</span>
-        <div class="rpg-obj" id="obj-futuro" data-label="Lab IA" style="--ox: 60px; --oy: 150px;">🤖</div>
+        <svg width="140" height="120"><use href="#sprite-lab"/></svg>
+        <div class="rpg-obj" id="obj-futuro" data-label="Futuro IA" style="--ox: 70px; --oy: 90px;"></div>
       </div>
 
       <!-- 5. Contacto -->
       <div class="rpg-building" style="left: 700px; top: 750px;">
-        <span class="building-sprite">🏤</span>
-        <div class="rpg-obj" id="obj-contacto" data-label="Contacto" style="--ox: 60px; --oy: 150px;">✉️</div>
+        <svg width="90" height="110"><use href="#sprite-mail"/></svg>
+        <div class="rpg-obj" id="obj-contacto" data-label="Contacto" style="--ox: 45px; --oy: 80px;"></div>
       </div>
 
       <!-- Jugador -->
       <div id="rpg-player">
-        <span class="player-sprite">🧑‍💻</span>
+        <div class="rpg-player-inner">
+          <svg width="48" height="64"><use href="#sprite-player"/></svg>
+        </div>
       </div>
 
     </div>
@@ -464,7 +513,20 @@
   <div id="rpg-ui">
     <div class="rpg-controls-hint">
       <p>🎮 Mueve con <b>W A S D</b> o <b>Flechas</b>. Acércate a los objetos y pulsa <b>ENTER</b>.</p>
-      <button id="btn-exit-rpg" class="btn btn--solid">🚪 Volver a la Web Normal</button>
+    </div>
+    <button id="btn-exit-rpg" class="btn btn--solid">🚪 Volver a la Web</button>
+  </div>
+
+  <!-- Controles Táctiles para Móviles -->
+  <div id="rpg-touch-ui" aria-hidden="true">
+    <div class="dpad">
+      <button id="t-up" class="dpad-btn dpad-up">▲</button>
+      <button id="t-left" class="dpad-btn dpad-left">◀</button>
+      <button id="t-right" class="dpad-btn dpad-right">▶</button>
+      <button id="t-down" class="dpad-btn dpad-down">▼</button>
+    </div>
+    <div class="action-pad">
+      <button id="t-enter" class="dpad-btn action-btn">A</button>
     </div>
   </div>
 
