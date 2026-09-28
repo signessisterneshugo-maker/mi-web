@@ -20,8 +20,9 @@
 <script>
 (function(){
   try{
-    var t=localStorage.getItem('hugo-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
-    var s=localStorage.getItem('hugo-style')||'unico';
+    var url = new URLSearchParams(window.location.search);
+    var t = url.get('theme') || localStorage.getItem('hugo-theme') || (matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+    var s = url.get('style') || localStorage.getItem('hugo-style') || 'unico';
     if(s === 'rpg') s = 'unico'; 
     document.documentElement.setAttribute('data-theme',t);
     document.documentElement.setAttribute('data-style',s);

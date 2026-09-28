@@ -1,5 +1,5 @@
 /* =====================================================================
-   HUGO SIGNES SISTERNES · MOTOR RPG Y ANIMACIONES
+   HUGO SIGNES SISTERNES · MOTOR RPG Y ANIMACIONES (CORREGIDO)
    ===================================================================== */
 (function () {
   "use strict";
@@ -9,9 +9,42 @@
   var $  = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
+  /* ---------- Sincronizar enlaces (Soluciona persistencia local) ---------- */
+  function syncLinks() {
+    var t = root.getAttribute("data-theme");
+    var s = root.getAttribute("data-style");
+    $$(".topnav a, .rail__nav a, .hero__cta a").forEach(function(a) {
+      var href = a.getAttribute("href");
+      if (!href || href.startsWith("http") || href.startsWith("mailto:")) return;
+      var base = href.split("?")[0].split("#")[0];
+      var hash = href.includes("#") ? "#" + href.split("#")[1] : "";
+      if (base) a.setAttribute("href", base + "?theme=" + t + "&style=" + s + hash);
+    });
+    $$(".rpg-obj").forEach(function(obj) {
+      var base = obj.getAttribute("data-url");
+      if (base) {
+        base = base.split("?")[0];
+        obj.setAttribute("data-url", base + "?theme=" + t + "&style=" + s);
+      }
+    });
+  }
+
+  /* ---------- Menú Superior (Fondo al scrollear arreglado) ---------- */
+  var topbar = $(".topbar");
+  function onScroll() {
+    if (rpgModeActive) return;
+    var st = window.scrollY || window.pageYOffset;
+    if(topbar) topbar.classList.toggle("is-scrolled", st > 30);
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
   /* ---------- Tema claro/oscuro ---------- */
   var tBtn = $("#themeToggle");
-  function syncTheme() { if(tBtn) tBtn.setAttribute("aria-pressed", root.getAttribute("data-theme") === "light"); }
+  function syncTheme() {
+    if(tBtn) tBtn.setAttribute("aria-pressed", root.getAttribute("data-theme") === "light");
+    syncLinks(); 
+  }
   syncTheme();
   if(tBtn) {
     tBtn.addEventListener("click", function () {
@@ -38,6 +71,7 @@
     });
     
     updateCursor();
+    syncLinks(); 
 
     var rpgContainer = $("#rpg-mode");
     var mainWeb = $("#mainWeb");
@@ -55,7 +89,8 @@
     }
   }
   
-  var initialStyle = localStorage.getItem('hugo-style') || "unico";
+  var urlParams = new URLSearchParams(window.location.search);
+  var initialStyle = urlParams.get('style') || localStorage.getItem('hugo-style') || "unico";
   if (initialStyle === "rpg") initialStyle = "unico"; 
   applyStyle(initialStyle);
 
@@ -89,7 +124,7 @@
   var page = path.split("/").pop();
   if(page === "" || page === "index.html") page = "index.html";
   $$(".topnav a, .rail__nav a").forEach(function(a) {
-    var href = a.getAttribute("href");
+    var href = a.getAttribute("href").split("?")[0];
     if (href === page) a.classList.add("is-active");
     else a.classList.remove("is-active");
   });
@@ -160,7 +195,6 @@
     if(!rpgModeActive) return;
     keys[e.key.toLowerCase()] = true;
     
-    // Al pulsar ENTER cerca de un edificio
     if (e.key === "Enter" && currentNear) {
       window.location.href = currentNear.getAttribute("data-url");
     }
@@ -227,11 +261,9 @@
      ANIMACIONES: Contadores, Reveal y Typewriter
      ===================================================================== */
   
-  // Reveal
   var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); } }); }, { threshold: 0.12, rootMargin: "0px 0px -10% 0px" });
   $$("[data-reveal]").forEach(function (el) { io.observe(el); });
 
-  // Contadores (AQUÍ ESTÁ LA SOLUCIÓN AL "0 meses")
   var cio = new IntersectionObserver(function (es) {
     es.forEach(function (en) {
       if (!en.isIntersecting) return;
@@ -247,7 +279,6 @@
   }, { threshold: 0.6 });
   $$("[data-count]").forEach(function (el) { cio.observe(el); });
 
-  // Scramble text (Texto del inicio)
   var CH = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&/";
   function scramble(el) {
     var target = el.dataset.text || el.textContent, frame = 0;
@@ -265,7 +296,6 @@
   }
   if (!reduce) setTimeout(function () { $$(".hero__name-line").forEach(scramble); }, 550);
 
-  // Terminal en sección Futuro
   var termBody = $("#termBody"), termStatus = $("#termStatus"), termBlock = $("#terminalBlock");
   if (termBody && termBlock) {
     var lines = ["whoami → hugo_signes", "cat ~/dam/plan.md → IA aplicada a industria", "git log --oneline → smx · vae · erasmus · dam", "echo $SIGUIENTE → especialización en IA"];
@@ -289,7 +319,6 @@
     }
   }
 
-  // Tabs
   var tabs = $$(".tabs__btn");
   tabs.forEach(function (btn) {
     btn.addEventListener("click", function () {
@@ -303,7 +332,6 @@
     });
   });
 
-  // Copiar Mail
   var toast = $("#toast"), copyBtn = $("#copy"), mailEl = $("#mail");
   if(copyBtn && mailEl) {
     copyBtn.addEventListener("click", function () {
