@@ -63,6 +63,10 @@
   function applyStyle(s) {
     root.setAttribute("data-style", s);
     if (s !== "rpg") { try { localStorage.setItem("hugo-style", s); } catch (e) {} }
+    if (s === "rpg" && !$("#rpg-map")) {
+      window.location.href = "index.html?style=rpg";
+      return;
+    }
     
     sOpts.forEach(function (b) {
       var on = b.dataset.setStyle === s;
