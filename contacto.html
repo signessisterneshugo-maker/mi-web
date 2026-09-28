@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark" data-style="unico">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contacto — Hugo Signes Sisternes</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script>
+(function(){
+  try{
+    var t=localStorage.getItem('hugo-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+    var s=localStorage.getItem('hugo-style')||'unico';
+    if(s === 'rpg') s = 'unico'; 
+    document.documentElement.setAttribute('data-theme',t);
+    document.documentElement.setAttribute('data-style',s);
+  }catch(e){}
+})();
+</script>
+</head>
+<body>
+<!-- LIBRERÍA DE SPRITES SVG -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="wing" viewBox="0 0 120 120">
+    <path d="M60 14 L16 58 L60 58 Z"/><path d="M60 106 L16 62 L60 62 Z"/>
+    <path d="M60 14 L104 58 L60 58 Z"/><path d="M60 106 L104 62 L60 62 Z"/>
+    <rect x="50" y="50" width="20" height="20" transform="rotate(45 60 60)"/>
+  </symbol>
+</svg>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="trail" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a href="index.html" class="logo" data-magnetic>
+      <svg class="logo__mark" aria-hidden="true"><use href="#wing"/></svg>
+      <span class="logo__txt"><b>hugo</b>.signes</span>
+    </a>
+    <nav class="topnav" aria-label="Secciones">
+      <a href="sobre.html">Sobre</a>
+      <a href="trabajo.html">Trayectoria</a>
+      <a href="gusta.html">Me gusta</a>
+      <a href="futuro.html">Futuro</a>
+      <a href="contacto.html" class="is-active">Contacto</a>
+    </nav>
+    <div class="tools">
+      <div class="style-switch">
+        <button class="style-switch__btn" id="styleToggle" aria-haspopup="true" aria-expanded="false">
+          <svg aria-hidden="true"><use href="#wing"/></svg><span>Estilo</span>
+        </button>
+        <div class="style-switch__panel" id="stylePanel" hidden>
+          <button data-set-style="unico"><i class="sw sw--unico"></i>Único</button>
+          <button data-set-style="professional"><i class="sw sw--pro"></i>Profesional</button>
+          <button data-set-style="gamer"><i class="sw sw--gamer"></i>Gamer</button>
+          <button data-set-style="retro"><i class="sw sw--retro"></i>Retro</button>
+          <button data-set-style="rpg"><i class="sw sw--rpg"></i>Minijuego RPG</button>
+        </div>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+        <span class="theme-toggle__ico theme-toggle__ico--sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></g></svg></span>
+        <span class="theme-toggle__ico theme-toggle__ico--moon"><svg viewBox="0 0 24 24"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z"/></svg></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<aside class="rail" aria-hidden="true">
+  <span class="rail__top">Hugo Signes · 2024→2026</span>
+  <nav class="rail__nav">
+    <a href="index.html" data-label="Inicio">00<i class="rail__dot"></i></a>
+    <a href="sobre.html" data-label="Sobre mí">01<i class="rail__dot"></i></a>
+    <a href="trabajo.html" data-label="Trayectoria">02<i class="rail__dot"></i></a>
+    <a href="gusta.html" data-label="Me gusta">03<i class="rail__dot"></i></a>
+    <a href="futuro.html" data-label="Futuro IA">04<i class="rail__dot"></i></a>
+    <a href="contacto.html" data-label="Contacto" class="is-active">05<i class="rail__dot"></i></a>
+  </nav>
+  <div class="rail__bottom"><span class="rail__line"></span><svg class="rail__wing"><use href="#wing"/></svg></div>
+</aside>
+
+<div class="page" id="mainWeb">
+<main>
+  <section class="section" style="padding-top: 10rem; min-height: 100vh;">
+    <div class="section__inner">
+      <div class="section__head">
+        <p class="section__num">05 — Contacto</p>
+        <h2 class="section__title mask"><span>Hablemos de código, robots o IA</span></h2>
+        <p class="section__sub">Abierto a prácticas (FCT), proyectos de equipo y cualquier conversación técnica.</p>
+      </div>
+      
+      <div class="contact-grid">
+        <!-- FORMULARIO REAL (Solo necesitas cambiar TU_ID_AQUI por el ID que te dé Formspree) -->
+        <form action="https://formspree.io/f/TU_ID_AQUI" method="POST" class="real-form">
+          <div class="form-group">
+            <label for="name">Nombre</label>
+            <input type="text" id="name" name="name" required placeholder="Tu nombre">
+          </div>
+          <div class="form-group">
+            <label for="email">Correo electrónico</label>
+            <input type="email" id="email" name="email" required placeholder="tu@email.com">
+          </div>
+          <div class="form-group">
+            <label for="message">Mensaje</label>
+            <textarea id="message" name="message" rows="5" required placeholder="¿En qué te puedo ayudar?"></textarea>
+          </div>
+          <button type="submit" class="btn btn--solid" data-magnetic>Enviar mensaje</button>
+        </form>
+        
+        <div class="contact-info">
+          <p class="footer__note">O si prefieres el correo tradicional:</p>
+          <div class="mailrow" style="margin-top: 1.5rem;">
+            <a id="mail" href="mailto:hugo.signes@example.com">hugo.signes@example.com</a>
+            <button id="copy" class="btn btn--ghost" type="button" data-magnetic>Copiar correo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite">Correo copiado ✓</div>
+<script src="script.js"></script>
+</body>
+</html>
