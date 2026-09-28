@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark" data-style="unico">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Futuro IA — Hugo Signes Sisternes</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script>
+(function(){
+  try{
+    var t=localStorage.getItem('hugo-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+    var s=localStorage.getItem('hugo-style')||'unico';
+    if(s === 'rpg') s = 'unico'; 
+    document.documentElement.setAttribute('data-theme',t);
+    document.documentElement.setAttribute('data-style',s);
+  }catch(e){}
+})();
+</script>
+</head>
+<body>
+<!-- LIBRERÍA DE SPRITES SVG -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="wing" viewBox="0 0 120 120">
+    <path d="M60 14 L16 58 L60 58 Z"/><path d="M60 106 L16 62 L60 62 Z"/>
+    <path d="M60 14 L104 58 L60 58 Z"/><path d="M60 106 L104 62 L60 62 Z"/>
+    <rect x="50" y="50" width="20" height="20" transform="rotate(45 60 60)"/>
+  </symbol>
+</svg>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="trail" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a href="index.html" class="logo" data-magnetic>
+      <svg class="logo__mark" aria-hidden="true"><use href="#wing"/></svg>
+      <span class="logo__txt"><b>hugo</b>.signes</span>
+    </a>
+    <nav class="topnav" aria-label="Secciones">
+      <a href="sobre.html">Sobre</a>
+      <a href="trabajo.html">Trayectoria</a>
+      <a href="gusta.html">Me gusta</a>
+      <a href="futuro.html" class="is-active">Futuro</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <div class="tools">
+      <div class="style-switch">
+        <button class="style-switch__btn" id="styleToggle" aria-haspopup="true" aria-expanded="false">
+          <svg aria-hidden="true"><use href="#wing"/></svg><span>Estilo</span>
+        </button>
+        <div class="style-switch__panel" id="stylePanel" hidden>
+          <button data-set-style="unico"><i class="sw sw--unico"></i>Único</button>
+          <button data-set-style="professional"><i class="sw sw--pro"></i>Profesional</button>
+          <button data-set-style="gamer"><i class="sw sw--gamer"></i>Gamer</button>
+          <button data-set-style="retro"><i class="sw sw--retro"></i>Retro</button>
+          <button data-set-style="rpg"><i class="sw sw--rpg"></i>Minijuego RPG</button>
+        </div>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+        <span class="theme-toggle__ico theme-toggle__ico--sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></g></svg></span>
+        <span class="theme-toggle__ico theme-toggle__ico--moon"><svg viewBox="0 0 24 24"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z"/></svg></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<aside class="rail" aria-hidden="true">
+  <span class="rail__top">Hugo Signes · 2024→2026</span>
+  <nav class="rail__nav">
+    <a href="index.html" data-label="Inicio">00<i class="rail__dot"></i></a>
+    <a href="sobre.html" data-label="Sobre mí">01<i class="rail__dot"></i></a>
+    <a href="trabajo.html" data-label="Trayectoria">02<i class="rail__dot"></i></a>
+    <a href="gusta.html" data-label="Me gusta">03<i class="rail__dot"></i></a>
+    <a href="futuro.html" data-label="Futuro IA" class="is-active">04<i class="rail__dot"></i></a>
+    <a href="contacto.html" data-label="Contacto">05<i class="rail__dot"></i></a>
+  </nav>
+  <div class="rail__bottom"><span class="rail__line"></span><svg class="rail__wing"><use href="#wing"/></svg></div>
+</aside>
+
+<div class="page" id="mainWeb">
+<main>
+  <section class="section future" style="padding-top: 10rem; min-height: 100vh;">
+    <svg class="watermark" aria-hidden="true"><use href="#wing"/></svg>
+    <div class="section__inner">
+      <div class="section__head">
+        <p class="section__num">04 — Qué quiero ser</p>
+        <h2 class="section__title mask"><span>Futuro · IA</span></h2>
+        <p class="section__sub">Curso de especialización en IA: interesante, útil y con muchísimas salidas. El siguiente paso natural.</p>
+      </div>
+      <div class="future__grid">
+        <div class="terminal" data-reveal id="terminalBlock">
+          <div class="terminal__bar"><i></i><i></i><i></i> hugo@simarro: ~/ia <span id="termStatus">listo</span></div>
+          <div class="terminal__body" id="termBody"><span class="prompt">$</span> <span class="caret"></span></div>
+        </div>
+        <div class="tabs" data-reveal>
+          <div class="tabs__bar" role="tablist" aria-label="Líneas de interés">
+            <button class="tabs__btn is-active" role="tab" aria-selected="true" data-tab="tab-ia">IA aplicada</button>
+            <button class="tabs__btn" role="tab" aria-selected="false" data-tab="tab-vision">Visión</button>
+            <button class="tabs__btn" role="tab" aria-selected="false" data-tab="tab-robotica">IA + Robot</button>
+          </div>
+          <div class="tabs__panels">
+            <article class="tabs__panel" id="tab-ia" role="tabpanel"><h3>Que el modelo trabaje para alguien</h3><p>No me interesa la IA como concepto: me interesa integrada. Modelos que detectan averías, clasifican documentos, asisten en un turno. Encajo porque sé montar el sistema, sé programarlo y quiero saber entrenarlo.</p><ul class="tags"><li>Python</li><li>Datos</li><li>APIs</li><li>Despliegue</li></ul></article>
+            <article class="tabs__panel" id="tab-vision" role="tabpanel" hidden><h3>Máquinas que miran</h3><p>Cámaras, inspección, lectura de placas, control de calidad.</p></article>
+            <article class="tabs__panel" id="tab-robotica" role="tabpanel" hidden><h3>El robot deja de repetir y empieza a decidir</h3><p>Robótica con IA: brazos que se adaptan, navegación autónoma.</p></article>
+          </div>
+        </div>
+      </div>
+      <ol class="road" id="road">
+        <span class="road__fill" id="roadFill" aria-hidden="true"></span>
+        <li class="road__step on"><b>AHORA</b><span>1º DAM · reforzar Python y mates</span></li>
+        <li class="road__step"><b>2025</b><span>2º DAM + FCT · datos reales</span></li>
+        <li class="road__step"><b>2026</b><span>Curso de especialización en IA</span></li>
+        <li class="road__step"><b>DESPUÉS</b><span>IA aplicada a industria</span></li>
+      </ol>
+    </div>
+  </section>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
