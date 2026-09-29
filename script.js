@@ -1,5 +1,5 @@
 /* =====================================================================
-   HUGO SIGNES SISTERNES · MOTOR RPG Y ANIMACIONES (CORREGIDO)
+   HUGO SIGNES SISTERNES · SCRIPT COMPLETO + MOTOR DEVICE_KNIGHT (CANVAS)
    ===================================================================== */
 (function () {
   "use strict";
@@ -14,26 +14,19 @@
     var t = root.getAttribute("data-theme");
     var s = root.getAttribute("data-style");
     if (s === "rpg") { try { s = localStorage.getItem("hugo-style") || "unico"; } catch (e) { s = "unico"; } }
-    $$(".topnav a, .rail__nav a, .hero__cta a, .mnav a").forEach(function(a) {
+    
+    $$(".logo, .topnav a, .rail__nav a, .hero__cta a, .mnav a").forEach(function(a) {
       var href = a.getAttribute("href");
       if (!href || href.startsWith("http") || href.startsWith("mailto:")) return;
       var base = href.split("?")[0].split("#")[0];
       var hash = href.includes("#") ? "#" + href.split("#")[1] : "";
       if (base) a.setAttribute("href", base + "?theme=" + t + "&style=" + s + hash);
     });
-    $$(".rpg-obj").forEach(function(obj) {
-      var base = obj.getAttribute("data-url");
-      if (base) {
-        base = base.split("?")[0];
-        obj.setAttribute("data-url", base + "?theme=" + t + "&style=" + s);
-      }
-    });
   }
 
   /* ---------- Menú Superior (Fondo al scrollear arreglado) ---------- */
   var topbar = $(".topbar");
   function onScroll() {
-    if (rpgModeActive) return;
     var st = window.scrollY || window.pageYOffset;
     if(topbar) topbar.classList.toggle("is-scrolled", st > 30);
   }
@@ -52,23 +45,31 @@
       var n = root.getAttribute("data-theme") === "light" ? "dark" : "light";
       root.setAttribute("data-theme", n);
       try { localStorage.setItem("hugo-theme", n); } catch (e) {}
+      
+      try {
+        var urlObj = new URL(window.location);
+        urlObj.searchParams.set('theme', n);
+        window.history.replaceState({}, '', urlObj);
+      } catch (e) {}
+
       syncTheme();
     });
   }
 
-  /* ---------- Selector de estilo & Toggle RPG ---------- */
-  var rpgModeActive = false;
+  /* ---------- Selector de estilo & Toggle RPG (Canvas) ---------- */
   var sBtn = $("#styleToggle"), sPanel = $("#stylePanel"), sOpts = $$("[data-set-style]");
   var btnExitRpg = $("#btn-exit-rpg");
   
   function applyStyle(s) {
     root.setAttribute("data-style", s);
     if (s !== "rpg") { try { localStorage.setItem("hugo-style", s); } catch (e) {} }
-    if (s === "rpg" && !$("#rpg-map")) {
-      window.location.href = "index.html?style=rpg";
-      return;
-    }
     
+    try {
+      var urlObj = new URL(window.location);
+      urlObj.searchParams.set('style', s);
+      window.history.replaceState({}, '', urlObj);
+    } catch (e) {}
+
     sOpts.forEach(function (b) {
       var on = b.dataset.setStyle === s;
       b.classList.toggle("is-active", on);
@@ -83,21 +84,18 @@
     var mainWeb = $("#mainWeb");
     
     if (s === "rpg") {
-      rpgModeActive = true;
       if (rpgContainer) rpgContainer.hidden = false;
       if (mainWeb) mainWeb.hidden = true; 
-      initRPG();
+      if (typeof window.initDeviceKnightGame === "function") window.initDeviceKnightGame();
     } else {
-      rpgModeActive = false;
       if (rpgContainer) rpgContainer.hidden = true;
       if (mainWeb) mainWeb.hidden = false;
-      stopRPG();
+      if (typeof window.stopDeviceKnightGame === "function") window.stopDeviceKnightGame();
     }
   }
   
   var urlParams = new URLSearchParams(window.location.search);
   var initialStyle = urlParams.get('style') || localStorage.getItem('hugo-style') || "unico";
-  if (initialStyle === "rpg" && !$("#rpg-map")) initialStyle = "unico";
   applyStyle(initialStyle);
 
   if(sBtn) {
@@ -168,105 +166,185 @@
   }
 
   /* =====================================================================
-     MOTOR MINIJUEGO 2D (RPG) LIGADO A PÁGINAS
+     MOTOR DE JUEGO TIPO DEVICE_KNIGHT (EN CANVAS)
      ===================================================================== */
-  var mapEl, playerEl, playerInner;
-  var pX = 430, pY = 430; 
-  var speed = 6; 
-  var keys = {};
-  var rpgLoopId = null;
-  var currentNear = null;
-  var playerDir = 1;
+  var canvas, ctx;
+  var gameRunning = false;
+  var animId = null;
+  var pX = 320, pY = 240, pSize = 10, pSpeed = 3.5;
+  var hp = 20, maxHp = 20, score = 0;
+  var bullets = [];
+  var keys = { up: false, down: false, left: false, right: false, z: false, x: false };
+  var frameCount = 0;
+  var shieldActive = false, shieldCd = 0;
 
-  function initRPG() {
-    mapEl = $("#rpg-map");
-    playerEl = $("#rpg-player");
-    playerInner = $(".rpg-player-inner");
+  window.initDeviceKnightGame = function() {
+    canvas = document.getElementById("game");
+    if (!canvas) return;
+    ctx = canvas.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
 
-    if(!mapEl) return;
-    window.addEventListener("keydown", rpgKeyDown);
-    window.addEventListener("keyup", rpgKeyUp);
-    if(!rpgLoopId) rpgLoopId = requestAnimationFrame(rpgGameLoop);
-  }
-
-  function stopRPG() {
-    window.removeEventListener("keydown", rpgKeyDown);
-    window.removeEventListener("keyup", rpgKeyUp);
-    if(rpgLoopId) cancelAnimationFrame(rpgLoopId);
-    rpgLoopId = null;
-    keys = {};
-  }
-
-  function rpgKeyDown(e) {
-    if(!rpgModeActive) return;
-    keys[e.key.toLowerCase()] = true;
+    resetGameData();
+    gameRunning = true;
     
-    if (e.key === "Enter" && currentNear) {
-      window.location.href = currentNear.getAttribute("data-url");
-    }
-    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.key) > -1) {
-      e.preventDefault();
-    }
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    setupTouchControls();
+
+    if (!animId) animId = requestAnimationFrame(gameLoop);
+  };
+
+  window.stopDeviceKnightGame = function() {
+    gameRunning = false;
+    if (animId) cancelAnimationFrame(animId);
+    animId = null;
+    window.removeEventListener("keydown", handleKeyDown);
+    window.removeEventListener("keyup", handleKeyUp);
+  };
+
+  window.exitRpgGame = function() {
+    stopDeviceKnightGame();
+    var stored = localStorage.getItem('hugo-style') || "unico";
+    applyStyle(stored === "rpg" ? "unico" : stored);
+  };
+
+  function resetGameData() {
+    hp = 20; score = 0; pX = 320; pY = 240; bullets = []; frameCount = 0;
   }
-  function rpgKeyUp(e) { keys[e.key.toLowerCase()] = false; }
 
-  function rpgGameLoop() {
-    if (!rpgModeActive) return;
+  function handleKeyDown(e) {
+    if (!gameRunning) return;
+    if (e.key === "ArrowUp" || e.key === "w") keys.up = true;
+    if (e.key === "ArrowDown" || e.key === "s") keys.down = true;
+    if (e.key === "ArrowLeft" || e.key === "a") keys.left = true;
+    if (e.key === "ArrowRight" || e.key === "d") keys.right = true;
+    if (e.key === "z") keys.z = true;
+    if (e.key === "x") keys.x = true;
+    if (e.key === "r" || e.key === "R") resetGameData();
+  }
 
-    var dx = 0, dy = 0;
-    if (keys["arrowup"] || keys["w"]) dy = -speed;
-    if (keys["arrowdown"] || keys["s"]) dy = speed;
-    if (keys["arrowleft"] || keys["a"]) dx = -speed;
-    if (keys["arrowright"] || keys["d"]) dx = speed;
+  function handleKeyUp(e) {
+    if (e.key === "ArrowUp" || e.key === "w") keys.up = false;
+    if (e.key === "ArrowDown" || e.key === "s") keys.down = false;
+    if (e.key === "ArrowLeft" || e.key === "a") keys.left = false;
+    if (e.key === "ArrowRight" || e.key === "d") keys.right = false;
+    if (e.key === "z") keys.z = false;
+    if (e.key === "x") keys.x = false;
+  }
 
-    var nextX = pX + dx;
-    var nextY = pY + dy;
-    
-    if (nextX < 24) nextX = 24;
-    if (nextX > 1576) nextX = 1576;
-    if (nextY < 32) nextY = 32;
-    if (nextY > 1568) nextY = 1568;
+  function setupTouchControls() {
+    var dpad = document.getElementById("dpad");
+    if (!dpad || dpad.dataset.initialized) return;
+    dpad.dataset.initialized = "true";
 
-    pX = nextX;
-    pY = nextY;
-
-    var isMoving = (dx !== 0 || dy !== 0);
-    if (dx < 0) playerDir = -1;
-    else if (dx > 0) playerDir = 1;
-
-    if (isMoving) playerInner.classList.add("is-walking");
-    else playerInner.classList.remove("is-walking");
-
-    playerEl.style.transform = "translate(" + pX + "px, " + pY + "px)";
-    playerInner.style.transform = "scaleX(" + playerDir + ")";
-
-    var camX = (window.innerWidth / 2) - pX - 24;
-    var camY = (window.innerHeight / 2) - pY - 32;
-    mapEl.style.transform = "translate(" + camX + "px, " + camY + "px)";
-
-    var foundNear = null;
-    $$(".rpg-obj").forEach(function(objEl) {
-      var parentRect = objEl.parentElement.getBoundingClientRect();
-      var mapRect = mapEl.getBoundingClientRect();
-      var objX = (parentRect.left - mapRect.left) + parseInt(getComputedStyle(objEl).getPropertyValue('--ox')); 
-      var objY = (parentRect.top - mapRect.top) + parseInt(getComputedStyle(objEl).getPropertyValue('--oy')); 
-      
-      var dist = Math.sqrt(Math.pow(pX - objX, 2) + Math.pow(pY - objY, 2));
-      if (dist < 110) { 
-        if (!objEl.classList.contains("is-near")) objEl.classList.add("is-near");
-        foundNear = objEl;
-      } else {
-        if (objEl.classList.contains("is-near")) objEl.classList.remove("is-near");
-      }
+    dpad.addEventListener("pointermove", handleDpadTouch);
+    dpad.addEventListener("pointerdown", handleDpadTouch);
+    dpad.addEventListener("pointerup", function() {
+      keys.up = keys.down = keys.left = keys.right = false;
     });
-    currentNear = foundNear;
-    rpgLoopId = requestAnimationFrame(rpgGameLoop);
+
+    function handleDpadTouch(e) {
+      e.preventDefault();
+      var rect = dpad.getBoundingClientRect();
+      var x = e.clientX - rect.left - rect.width / 2;
+      var y = e.clientY - rect.top - rect.height / 2;
+      keys.up = y < -20; keys.down = y > 20;
+      keys.left = x < -20; keys.right = x > 20;
+    }
+
+    var bindBtn = function(id, keyName) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("pointerdown", function(e) { e.preventDefault(); el.classList.add("down"); keys[keyName] = true; });
+      el.addEventListener("pointerup", function() { el.classList.remove("down"); keys[keyName] = false; });
+    };
+
+    bindBtn("btnZ", "z");
+    bindBtn("btnX", "x");
+    
+    var btnR = document.getElementById("btnR");
+    if(btnR) {
+      btnR.addEventListener("pointerdown", function(e) { e.preventDefault(); resetGameData(); });
+    }
+  }
+
+  function updateGame() {
+    if (!gameRunning) return;
+    frameCount++;
+
+    if (keys.up && pY > 60) pY -= pSpeed;
+    if (keys.down && pY < 420) pY += pSpeed;
+    if (keys.left && pX > 40) pX -= pSpeed;
+    if (keys.right && pX < 600) pX += pSpeed;
+
+    if (keys.x && shieldCd <= 0) { shieldActive = true; shieldCd = 50; }
+    if (shieldActive) { shieldCd--; if (shieldCd <= 25) shieldActive = false; }
+
+    if (keys.z && frameCount % 12 === 0) {
+      bullets.push({ x: pX, y: pY - 8, vx: 0, vy: -6, type: 'player' });
+    }
+
+    if (frameCount % 25 === 0) {
+      var angle = Math.random() * Math.PI * 2;
+      bullets.push({
+        x: 320 + Math.cos(angle) * 120, y: 100 + Math.sin(angle) * 40,
+        vx: (Math.random() - 0.5) * 3, vy: Math.random() * 2 + 1, type: 'enemy'
+      });
+    }
+
+    for (var i = bullets.length - 1; i >= 0; i--) {
+      var b = bullets[i];
+      b.x += b.vx; b.y += b.vy;
+
+      if (b.type === 'enemy') {
+        var dist = Math.hypot(b.x - pX, b.y - pY);
+        if (dist < pSize + 4) {
+          if (!shieldActive) { hp -= 2; if (hp <= 0) hp = 0; }
+          else { score += 10; }
+          bullets.splice(i, 1);
+          continue;
+        }
+      }
+
+      if (b.y < 0 || b.y > 480 || b.x < 0 || b.x > 640) { bullets.splice(i, 1); }
+    }
+
+    score++;
+    var hud = document.getElementById("hud");
+    if (hud) hud.textContent = "HP: " + hp + "/" + maxHp + " | SCORE: " + score + " | Z: DISPARAR X: ESCUDO";
+  }
+
+  function drawGame() {
+    if (!ctx) return;
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, 640, 480);
+
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(30, 40, 580, 400);
+
+    ctx.fillStyle = shieldActive ? "#33ccff" : "#ff0000";
+    ctx.beginPath();
+    ctx.arc(pX, pY, pSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    for (var i = 0; i < bullets.length; i++) {
+      var b = bullets[i];
+      ctx.fillStyle = b.type === 'player' ? "#ffff00" : "#ff5533";
+      ctx.fillRect(b.x - 3, b.y - 3, 6, 6);
+    }
+  }
+
+  function gameLoop() {
+    if (!gameRunning) return;
+    updateGame();
+    drawGame();
+    animId = requestAnimationFrame(gameLoop);
   }
 
   /* =====================================================================
-     ANIMACIONES: Contadores, Reveal y Typewriter
+     ANIMACIONES: Contadores, Reveal, Terminal y Diálogos
      ===================================================================== */
-  
   var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); } }); }, { threshold: 0.12, rootMargin: "0px 0px -10% 0px" });
   $$("[data-reveal]").forEach(function (el) { io.observe(el); });
 
@@ -347,9 +425,7 @@
       else location.href = "mailto:" + mail;
     });
   }
-  /* =====================================================================
-     MEJORAS: menú móvil, controles táctiles RPG, formulario, hoja de ruta
-     ===================================================================== */
+
   var tools = $(".tools"), topnavEl = $(".topnav");
   if (tools && topnavEl) {
     var burger = document.createElement("button");
@@ -373,45 +449,6 @@
   }
   $$(".rail a").forEach(function (a) { a.tabIndex = -1; });
 
-  /* Controles táctiles del minijuego */
-  var rpgBox = $("#rpg-mode");
-  if (rpgBox) {
-    var tu = document.createElement("div");
-    tu.id = "rpg-touch-ui";
-    tu.innerHTML = '<div class="dpad">' +
-      '<button class="dpad-btn dpad-up" data-k="arrowup" aria-label="Arriba">▲</button>' +
-      '<button class="dpad-btn dpad-left" data-k="arrowleft" aria-label="Izquierda">◀</button>' +
-      '<button class="dpad-btn dpad-right" data-k="arrowright" aria-label="Derecha">▶</button>' +
-      '<button class="dpad-btn dpad-down" data-k="arrowdown" aria-label="Abajo">▼</button></div>' +
-      '<div class="action-pad"><button class="dpad-btn action-btn" data-act="1" aria-label="Entrar">↵</button></div>';
-    rpgBox.appendChild(tu);
-    $$("[data-k]", tu).forEach(function (b) {
-      var k = b.dataset.k;
-      b.addEventListener("pointerdown", function (e) { e.preventDefault(); keys[k] = true; });
-      ["pointerup", "pointerleave", "pointercancel"].forEach(function (ev) { b.addEventListener(ev, function () { keys[k] = false; }); });
-      b.addEventListener("contextmenu", function (e) { e.preventDefault(); });
-    });
-    $("[data-act]", tu).addEventListener("pointerdown", function (e) {
-      e.preventDefault();
-      if (currentNear) window.location.href = currentNear.getAttribute("data-url");
-    });
-  }
-
-  /* Imágenes del RPG que falten: sustituto visible */
-  var EMO = { casa: "🏠", school: "🏫", arcade: "🕹️", lab: "🧪", player: "🧑‍💻" };
-  function fallbackImg(img) {
-    var m = (img.getAttribute("src") || "").match(/assets\/(\w+)/);
-    var d = document.createElement("div");
-    d.className = "rpg-fallback"; d.textContent = EMO[m && m[1]] || "?";
-    d.style.width = img.style.width; d.style.height = img.style.height;
-    img.replaceWith(d);
-  }
-  $$("#rpg-map img").forEach(function (img) {
-    if (img.complete && img.naturalWidth === 0) fallbackImg(img);
-    else img.addEventListener("error", function () { fallbackImg(img); }, { once: true });
-  });
-
-  /* Hoja de ruta: la línea avanza al llegar a ella */
   var roadEl = $("#road"), roadFill = $("#roadFill");
   if (roadEl && roadFill) {
     var rsteps = $$(".road__step", roadEl);
@@ -428,7 +465,6 @@
     rio.observe(roadEl);
   }
 
-  /* Pestañas con teclado */
   var tabBar = $(".tabs__bar");
   if (tabBar) tabBar.addEventListener("keydown", function (e) {
     var i = tabs.indexOf(document.activeElement);
@@ -437,7 +473,6 @@
     n.focus(); n.click();
   });
 
-  /* Formulario: Formspree si hay ID; si no, abre el correo con el mensaje listo */
   var form = $(".real-form");
   if (form) {
     var status = document.createElement("p");
@@ -463,7 +498,7 @@
         .then(function () { btn.disabled = false; });
     });
   }
-  /* Diálogo tipo Undertale: la frase del inicio se escribe letra a letra */
+
   var dlgTimer = null;
   function dialogFx(s) {
     var el = $(".hero__phrase") || $(".section__sub");
