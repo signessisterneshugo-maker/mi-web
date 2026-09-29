@@ -687,3 +687,78 @@ html{scroll-padding-top:6rem}
 @media(min-width:821px){#rpg-touch-ui{display:none}}
 
 @media(prefers-reduced-motion:reduce){.road__fill{transition:none}}
+
+
+/* =====================================================================
+   ESTILO "GAMER" → UNDERTALE (CORREGIDO)
+   ===================================================================== */
+html[data-style="gamer"], html[data-style="gamer"][data-theme="light"] {
+  /* Usamos VT323 y Press Start 2P que ya tienes cargadas en el HTML */
+  --font-display: 'Press Start 2P', monospace;
+  --font-body: 'VT323', monospace;
+  --font-label: 'VT323', monospace;
+
+  --r: 0; --r-lg: 0; --r-btn: 0; --clip: none; --glow: none; --scan: 0; --grain: .02;
+  --bg: #000; --bg-2: #000; --bg-3: #080808; --text: #fff; --muted: #b5b5b5; --bone: #fff;
+  --accent: #ff0000; --accent-2: #ffff00; --accent-3: #00c0ff; 
+  --line: #fff; --line-strong: #fff; --on-accent: #000;
+  --card-shadow: none; --img-filter: contrast(1.1) saturate(.9); 
+  --media-shadow: none; --media-overlay: none;
+}
+
+/* Ajuste de escala para no romper tu diseño original */
+html[data-style="gamer"] body { font-size: 1.25rem; line-height: 1.5; }
+html[data-style="gamer"] h1, html[data-style="gamer"] h2, html[data-style="gamer"] h3 { 
+  letter-spacing: 0; line-height: 1.2; text-transform: uppercase; 
+}
+html[data-style="gamer"] .hero__name { font-size: clamp(2rem, 7vw, 4.5rem); }
+
+/* Efecto en el título */
+html[data-style="gamer"] .hero__name-line--accent { color: var(--accent-2); }
+html[data-style="gamer"] .hero__wing, html[data-style="gamer"] .watermark { opacity: .1; filter: grayscale(1); }
+html[data-style="gamer"] .hero__glow { display: none; }
+
+/* Marcos de Caja Clásicos (Negro con borde blanco grueso) */
+html[data-style="gamer"] .cell, html[data-style="gamer"] .work__card, html[data-style="gamer"] .spec,
+html[data-style="gamer"] .terminal, html[data-style="gamer"] .tabs, html[data-style="gamer"] .stat,
+html[data-style="gamer"] .about__portrait, html[data-style="gamer"] .work__media, html[data-style="gamer"] .spec__photo,
+html[data-style="gamer"] .form-group input, html[data-style="gamer"] .form-group textarea {
+  background: #000; border: 3px solid #fff; border-radius: 0; box-shadow: none; clip-path: none;
+}
+
+/* Campos de formulario */
+html[data-style="gamer"] .form-group input:focus, html[data-style="gamer"] .form-group textarea:focus { border-color: var(--accent-2); }
+html[data-style="gamer"] .form-group label { font-family: 'Press Start 2P', monospace; font-size: 0.7rem; color: var(--text); }
+
+/* Diálogos con el clásico asterisco */
+html[data-style="gamer"] .hero__phrase, html[data-style="gamer"] .section__sub {
+  border: 3px solid #fff; background: #000; padding: 1.2rem; font-size: 1.4rem; font-family: 'VT323', monospace;
+}
+html[data-style="gamer"] .hero__phrase::before, html[data-style="gamer"] .section__sub::before { content: "* "; color: #fff; }
+html[data-style="gamer"] .hero__phrase b, html[data-style="gamer"] .hero__phrase em { color: var(--accent-2); font-style: normal; }
+
+/* Menú de navegación (Sin subrayado, color amarillo al pasar el ratón) */
+html[data-style="gamer"] .topnav a, html[data-style="gamer"] .rail__nav a { font-family: 'Press Start 2P', monospace; font-size: 0.65rem; }
+html[data-style="gamer"] .topnav a::after, html[data-style="gamer"] .rail__nav a::before { display: none; }
+html[data-style="gamer"] .topnav a:hover, html[data-style="gamer"] .topnav a.is-active,
+html[data-style="gamer"] .rail__nav a:hover, html[data-style="gamer"] .rail__nav a.is-active { color: var(--accent-2); transform: translateY(-2px); }
+
+/* Botones de Acción (FIGHT / ACT / ITEM / MERCY) */
+html[data-style="gamer"] .btn {
+  font-family: 'Press Start 2P', monospace; font-size: 0.7rem;
+  background: #000; color: #ff9900; border: 3px solid #ff9900; 
+  padding: 1.2rem 1.5rem; transition: none;
+}
+html[data-style="gamer"] .btn::before { display: none; /* Anulamos el efecto original */ }
+html[data-style="gamer"] .btn:hover, html[data-style="gamer"] .btn:focus-visible { 
+  color: #ffff00; border-color: #ffff00; background: #000; transform: none; box-shadow: none; 
+}
+
+/* Cursor del Sistema (Alma Roja) */
+html[data-style="gamer"] .cursor {
+  width: 18px; height: 18px; border-radius: 0; background: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 8' shape-rendering='crispEdges'%3E%3Cpath fill='%23ff0000' d='M1 0h2v1H1zM6 0h2v1H6zM0 1h4v1H0zM5 1h4v1H5zM0 2h9v2H0zM1 4h7v1H1zM2 5h5v1H2zM3 6h3v1H3zM4 7h1v1H4z'/%3E%3C/svg%3E");
+  background-size: contain; background-repeat: no-repeat;
+}
+html[data-style="gamer"] .cursor-ring { display: none; }
+html[data-style="gamer"] .trail i { width: 6px; height: 6px; border-radius: 0; background: #ff0000; box-shadow: none; }

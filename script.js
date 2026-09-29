@@ -75,6 +75,7 @@
       b.setAttribute("aria-checked", on);
     });
     
+    dialogFx(s);
     updateCursor();
     syncLinks(); 
 
@@ -461,5 +462,27 @@
         .catch(function () { status.textContent = "No se pudo enviar. Escríbeme a " + to + "."; })
         .then(function () { btn.disabled = false; });
     });
+  }
+  /* Diálogo tipo Undertale: la frase del inicio se escribe letra a letra */
+  var dlgTimer = null;
+  function dialogFx(s) {
+    var el = $(".hero__phrase") || $(".section__sub");
+    if (!el) return;
+    clearTimeout(dlgTimer);
+    if (el.dataset.orig) { el.innerHTML = el.dataset.orig; el.style.minHeight = ""; }
+    else el.dataset.orig = el.innerHTML;
+    if (s !== "gamer" || reduce) return;
+    el.style.minHeight = el.offsetHeight + "px";
+    var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [], n;
+    while ((n = w.nextNode())) nodes.push({ n: n, t: n.nodeValue });
+    nodes.forEach(function (o) { o.n.nodeValue = ""; });
+    var ni = 0, ci = 0;
+    (function step() {
+      if (ni >= nodes.length) return;
+      var o = nodes[ni]; ci++;
+      o.n.nodeValue = o.t.slice(0, ci);
+      if (ci >= o.t.length) { ni++; ci = 0; }
+      dlgTimer = setTimeout(step, 40);
+    })();
   }
 })();
