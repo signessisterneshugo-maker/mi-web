@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Contacto — Hugo Signes Sisternes</title>
+<meta name="theme-color" content="#0A0A0C">
+<meta name="description" content="Contacta con Hugo Signes para prácticas (FCT), proyectos de equipo o conversaciones técnicas.">
+<meta property="og:title" content="Hugo Signes Sisternes">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <script>
@@ -20,6 +26,7 @@
 </script>
 </head>
 <body>
+<a class="skip" href="#main">Saltar al contenido</a>
 <!-- LIBRERÍA DE SPRITES SVG -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="wing" viewBox="0 0 120 120">
@@ -84,7 +91,7 @@
 </aside>
 
 <div class="page" id="mainWeb">
-<main>
+<main id="main">
   <section class="section" style="padding-top: 10rem; min-height: 100vh;">
     <div class="section__inner">
       <div class="section__head">
@@ -95,14 +102,15 @@
       
       <div class="contact-grid">
         <!-- FORMULARIO REAL (Solo necesitas cambiar TU_ID_AQUI por el ID que te dé Formspree) -->
-        <form action="https://formspree.io/f/TU_ID_AQUI" method="POST" class="real-form">
+        <form action="https://formspree.io/f/TU_ID_AQUI" method="POST" class="real-form" novalidate>
+          <input type="text" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
           <div class="form-group">
             <label for="name">Nombre</label>
-            <input type="text" id="name" name="name" required placeholder="Tu nombre">
+            <input type="text" id="name" name="name" autocomplete="name" required placeholder="Tu nombre">
           </div>
           <div class="form-group">
             <label for="email">Correo electrónico</label>
-            <input type="email" id="email" name="email" required placeholder="tu@email.com">
+            <input type="email" id="email" name="email" autocomplete="email" required placeholder="tu@email.com">
           </div>
           <div class="form-group">
             <label for="message">Mensaje</label>
@@ -112,7 +120,7 @@
         </form>
         
         <div class="contact-info">
-          <p class="footer__note">O si prefieres el correo tradicional:</p>
+          <p class="footer__note">O escríbeme directamente:</p>
           <div class="mailrow" style="margin-top: 1.5rem;">
             <a id="mail" href="mailto:hugo.signes@example.com">hugo.signes@example.com</a>
             <button id="copy" class="btn btn--ghost" type="button" data-magnetic>Copiar correo</button>
