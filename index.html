@@ -2,7 +2,7 @@
 <html lang="es" data-theme="dark" data-style="unico">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Inicio — Hugo Signes Sisternes</title>
 <meta name="theme-color" content="#0A0A0C">
 <meta property="og:title" content="Hugo Signes Sisternes">
@@ -13,14 +13,73 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <style>
-  /* EFECTOS MÁGICOS PARA EL MODO RPG */
-  .firefly {
-    position: absolute; width: 4px; height: 4px; background: #fff;
-    border-radius: 50%; box-shadow: 0 0 10px 2px #fde047;
-    animation: drift linear infinite, flash 3s ease-in-out infinite alternate;
+  /* ESTILOS ESPECÍFICOS PARA EL MINIJUEGO CANVAS TIPO DEVICE_KNIGHT */
+  #rpg-mode {
+    position: fixed; inset: 0; z-index: 150; background: #000;
+    touch-action: none; overscroll-behavior: none;
   }
-  @keyframes drift { 0% { transform: translate(0, 0); } 100% { transform: translate(60px, -60px); } }
-  @keyframes flash { 0%, 100% { opacity: 0; } 50% { opacity: 0.8; } }
+  #game {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(100vw, calc(100vh * 4 / 3));
+    height: min(100vh, calc(100vw * 3 / 4));
+    background: #000;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+  #hud {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 6px 10px; text-align: center;
+    background: rgba(0, 0, 0, .8); color: #ccc;
+    font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+    z-index: 25; pointer-events: none;
+  }
+  .chrome {
+    position: fixed; z-index: 30; color: #4a4a4a; font-size: 12px;
+    letter-spacing: .1em; text-decoration: none; background: none;
+    border: none; font-family: inherit; cursor: pointer; padding: 10px;
+  }
+  .chrome:hover { color: #ffff00; }
+  #back { top: 6px; left: 8px; }
+
+  #touch { display: none; }
+  @media (pointer: coarse) {
+    #touch { display: block; position: fixed; inset: 0; pointer-events: none; z-index: 20; }
+  }
+  #touch .pad, #touch .btn {
+    position: absolute; pointer-events: auto; touch-action: none;
+    border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.06); -webkit-user-select: none; user-select: none;
+  }
+  #dpad {
+    left: max(18px, env(safe-area-inset-left));
+    bottom: max(18px, env(safe-area-inset-bottom));
+    width: 148px; height: 148px;
+  }
+  #dpad::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(rgba(255,255,255,0.14), rgba(255,255,255,0.14)) 50% 0 / 34% 100% no-repeat,
+                linear-gradient(rgba(255,255,255,0.14), rgba(255,255,255,0.14)) 0 50% / 100% 34% no-repeat;
+    border-radius: inherit;
+  }
+  #touch .btn {
+    width: 64px; height: 64px; color: rgba(255, 255, 255, 0.55);
+    font: bold 20px/60px ui-monospace, Menlo, monospace; text-align: center;
+  }
+  #touch .btn.down { background: rgba(255, 255, 255, 0.22); }
+  #btnZ {
+    right: max(20px, env(safe-area-inset-right));
+    bottom: calc(max(18px, env(safe-area-inset-bottom)) + 74px);
+  }
+  #btnX {
+    right: calc(max(20px, env(safe-area-inset-right)) + 74px);
+    bottom: max(18px, env(safe-area-inset-bottom));
+  }
+  #touch #btnR {
+    top: max(14px, env(safe-area-inset-top));
+    right: max(14px, env(safe-area-inset-right));
+    width: 44px; height: 44px; font-size: 15px; line-height: 40px;
+  }
 </style>
 <script>
 (function(){
@@ -28,7 +87,6 @@
     var url = new URLSearchParams(window.location.search);
     var t = url.get('theme') || localStorage.getItem('hugo-theme') || (matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
     var s = url.get('style') || localStorage.getItem('hugo-style') || 'unico';
-    if(s === 'rpg') s = 'unico'; 
     document.documentElement.setAttribute('data-theme',t);
     document.documentElement.setAttribute('data-style',s);
   }catch(e){}
@@ -38,18 +96,12 @@
 <body>
 <a class="skip" href="#main">Saltar al contenido</a>
 
-<!-- SPRITES SVG GLOBALES (Incluyendo el buzón que faltaba) -->
+<!-- SPRITES SVG GLOBALES -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="wing" viewBox="0 0 120 120">
     <path d="M60 14 L16 58 L60 58 Z"/><path d="M60 106 L16 62 L60 62 Z"/>
     <path d="M60 14 L104 58 L60 58 Z"/><path d="M60 106 L104 62 L60 62 Z"/>
     <rect x="50" y="50" width="20" height="20" transform="rotate(45 60 60)"/>
-  </symbol>
-  <symbol id="sprite-tree">
-    <image href="assets/tree.gif" width="120" height="140"/>
-  </symbol>
-  <symbol id="sprite-mail">
-    <image href="assets/mail.png" width="120" height="150"/>
   </symbol>
 </svg>
 
@@ -129,10 +181,9 @@
         </h1>
         <p class="hero__phrase">Estudiante de DAM. Técnico en SMX. Ex becario Erasmus en <b>ESSEPI Tech</b> (Italia). Cofundador de <em>Volver a Encender</em> en The Challenge. Próxima parada: IA.</p>
         <div class="hero__cta">
-          <!-- Botones estilo FIGHT y ACT -->
-          <a href="trabajo.html" class="btn btn--solid" data-magnetic><span style="color:#fff; margin-right:8px">⚔</span> TRAYECTORIA</a>
-          <a href="contacto.html" class="btn btn--ghost" data-magnetic><span style="color:#fff; margin-right:8px">💬</span> HABLAR</a>
-          <a href="gusta.html" class="btn btn--ghost" data-magnetic><span style="color:#fff; margin-right:8px">♥</span> MERCY</a>
+          <a href="trabajo.html" class="btn btn--solid" data-magnetic>⚔ TRAYECTORIA</a>
+          <a href="contacto.html" class="btn btn--ghost" data-magnetic>💬 HABLAR</a>
+          <a href="index.html?style=rpg" class="btn btn--ghost" data-magnetic>🎮 JUGAR MINIJUEGO</a>
         </div>
         <ul class="hero__chips"><li>1º DAM</li><li>SMX</li><li>Erasmus IT</li><li>The Challenge</li><li>IA</li></ul>
       </div>
@@ -153,71 +204,18 @@
 </main>
 </div>
 
-<!-- VISTA RPG (Mapa 2D con imágenes ENORMES) -->
+<!-- VISTA MINIJUEGO CANVAS (Estilo DEVICE_KNIGHT) -->
 <div id="rpg-mode" hidden>
-  <div id="rpg-camera">
-    <div id="rpg-map">
-      
-      <!-- Efecto luciérnagas RPG -->
-      <div class="firefly" style="top: 200px; left: 300px; animation-duration: 14s, 3s;"></div>
-      <div class="firefly" style="top: 600px; left: 800px; animation-duration: 18s, 4s;"></div>
-      <div class="firefly" style="top: 800px; left: 400px; animation-duration: 12s, 3.5s;"></div>
-      <div class="firefly" style="top: 300px; left: 1100px; animation-duration: 16s, 2.5s;"></div>
-
-      <!-- Caminos -->
-      <div class="rpg-path" style="left: 128px; top: 384px; width: 1280px; height: 160px;"></div>
-      <div class="rpg-path" style="left: 384px; top: 128px; width: 160px; height: 1024px;"></div>
-      <div class="rpg-path" style="left: 896px; top: 128px; width: 160px; height: 1024px;"></div>
-
-      <!-- Árboles del entorno (Grandes) -->
-      <svg class="rpg-tree" style="left: 80px; top: 80px;" width="140" height="160"><use href="#sprite-tree"/></svg>
-      <svg class="rpg-tree" style="left: 140px; top: 180px;" width="140" height="160"><use href="#sprite-tree"/></svg>
-      <svg class="rpg-tree" style="left: 1200px; top: 150px;" width="140" height="160"><use href="#sprite-tree"/></svg>
-      <svg class="rpg-tree" style="left: 1280px; top: 250px;" width="140" height="160"><use href="#sprite-tree"/></svg>
-      <svg class="rpg-tree" style="left: 120px; top: 780px;" width="140" height="160"><use href="#sprite-tree"/></svg>
-      <svg class="rpg-tree" style="left: 1150px; top: 820px;" width="140" height="160"><use href="#sprite-tree"/></svg>
-
-      <!-- EDIFICIOS GIGANTES (360px de tamaño) -->
-      <div class="rpg-building" style="left: 140px; top: 120px;">
-        <img src="assets/casa.png" alt="Sobre mí" style="width: 360px; height: 360px; object-fit: contain;">
-        <div class="rpg-obj" data-url="sobre.html" data-label="ENTRAR: Sobre mí" style="--ox: 180px; --oy: 260px;"></div>
-      </div>
-
-      <div class="rpg-building" style="left: 560px; top: 80px;">
-        <img src="assets/school.png" alt="Trayectoria" style="width: 380px; height: 380px; object-fit: contain;">
-        <div class="rpg-obj" data-url="trabajo.html" data-label="ENTRAR: Trayectoria" style="--ox: 190px; --oy: 280px;"></div>
-      </div>
-
-      <div class="rpg-building" style="left: 1020px; top: 420px;">
-        <img src="assets/arcade.png" alt="Me Gusta" style="width: 340px; height: 360px; object-fit: contain;">
-        <div class="rpg-obj" data-url="gusta.html" data-label="ENTRAR: Me Gusta" style="--ox: 170px; --oy: 260px;"></div>
-      </div>
-
-      <div class="rpg-building" style="left: 140px; top: 560px;">
-        <img src="assets/lab.png" alt="Futuro IA" style="width: 380px; height: 340px; object-fit: contain;">
-        <div class="rpg-obj" data-url="futuro.html" data-label="ENTRAR: Futuro IA" style="--ox: 190px; --oy: 250px;"></div>
-      </div>
-
-      <!-- El Buzón de Contacto (Arreglado y Gigante) -->
-      <div class="rpg-building" style="left: 650px; top: 700px;">
-        <svg width="220" height="260"><use href="#sprite-mail"/></svg>
-        <div class="rpg-obj" data-url="contacto.html" data-label="ENTRAR: Contacto" style="--ox: 110px; --oy: 200px;"></div>
-      </div>
-
-      <!-- El Jugador (Más grande y visible: 130x170px) -->
-      <div id="rpg-player">
-        <div class="rpg-player-inner">
-          <img src="assets/player.webp" alt="Jugador" style="width: 130px; height: 170px; object-fit: contain;">
-        </div>
-      </div>
-    </div>
-  </div>
+  <canvas id="game" width="640" height="480"></canvas>
+  <div id="hud">DEVICE_KNIGHT [Hugo Edition] · Z: Atacar | X: Escudo | R: Reiniciar</div>
   
-  <div id="rpg-ui">
-    <div class="rpg-controls-hint">
-      <p>🎮 Mueve con <b>W A S D</b>. Acércate a los edificios y pulsa <b>ENTER para viajar</b>.</p>
-    </div>
-    <button id="btn-exit-rpg" class="btn btn--solid">🚪 Volver a la Web</button>
+  <button class="chrome" id="back" onclick="exitRpgGame()">✕ Salir</button>
+
+  <div id="touch">
+    <div id="dpad" class="pad"></div>
+    <div id="btnZ" class="btn">Z</div>
+    <div id="btnX" class="btn">X</div>
+    <div id="btnR" class="btn">R</div>
   </div>
 </div>
 
