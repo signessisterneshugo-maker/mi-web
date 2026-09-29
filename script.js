@@ -13,7 +13,8 @@
   function syncLinks() {
     var t = root.getAttribute("data-theme");
     var s = root.getAttribute("data-style");
-    $$(".topnav a, .rail__nav a, .hero__cta a").forEach(function(a) {
+    if (s === "rpg") { try { s = localStorage.getItem("hugo-style") || "unico"; } catch (e) { s = "unico"; } }
+    $$(".topnav a, .rail__nav a, .hero__cta a, .mnav a").forEach(function(a) {
       var href = a.getAttribute("href");
       if (!href || href.startsWith("http") || href.startsWith("mailto:")) return;
       var base = href.split("?")[0].split("#")[0];
@@ -95,7 +96,7 @@
   
   var urlParams = new URLSearchParams(window.location.search);
   var initialStyle = urlParams.get('style') || localStorage.getItem('hugo-style') || "unico";
-  if (initialStyle === "rpg") initialStyle = "unico"; 
+  if (initialStyle === "rpg" && !$("#rpg-map")) initialStyle = "unico";
   applyStyle(initialStyle);
 
   if(sBtn) {
@@ -343,6 +344,122 @@
       function ok() { if(toast){toast.classList.add("is-show"); setTimeout(function () { toast.classList.remove("is-show"); }, 2200);} }
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(mail).then(ok, function () { location.href = "mailto:" + mail; });
       else location.href = "mailto:" + mail;
+    });
+  }
+  /* =====================================================================
+     MEJORAS: menú móvil, controles táctiles RPG, formulario, hoja de ruta
+     ===================================================================== */
+  var tools = $(".tools"), topnavEl = $(".topnav");
+  if (tools && topnavEl) {
+    var burger = document.createElement("button");
+    burger.className = "burger"; burger.setAttribute("aria-label", "Abrir menú");
+    burger.setAttribute("aria-expanded", "false"); burger.setAttribute("aria-controls", "mnav");
+    burger.innerHTML = "<span></span><span></span><span></span>";
+    tools.appendChild(burger);
+    var mnav = document.createElement("nav");
+    mnav.id = "mnav"; mnav.className = "mnav"; mnav.hidden = true; mnav.setAttribute("aria-label", "Menú");
+    mnav.innerHTML = topnavEl.innerHTML;
+    var homeA = document.createElement("a");
+    homeA.href = "index.html"; homeA.textContent = "Inicio";
+    if (page === "index.html") homeA.className = "is-active";
+    mnav.insertBefore(homeA, mnav.firstChild);
+    document.body.appendChild(mnav);
+    var setMenu = function (o) { mnav.hidden = !o; burger.setAttribute("aria-expanded", String(o)); document.body.classList.toggle("menu-open", o); };
+    burger.addEventListener("click", function (e) { e.stopPropagation(); setMenu(mnav.hidden); });
+    mnav.addEventListener("click", function (e) { if (e.target.closest("a")) setMenu(false); });
+    addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
+    syncLinks();
+  }
+  $$(".rail a").forEach(function (a) { a.tabIndex = -1; });
+
+  /* Controles táctiles del minijuego */
+  var rpgBox = $("#rpg-mode");
+  if (rpgBox) {
+    var tu = document.createElement("div");
+    tu.id = "rpg-touch-ui";
+    tu.innerHTML = '<div class="dpad">' +
+      '<button class="dpad-btn dpad-up" data-k="arrowup" aria-label="Arriba">▲</button>' +
+      '<button class="dpad-btn dpad-left" data-k="arrowleft" aria-label="Izquierda">◀</button>' +
+      '<button class="dpad-btn dpad-right" data-k="arrowright" aria-label="Derecha">▶</button>' +
+      '<button class="dpad-btn dpad-down" data-k="arrowdown" aria-label="Abajo">▼</button></div>' +
+      '<div class="action-pad"><button class="dpad-btn action-btn" data-act="1" aria-label="Entrar">↵</button></div>';
+    rpgBox.appendChild(tu);
+    $$("[data-k]", tu).forEach(function (b) {
+      var k = b.dataset.k;
+      b.addEventListener("pointerdown", function (e) { e.preventDefault(); keys[k] = true; });
+      ["pointerup", "pointerleave", "pointercancel"].forEach(function (ev) { b.addEventListener(ev, function () { keys[k] = false; }); });
+      b.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+    });
+    $("[data-act]", tu).addEventListener("pointerdown", function (e) {
+      e.preventDefault();
+      if (currentNear) window.location.href = currentNear.getAttribute("data-url");
+    });
+  }
+
+  /* Imágenes del RPG que falten: sustituto visible */
+  var EMO = { casa: "🏠", school: "🏫", arcade: "🕹️", lab: "🧪", player: "🧑‍💻" };
+  function fallbackImg(img) {
+    var m = (img.getAttribute("src") || "").match(/assets\/(\w+)/);
+    var d = document.createElement("div");
+    d.className = "rpg-fallback"; d.textContent = EMO[m && m[1]] || "?";
+    d.style.width = img.style.width; d.style.height = img.style.height;
+    img.replaceWith(d);
+  }
+  $$("#rpg-map img").forEach(function (img) {
+    if (img.complete && img.naturalWidth === 0) fallbackImg(img);
+    else img.addEventListener("error", function () { fallbackImg(img); }, { once: true });
+  });
+
+  /* Hoja de ruta: la línea avanza al llegar a ella */
+  var roadEl = $("#road"), roadFill = $("#roadFill");
+  if (roadEl && roadFill) {
+    var rsteps = $$(".road__step", roadEl);
+    var rio = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting) return;
+      rio.disconnect();
+      var i = 0;
+      (function go() {
+        roadFill.style.width = (i / (rsteps.length - 1) * 88) + "%";
+        rsteps[i].classList.add("on");
+        if (++i < rsteps.length) setTimeout(go, reduce ? 0 : 700);
+      })();
+    }, { threshold: 0.5 });
+    rio.observe(roadEl);
+  }
+
+  /* Pestañas con teclado */
+  var tabBar = $(".tabs__bar");
+  if (tabBar) tabBar.addEventListener("keydown", function (e) {
+    var i = tabs.indexOf(document.activeElement);
+    if (i < 0 || (e.key !== "ArrowRight" && e.key !== "ArrowLeft")) return;
+    var n = tabs[(i + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length];
+    n.focus(); n.click();
+  });
+
+  /* Formulario: Formspree si hay ID; si no, abre el correo con el mensaje listo */
+  var form = $(".real-form");
+  if (form) {
+    var status = document.createElement("p");
+    status.className = "form-status"; status.setAttribute("role", "status");
+    form.appendChild(status);
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      var d = new FormData(form);
+      if (d.get("website")) return;
+      var to = mailEl ? mailEl.textContent.trim() : "";
+      var endpoint = form.getAttribute("action") || "";
+      if (/TU_ID_AQUI/.test(endpoint)) {
+        location.href = "mailto:" + to + "?subject=" + encodeURIComponent("Mensaje de " + d.get("name")) +
+          "&body=" + encodeURIComponent(d.get("message") + "\n\n— " + d.get("name") + " (" + d.get("email") + ")");
+        status.textContent = "Se ha abierto tu programa de correo con el mensaje listo para enviar.";
+        return;
+      }
+      var btn = $("button[type=submit]", form); btn.disabled = true; status.textContent = "Enviando…";
+      fetch(endpoint, { method: "POST", body: d, headers: { Accept: "application/json" } })
+        .then(function (r) { if (!r.ok) throw new Error(); form.reset(); status.textContent = "Mensaje enviado. Te responderé pronto."; })
+        .catch(function () { status.textContent = "No se pudo enviar. Escríbeme a " + to + "."; })
+        .then(function () { btn.disabled = false; });
     });
   }
 })();
