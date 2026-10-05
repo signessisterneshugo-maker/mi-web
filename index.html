@@ -12,75 +12,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-<style>
-  /* ESTILOS ESPECÍFICOS PARA EL MINIJUEGO CANVAS TIPO DEVICE_KNIGHT */
-  #rpg-mode {
-    position: fixed; inset: 0; z-index: 150; background: #000;
-    touch-action: none; overscroll-behavior: none;
-  }
-  #game {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: min(100vw, calc(100vh * 4 / 3));
-    height: min(100vh, calc(100vw * 3 / 4));
-    background: #000;
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
-  }
-  #hud {
-    position: absolute; left: 0; right: 0; bottom: 0;
-    padding: 6px 10px; text-align: center;
-    background: rgba(0, 0, 0, .8); color: #ccc;
-    font-family: ui-monospace, Menlo, monospace; font-size: 12px;
-    z-index: 25; pointer-events: none;
-  }
-  .chrome {
-    position: fixed; z-index: 30; color: #4a4a4a; font-size: 12px;
-    letter-spacing: .1em; text-decoration: none; background: none;
-    border: none; font-family: inherit; cursor: pointer; padding: 10px;
-  }
-  .chrome:hover { color: #ffff00; }
-  #back { top: 6px; left: 8px; }
-
-  #touch { display: none; }
-  @media (pointer: coarse) {
-    #touch { display: block; position: fixed; inset: 0; pointer-events: none; z-index: 20; }
-  }
-  #touch .pad, #touch .btn {
-    position: absolute; pointer-events: auto; touch-action: none;
-    border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.25);
-    background: rgba(255, 255, 255, 0.06); -webkit-user-select: none; user-select: none;
-  }
-  #dpad {
-    left: max(18px, env(safe-area-inset-left));
-    bottom: max(18px, env(safe-area-inset-bottom));
-    width: 148px; height: 148px;
-  }
-  #dpad::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(rgba(255,255,255,0.14), rgba(255,255,255,0.14)) 50% 0 / 34% 100% no-repeat,
-                linear-gradient(rgba(255,255,255,0.14), rgba(255,255,255,0.14)) 0 50% / 100% 34% no-repeat;
-    border-radius: inherit;
-  }
-  #touch .btn {
-    width: 64px; height: 64px; color: rgba(255, 255, 255, 0.55);
-    font: bold 20px/60px ui-monospace, Menlo, monospace; text-align: center;
-  }
-  #touch .btn.down { background: rgba(255, 255, 255, 0.22); }
-  #btnZ {
-    right: max(20px, env(safe-area-inset-right));
-    bottom: calc(max(18px, env(safe-area-inset-bottom)) + 74px);
-  }
-  #btnX {
-    right: calc(max(20px, env(safe-area-inset-right)) + 74px);
-    bottom: max(18px, env(safe-area-inset-bottom));
-  }
-  #touch #btnR {
-    top: max(14px, env(safe-area-inset-top));
-    right: max(14px, env(safe-area-inset-right));
-    width: 44px; height: 44px; font-size: 15px; line-height: 40px;
-  }
-</style>
 <script>
 (function(){
   try{
@@ -136,7 +67,6 @@
           <button data-set-style="professional"><i class="sw sw--pro"></i>Profesional</button>
           <button data-set-style="gamer"><i class="sw sw--gamer"></i>Undertale</button>
           <button data-set-style="retro"><i class="sw sw--retro"></i>Retro</button>
-          <button data-set-style="rpg"><i class="sw sw--rpg"></i>Minijuego RPG</button>
         </div>
       </div>
       <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
@@ -183,14 +113,13 @@
         <div class="hero__cta">
           <a href="trabajo.html" class="btn btn--solid" data-magnetic>⚔ TRAYECTORIA</a>
           <a href="contacto.html" class="btn btn--ghost" data-magnetic>💬 HABLAR</a>
-          <a href="index.html?style=rpg" class="btn btn--ghost" data-magnetic>🎮 JUGAR MINIJUEGO</a>
         </div>
         <ul class="hero__chips"><li>1º DAM</li><li>SMX</li><li>Erasmus IT</li><li>The Challenge</li><li>IA</li></ul>
       </div>
       <aside class="spec" data-tilt>
         <div class="spec__head"><span>Ficha · 2024</span><span class="live"><i></i>Disponible</span></div>
         <figure class="spec__photo">
-          <img src="https://images.unsplash.com/photo-1607799279861-4dd99b8b0244?q=80&w=720&auto=format&fit=crop" alt="Setup de programación con luces led" width="720" height="450">
+          <img src="https://images.unsplash.com/photo-1607799279861-4dd99b8b0244?q=80&w=720&auto=format&fit=crop" alt="Setup de programación con luces led" width="720" height="450" loading="eager" decoding="async">
           <figcaption>hugo_workspace.jpg</figcaption>
         </figure>
         <dl>
@@ -204,21 +133,6 @@
 </main>
 </div>
 
-<!-- VISTA MINIJUEGO CANVAS (Estilo DEVICE_KNIGHT) -->
-<div id="rpg-mode" hidden>
-  <canvas id="game" width="640" height="480"></canvas>
-  <div id="hud">DEVICE_KNIGHT [Hugo Edition] · Z: Atacar | X: Escudo | R: Reiniciar</div>
-  
-  <button class="chrome" id="back" onclick="exitRpgGame()">✕ Salir</button>
-
-  <div id="touch">
-    <div id="dpad" class="pad"></div>
-    <div id="btnZ" class="btn">Z</div>
-    <div id="btnX" class="btn">X</div>
-    <div id="btnR" class="btn">R</div>
-  </div>
-</div>
-
-<script src="script.js"></script>
+<script src="script.js" defer></script>
 </body>
 </html>

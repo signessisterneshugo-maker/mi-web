@@ -2,12 +2,12 @@
 <html lang="es" data-theme="dark" data-style="unico">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Sobre mí — Hugo Signes Sisternes</title>
 <meta name="theme-color" content="#0A0A0C">
-<meta name="description" content="Quién es Hugo Signes: técnico en SMX, estudiante de 1º DAM y ex becario Erasmus en Italia.">
-<meta property="og:title" content="Hugo Signes Sisternes">
+<meta property="og:title" content="Sobre mí — Hugo Signes Sisternes">
 <meta property="og:type" content="website">
+<meta name="description" content="Perfil personal y técnico de Hugo Signes Sisternes. Formación en SMX, DAM y especialización en sistemas e IA.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -18,7 +18,6 @@
     var url = new URLSearchParams(window.location.search);
     var t = url.get('theme') || localStorage.getItem('hugo-theme') || (matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
     var s = url.get('style') || localStorage.getItem('hugo-style') || 'unico';
-    if(s === 'rpg') s = 'unico'; 
     document.documentElement.setAttribute('data-theme',t);
     document.documentElement.setAttribute('data-style',s);
   }catch(e){}
@@ -27,7 +26,8 @@
 </head>
 <body>
 <a class="skip" href="#main">Saltar al contenido</a>
-<!-- LIBRERÍA DE SPRITES SVG -->
+
+<!-- SPRITES SVG GLOBALES -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="wing" viewBox="0 0 120 120">
     <path d="M60 14 L16 58 L60 58 Z"/><path d="M60 106 L16 62 L60 62 Z"/>
@@ -43,6 +43,7 @@
 <div class="cursor-ring" aria-hidden="true"></div>
 <div class="trail" aria-hidden="true"></div>
 
+<!-- CABECERA -->
 <header class="topbar">
   <div class="topbar__inner">
     <a href="index.html" class="logo" data-magnetic>
@@ -64,9 +65,8 @@
         <div class="style-switch__panel" id="stylePanel" hidden>
           <button data-set-style="unico"><i class="sw sw--unico"></i>Único</button>
           <button data-set-style="professional"><i class="sw sw--pro"></i>Profesional</button>
-          <button data-set-style="gamer"><i class="sw sw--gamer"></i>Gamer</button>
+          <button data-set-style="gamer"><i class="sw sw--gamer"></i>Undertale</button>
           <button data-set-style="retro"><i class="sw sw--retro"></i>Retro</button>
-          <button data-set-style="rpg"><i class="sw sw--rpg"></i>Minijuego RPG</button>
         </div>
       </div>
       <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
@@ -77,6 +77,7 @@
   </div>
 </header>
 
+<!-- RAIL LATERAL -->
 <aside class="rail" aria-hidden="true">
   <span class="rail__top">Hugo Signes · 2024→2026</span>
   <nav class="rail__nav">
@@ -90,38 +91,62 @@
   <div class="rail__bottom"><span class="rail__line"></span><svg class="rail__wing"><use href="#wing"/></svg></div>
 </aside>
 
-<div class="page" id="mainWeb">
+<!-- VISTA PRINCIPAL -->
+<div class="page">
 <main id="main">
-  <section class="section" style="padding-top: 10rem; min-height: 100vh;">
+  <section class="section" id="sobre">
     <div class="section__inner">
-      <div class="section__head">
-        <p class="section__num">01 — Sobre mí</p>
-        <h2 class="section__title mask"><span>Quién soy</span></h2>
+      <div class="section__head" data-reveal>
+        <span class="section__num">01 // Perfil Personal</span>
+        <h1 class="section__title">Sobre mí</h1>
+        <p class="section__sub">Formación técnica sólida, perspectiva internacional y una mentalidad orientada a la resolución metódica de problemas.</p>
       </div>
+
       <div class="about">
-        <div class="about__sticky">
+        <div class="about__sticky" data-reveal data-d="1">
           <figure class="about__portrait">
-            <!-- ¡Ancho y alto añadidos para evitar el CLS! -->
-            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=600&auto=format&fit=crop" alt="Programador trabajando en equipo" width="600" height="750" loading="lazy">
-            <figcaption><span>hugo_dev.jpg</span><span>· 2024</span></figcaption>
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=720&auto=format&fit=crop" alt="Retrato o representación de perfil tecnológico" width="720" height="900" loading="eager" decoding="async">
+            <figcaption><span>hugo_signes.png</span><span>Xàtiva, València</span></figcaption>
           </figure>
-          <div class="about__badge"><span>SMX</span><span>DAM</span><span>Erasmus</span><span>IA</span></div>
+          <div class="about__badge">
+            <span>Técnico SMX</span>
+            <span>Estudiante DAM</span>
+            <span>Erasmus IT</span>
+          </div>
         </div>
-        <div class="about__text">
-          <p class="about__lead">Empecé en el grado medio de <strong>SMX</strong> montando y reparando equipos. Hice un <strong>Erasmus de 3 meses en Italia</strong> en la empresa <strong>ESSEPI Tech</strong>. Ahora curso <strong>1º de DAM</strong> en el IES Simarro, donde programo a diario.</p>
-          <p class="about__p">Mi proyecto más significativo: <strong>Volver a Encender</strong>, creado con 3 compañeros. Llevamos la idea hasta <strong>The Challenge de la Fundación «la Caixa»</strong>. Vengo del hardware, pero mi sitio está en el código.</p>
-          <blockquote class="about__quote">“No quiero solo usar la tecnología que viene. Quiero programarla.”</blockquote>
+
+        <div class="about__content" data-reveal data-d="2">
+          <p class="about__lead">Entiendo la tecnología desde la base: desde el hardware y la infraestructura de redes hasta la lógica de negocio en el desarrollo de software.</p>
+          <div class="about__text">
+            <p class="about__p">Mi recorrido comenzó con el ciclo de <b>Sistemas Microinformáticos y Redes (SMX)</b>, lo que me aportó una visión profunda sobre cómo funcionan los equipos, la ciberseguridad y los entornos corporativos. Esta etapa se vio enriquecida con una estancia internacional de beca <b>Erasmus en ESSEPI Tech (Italia)</b>.</p>
+            <blockquote class="about__quote">
+              "El código limpio y la infraestructura robusta son los cimientos de cualquier solución tecnológica con verdadero impacto."
+            </blockquote>
+            <p class="about__p">Actualmente curso <b>1º de Desarrollo de Aplicaciones Multiplataforma (DAM)</b>, enfocando mi aprendizaje hacia la creación de aplicaciones eficientes y preparándome para dar el salto hacia la especialización en <b>Inteligencia Artificial</b>.</p>
+          </div>
+
           <div class="about__stats">
-            <div class="stat"><span class="stat__num" data-count="3">0</span><span class="stat__label">meses en Italia</span></div>
-            <div class="stat"><span class="stat__num" data-count="4">0</span><span class="stat__label">personas en VAE</span></div>
-            <div class="stat"><span class="stat__num" data-count="1">0</span><span class="stat__label">grados superados</span></div>
+            <div class="stat">
+              <span class="stat__num" data-count="2">0</span>
+              <span class="stat__label">Ciclos Formativos</span>
+            </div>
+            <div class="stat">
+              <span class="stat__num" data-count="1">0</span>
+              <span class="stat__label">Experiencia Erasmus</span>
+            </div>
+            <div class="stat">
+              <span class="stat__num" data-count="100">0</span>%
+              <span class="stat__label">Dedicación e Interés</span>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
   </section>
 </main>
 </div>
-<script src="script.js"></script>
+
+<script src="script.js" defer></script>
 </body>
 </html>

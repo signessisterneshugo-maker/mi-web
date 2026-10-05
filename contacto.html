@@ -2,12 +2,12 @@
 <html lang="es" data-theme="dark" data-style="unico">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Contacto — Hugo Signes Sisternes</title>
 <meta name="theme-color" content="#0A0A0C">
-<meta name="description" content="Contacta con Hugo Signes para prácticas (FCT), proyectos de equipo o conversaciones técnicas.">
-<meta property="og:title" content="Hugo Signes Sisternes">
+<meta property="og:title" content="Contacto — Hugo Signes Sisternes">
 <meta property="og:type" content="website">
+<meta name="description" content="Ponte en contacto con Hugo Signes Sisternes. Abierto a ofertas de FCT, proyectos de desarrollo y colaboración en IA.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -18,7 +18,6 @@
     var url = new URLSearchParams(window.location.search);
     var t = url.get('theme') || localStorage.getItem('hugo-theme') || (matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
     var s = url.get('style') || localStorage.getItem('hugo-style') || 'unico';
-    if(s === 'rpg') s = 'unico'; 
     document.documentElement.setAttribute('data-theme',t);
     document.documentElement.setAttribute('data-style',s);
   }catch(e){}
@@ -27,7 +26,8 @@
 </head>
 <body>
 <a class="skip" href="#main">Saltar al contenido</a>
-<!-- LIBRERÍA DE SPRITES SVG -->
+
+<!-- SPRITES SVG GLOBALES -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="wing" viewBox="0 0 120 120">
     <path d="M60 14 L16 58 L60 58 Z"/><path d="M60 106 L16 62 L60 62 Z"/>
@@ -43,6 +43,7 @@
 <div class="cursor-ring" aria-hidden="true"></div>
 <div class="trail" aria-hidden="true"></div>
 
+<!-- CABECERA -->
 <header class="topbar">
   <div class="topbar__inner">
     <a href="index.html" class="logo" data-magnetic>
@@ -64,9 +65,8 @@
         <div class="style-switch__panel" id="stylePanel" hidden>
           <button data-set-style="unico"><i class="sw sw--unico"></i>Único</button>
           <button data-set-style="professional"><i class="sw sw--pro"></i>Profesional</button>
-          <button data-set-style="gamer"><i class="sw sw--gamer"></i>Gamer</button>
+          <button data-set-style="gamer"><i class="sw sw--gamer"></i>Undertale</button>
           <button data-set-style="retro"><i class="sw sw--retro"></i>Retro</button>
-          <button data-set-style="rpg"><i class="sw sw--rpg"></i>Minijuego RPG</button>
         </div>
       </div>
       <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
@@ -77,6 +77,7 @@
   </div>
 </header>
 
+<!-- RAIL LATERAL -->
 <aside class="rail" aria-hidden="true">
   <span class="rail__top">Hugo Signes · 2024→2026</span>
   <nav class="rail__nav">
@@ -90,41 +91,53 @@
   <div class="rail__bottom"><span class="rail__line"></span><svg class="rail__wing"><use href="#wing"/></svg></div>
 </aside>
 
-<div class="page" id="mainWeb">
+<!-- VISTA PRINCIPAL -->
+<div class="page">
 <main id="main">
-  <section class="section" style="padding-top: 10rem; min-height: 100vh;">
+  <section class="section" id="contacto">
     <div class="section__inner">
-      <div class="section__head">
-        <p class="section__num">05 — Contacto</p>
-        <h2 class="section__title mask"><span>Hablemos de código, robots o IA</span></h2>
-        <p class="section__sub">Abierto a prácticas (FCT), proyectos de equipo y cualquier conversación técnica.</p>
+      <div class="section__head" data-reveal>
+        <span class="section__num">05 // Contacto</span>
+        <h1 class="section__title">Hablemos de código</h1>
+        <p class="section__sub">¿Tienes una propuesta de FCT, un proyecto tecnológico o quieres hablar sobre Inteligencia Artificial? Escríbeme directamente.</p>
       </div>
-      
+
       <div class="contact-grid">
-        <!-- FORMULARIO REAL (Solo necesitas cambiar TU_ID_AQUI por el ID que te dé Formspree) -->
-        <form action="https://formspree.io/f/TU_ID_AQUI" method="POST" class="real-form" novalidate>
-          <input type="text" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
-          <div class="form-group">
-            <label for="name">Nombre</label>
-            <input type="text" id="name" name="name" autocomplete="name" required placeholder="Tu nombre">
+        <div class="contact-info" data-reveal data-d="1">
+          <p class="about__lead">Actualmente cursando 1º de DAM en Xàtiva, con experiencia internacional previa en Italia (ESSEPI Tech) y proyectos de emprendimiento tecnológico como <em>Volver a Encender</em>.</p>
+          <p class="about__p">Estoy buscando oportunidades de colaboración, prácticas FCT y retos donde aplicar desarrollo de software e IA.</p>
+          
+          <div class="mailrow">
+            <a href="mailto:hugsigsis@alu.edu.gva.es" id="mail">hugsigsis@alu.edu.gva.es</a>
+            <button class="btn btn--ghost" id="copy" type="button">Copiar email</button>
           </div>
-          <div class="form-group">
-            <label for="email">Correo electrónico</label>
-            <input type="email" id="email" name="email" autocomplete="email" required placeholder="tu@email.com">
-          </div>
-          <div class="form-group">
-            <label for="message">Mensaje</label>
-            <textarea id="message" name="message" rows="5" required placeholder="¿En qué te puedo ayudar?"></textarea>
-          </div>
-          <button type="submit" class="btn btn--solid" data-magnetic>Enviar mensaje</button>
-        </form>
-        
-        <div class="contact-info">
-          <p class="footer__note">O escríbeme directamente:</p>
-          <div class="mailrow" style="margin-top: 1.5rem;">
-            <a id="mail" href="mailto:hugsigsis@alu.edu.gva.es">hugsigsis@alu.edu.gva.es</a>
-            <button id="copy" class="btn btn--ghost" type="button" data-magnetic>Copiar correo</button>
-          </div>
+
+          <ul class="social" style="margin-top: 2rem;">
+            <li><a href="https://github.com/" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="https://linkedin.com/" target="_blank" rel="noopener">LinkedIn</a></li>
+            <li><a href="index.html">Portfolio Principal</a></li>
+          </ul>
+        </div>
+
+        <div class="contact-form-wrap" data-reveal data-d="2">
+          <form class="real-form" action="https://formspree.io/f/TU_ID_AQUI" method="POST">
+            <div class="form-group">
+              <label for="name">Tu Nombre / Empresa</label>
+              <input type="text" id="name" name="name" required placeholder="Ej. Juan Pérez">
+            </div>
+            <div class="form-group">
+              <label for="email">Correo Electrónico</label>
+              <input type="email" id="email" name="email" required placeholder="tucorreo@ejemplo.com">
+            </div>
+            <div class="form-group">
+              <label for="message">Mensaje</label>
+              <textarea id="message" name="message" required placeholder="Cuéntame los detalles de la propuesta..."></textarea>
+            </div>
+            <!-- Honeypot antispam -->
+            <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off">
+            
+            <button type="submit" class="btn btn--solid">Enviar Mensaje ✉</button>
+          </form>
         </div>
       </div>
     </div>
@@ -132,7 +145,9 @@
 </main>
 </div>
 
-<div class="toast" id="toast" role="status" aria-live="polite">Correo copiado ✓</div>
-<script src="script.js"></script>
+<!-- TOAST -->
+<div class="toast" id="toast">¡Correo copiado al portapapeles!</div>
+
+<script src="script.js" defer></script>
 </body>
 </html>
