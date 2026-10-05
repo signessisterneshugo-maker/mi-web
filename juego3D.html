@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark" data-style="unico">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Juego 3D & Hologramas — Hugo Signes Sisternes</title>
+<meta name="theme-color" content="#0A0A0C">
+<meta property="og:title" content="Juego 3D & Hologramas — Hugo Signes Sisternes">
+<meta property="og:type" content="website">
+<meta name="description" content="Explora el entorno 3D interactivo en primera persona de Hugo Signes Sisternes. Navega por los hologramas y construye en tiempo real.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* Estilos específicos para la experiencia 3D integrada */
+  body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+  #webgl-container { position: absolute; inset: 0; z-index: 1; }
+  
+  .game-hud { position: absolute; inset: 0; z-index: 10; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: 2rem; font-family: var(--font-label); }
+  .hud-top { display: flex; justify-content: flex-end; align-items: flex-start; }
+  
+  .crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.7); border-radius: 50%; z-index: 10; pointer-events: none; display: grid; place-items: center; }
+  .crosshair::before { content: ""; width: 3px; height: 3px; background: var(--accent); border-radius: 50%; }
+
+  .controls-hint { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); background: rgba(10,10,15,0.9); border: 1px solid var(--line-strong); padding: 0.8rem 1.5rem; border-radius: var(--r-btn); font-size: 0.7rem; color: var(--text); letter-spacing: 0.1em; text-transform: uppercase; pointer-events: auto; text-align: center; box-shadow: var(--card-shadow); }
+
+  #instructions-overlay { position: absolute; inset: 0; background: rgba(5,5,8,0.92); z-index: 100; display: grid; place-items: center; text-align: center; padding: 2rem; backdrop-filter: blur(16px); transition: opacity 0.5s ease; }
+  .modal-box { max-width: 540px; border: 1px solid var(--line-strong); background: var(--bg-2); padding: 2.5rem; border-radius: var(--r-lg); box-shadow: var(--card-shadow); }
+  .modal-box h2 { font-size: 2rem; text-transform: uppercase; margin-bottom: 1rem; color: var(--text); }
+  .modal-box h2 span { color: var(--accent); }
+  .modal-box p { color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.8rem; }
+  .key-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; text-align: left; font-family: var(--font-label); font-size: 0.75rem; margin-bottom: 2rem; }
+  .key-list div span { background: var(--bg-3); border: 1px solid var(--line-strong); padding: 0.2rem 0.5rem; border-radius: 4px; color: var(--accent); margin-right: 0.5rem; }
+</style>
+</head>
+<body>
+
+<!-- PANTALLA DE INSTRUCCIONES INICIAL -->
+<div id="instructions-overlay">
+  <div class="modal-box">
+    <h2>Juego <span>3D</span></h2>
+    <p>Explora tu portfolio en un entorno 3D en primera persona. Acércate a los paneles holográficos para viajar a las secciones o haz clic en el espacio para construir bloques tecnológicos en tiempo real.</p>
+    <div class="key-list">
+      <div><span>W A S D</span> Moverse</div>
+      <div><span>MOUSE</span> Rotar vista</div>
+      <div><span>CLIC IZQ</span> Construir / Entrar a portal</div>
+      <div><span>ESC</span> Liberar ratón</div>
+    </div>
+    <button class="btn btn--solid" id="startBtn" style="width: 100%; justify-content: center;">ENTRAR AL JUEGO 3D</button>
+  </div>
+</div>
+
+<!-- SPRITES SVG -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="wing" viewBox="0 0 120 120">
+    <path d="M60 14 L16 58 L60 58 Z"/><path d="M60 106 L16 62 L60 62 Z"/>
+    <path d="M60 14 L104 58 L60 58 Z"/><path d="M60 106 L104 62 L60 62 Z"/>
+    <rect x="50" y="50" width="20" height="20" transform="rotate(45 60 60)"/>
+  </symbol>
+</svg>
+
+<!-- CABECERA SUPERIOR -->
+<header class="topbar is-scrolled">
+  <div class="topbar__inner">
+    <a href="index.html" class="logo">
+      <svg class="logo__mark" aria-hidden="true"><use href="#wing"/></svg>
+      <span class="logo__txt"><b>hugo</b>.signes</span>
+    </a>
+    <nav class="topnav" aria-label="Secciones">
+      <a href="sobre.html">Sobre</a>
+      <a href="trabajo.html">Trayectoria</a>
+      <a href="gusta.html">Me gusta</a>
+      <a href="futuro.html">Futuro</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="juego3D.html" class="is-active" style="color: var(--accent);">3D</a>
+    </nav>
+    <div class="tools">
+      <a href="index.html" class="style-switch__btn" style="text-decoration:none;">← Volver</a>
+    </div>
+  </div>
+</header>
+
+<!-- RAIL LATERAL -->
+<aside class="rail" aria-hidden="true">
+  <span class="rail__top">Hugo Signes</span>
+  <nav class="rail__nav">
+    <a href="index.html" data-label="Inicio">00<i class="rail__dot"></i></a>
+    <a href="sobre.html" data-label="Sobre mí">01<i class="rail__dot"></i></a>
+    <a href="trabajo.html" data-label="Trayectoria">02<i class="rail__dot"></i></a>
+    <a href="gusta.html" data-label="Me gusta">03<i class="rail__dot"></i></a>
+    <a href="futuro.html" data-label="Futuro IA">04<i class="rail__dot"></i></a>
+    <a href="contacto.html" data-label="Contacto">05<i class="rail__dot"></i></a>
+    <a href="juego3D.html" data-label="Juego 3D" class="is-active">3D<i class="rail__dot"></i></a>
+  </nav>
+  <div class="rail__bottom"><span class="rail__line"></span><svg class="rail__wing"><use href="#wing"/></svg></div>
+</aside>
+
+<!-- CONTENEDOR 3D -->
+<div id="webgl-container"></div>
+<div class="crosshair" aria-hidden="true"></div>
+
+<div class="game-hud">
+  <div class="hud-top"></div>
+  <div class="controls-hint">
+    Usa <b>W, A, S, D</b> para moverte · Haz <b>Clic</b> para construir o interactuar con los hologramas
+  </div>
+</div>
+
+<!-- Scripts Three.js y Lógica 3D -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
+<script src="juego3D.js"></script>
+</body>
+</html>
