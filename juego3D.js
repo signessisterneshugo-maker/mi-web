@@ -142,6 +142,38 @@
   }
   syncWeatherWith3D();
 
+  async function fetchTechNews() {
+    const rssUrl = "https://feeds.weblogssl.com/xataka2";
+    const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+
+    try {
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+      if (data.status === "ok" && data.items && data.items.length > 0) {
+        return data.items.slice(0, 5).map(function (item) {
+          return "📰 [XATAKA]: " + item.title;
+        });
+      }
+    } catch (err) {
+      console.warn("No se pudieron cargar noticias en vivo, usando respaldo local:", err);
+    }
+
+    return [
+      "📰 [NOTICIA TECH]: La IA generativa revoluciona el desarrollo de software en 2026.",
+      "⚡ [SISTEMA]: Red cibernética de Madrid funcionando a máxima capacidad.",
+      "🤖 [NOTICIA IA]: Avances en agentes autónomos aplicados a entornos 3D."
+    ];
+  }
+
+  async function initNpcNews() {
+    const liveNews = await fetchTechNews();
+    npcs.forEach(function (npc) {
+      if (npc.role && /periodista|reportero|ia|datos/i.test(npc.role)) {
+        npc.news = liveNews;
+      }
+    });
+  }
+
   // 7. SISTEMA DE NPCs CON DIÁLOGOS (PREPARADO PARA API DE NOTICIAS)
   var npcs = [];
   var activeNpc = null;
@@ -174,9 +206,9 @@
     if (typeTimer) clearInterval(typeTimer);
     dialogUI.style.display = "block";
     npcNameEl.textContent = npc.role + " · " + npc.name;
-    
-    // Si en el futuro conectas una API de noticias, sustituyes este array por las llamadas `fetch`
-    var newsFeed = npc.news;
+    npc.isTalking = true;
+
+    var newsFeed = npc.news || ["📰 [NPC]: Sistema de noticias en línea activo."];
     var randomMessage = newsFeed[Math.floor(Math.random() * newsFeed.length)];
 
     var charIdx = 0;
@@ -191,6 +223,9 @@
   function hideNpcDialog() {
     dialogUI.style.display = "none";
     if (typeTimer) clearInterval(typeTimer);
+    npcs.forEach(function (npc) {
+      npc.isTalking = false;
+    });
   }
 
   // Creador de Modelos 3D para los NPCs
@@ -199,14 +234,24 @@
 
     // Cuerpo / Armadura
     var bodyGeo = new THREE.CylinderGeometry(0.5, 0.3, 1.6, 8);
-    var bodyMat = new THREE.MeshStandardMaterial({ color: palette.npc, roughness: 0.3, metalness: 0.8 });
+    var bodyMat = new THREE.MeshStandardMaterial({
+      color: palette.npc,
+      emissive: palette.primary,
+      emissiveIntensity: 0.15,
+      roughness: 0.3,
+      metalness: 0.8
+    });
     var body = new THREE.Mesh(bodyGeo, bodyMat);
     body.position.y = 1.0;
     group.add(body);
 
     // Cabeza Holográfica
     var headGeo = new THREE.SphereGeometry(0.35, 16, 16);
-    var headMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: palette.primary, emissiveIntensity: 0.6 });
+    var headMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      emissive: palette.primary,
+      emissiveIntensity: 0.7
+    });
     var head = new THREE.Mesh(headGeo, headMat);
     head.position.y = 2.1;
     group.add(head);
@@ -232,12 +277,15 @@
     var npcObj = {
       mesh: group,
       headMesh: head,
+      visorMesh: visor,
       ringMesh: ring,
       name: name,
       role: role,
       news: news,
       x: x,
-      z: z
+      z: z,
+      idleOffset: Math.random() * Math.PI * 2,
+      isTalking: false
     };
     npcs.push(npcObj);
   }
@@ -254,6 +302,8 @@
     "⚡ [SISTEMA]: Estado de la red al 99.8%. Todos los hologramas funcionan con sincronización de estado.",
     "🤖 [NOTICIA IA]: Nuevos agentes autónomos ya son capaces de refactorizar código en tiempo real."
   ]);
+
+  initNpcNews();
 
   // 8. Modal Holográfico para Navegación Web
   var previewModal = document.createElement("div");
@@ -284,16 +334,19 @@
   var holoCloseBtn = document.getElementById("holo-close");
 
   function openHologram(url, title) {
-    controls.unlock();
     var fullUrl = url + "?theme=" + rootTheme + "&style=" + currentStyle;
     holoFrame.src = fullUrl;
     holoTitle.textContent = "🌐 Previsualización: " + title;
     holoOpenExt.href = fullUrl;
+    
+    // 1. Mostrar modal antes de desbloquear controles para evitar conflictos
     previewModal.style.display = "flex";
     setTimeout(function () {
       previewModal.style.opacity = "1";
       previewModal.style.transform = "translate(-50%, -50%) scale(1)";
     }, 10);
+
+    controls.unlock();
   }
 
   function closeHologram() {
@@ -302,8 +355,18 @@
     setTimeout(function () {
       previewModal.style.display = "none";
       holoFrame.src = "";
+      
+      // 2. Volver a bloquear el puntero al cerrar el holograma
+      controls.lock();
     }, 300);
   }
+
+  // 3. Reactivar el puntero al hacer clic en el contenedor WebGL si está desbloqueado
+  container.addEventListener("click", function () {
+    if (!controls.isLocked && previewModal.style.display !== "flex") {
+      controls.lock();
+    }
+  });
 
   holoCloseBtn.addEventListener("click", closeHologram);
 
@@ -507,10 +570,28 @@
     var time = performance.now();
     var delta = (time - prevTime) / 1000;
 
-    // Animación continua de NPCs
+    // Animación viva de NPCs: se mueven con un idle suave y miran al jugador cuando hablan
     npcs.forEach(function (npc) {
-      npc.headMesh.position.y = 2.1 + Math.sin(time * 0.003 + npc.x) * 0.08;
-      npc.ringMesh.rotation.z += 0.015;
+      var angleToPlayer = Math.atan2(camera.position.x - npc.mesh.position.x, camera.position.z - npc.mesh.position.z);
+
+      if (npc.isTalking) {
+        npc.mesh.rotation.y = angleToPlayer;
+        npc.headMesh.rotation.y = -angleToPlayer * 0.5;
+        npc.visorMesh.rotation.y = -angleToPlayer * 0.5;
+        npc.headMesh.position.y = 2.12;
+        npc.ringMesh.rotation.z += 0.03;
+        return;
+      }
+
+      var idleX = Math.sin(time * 0.0015 + npc.idleOffset) * 0.55;
+      var idleZ = Math.cos(time * 0.0013 + npc.idleOffset) * 0.4;
+      npc.mesh.position.x = npc.x + idleX;
+      npc.mesh.position.z = npc.z + idleZ;
+      npc.mesh.rotation.y = Math.sin(time * 0.001 + npc.idleOffset) * 0.8;
+      npc.headMesh.position.y = 2.12 + Math.sin(time * 0.003 + npc.idleOffset) * 0.12;
+      npc.headMesh.rotation.y = Math.sin(time * 0.002 + npc.idleOffset) * 0.45;
+      npc.visorMesh.rotation.y = Math.sin(time * 0.002 + npc.idleOffset) * 0.5;
+      npc.ringMesh.rotation.z += 0.02;
     });
 
     // Relámpagos dinámicos si hay tormenta
