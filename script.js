@@ -32,6 +32,52 @@
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
+  /* ---------- Clima en tiempo real ---------- */
+  function weatherIconFromCode(code) {
+    var map = {
+      0: "☀️", 1: "🌤️", 2: "⛅", 3: "☁️", 45: "🌫️", 48: "🌫️",
+      51: "🌦️", 53: "🌦️", 55: "🌧️", 56: "🌧️", 57: "🌧️",
+      61: "🌦️", 63: "🌧️", 65: "🌧️", 66: "🌧️", 67: "🌧️",
+      71: "❄️", 73: "❄️", 75: "❄️", 77: "❄️", 80: "🌦️",
+      81: "🌧️", 82: "⛈️", 85: "🌨️", 86: "🌨️", 95: "⛈️",
+      96: "⛈️", 99: "⛈️"
+    };
+    return map[code] || "☁️";
+  }
+
+  function loadWeather() {
+    var tempEl = $("#weather-temp");
+    var iconEl = $("#weather-icon");
+    var cityEl = $("#weather-city");
+    if (!tempEl || !iconEl || !cityEl) return;
+
+    var city = "Madrid";
+    var geocodeUrl = "https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(city) + "&count=1&language=es&format=json";
+
+    fetch(geocodeUrl)
+      .then(function (res) { return res.json(); })
+      .then(function (geo) {
+        var result = geo && geo.results && geo.results[0];
+        if (!result) throw new Error("Ciudad no encontrada");
+        cityEl.textContent = result.name || city;
+        var weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=" + result.latitude + "&longitude=" + result.longitude + "&current=temperature_2m,weather_code&timezone=auto&language=es";
+        return fetch(weatherUrl);
+      })
+      .then(function (res) { return res.json(); })
+      .then(function (weather) {
+        var current = weather && weather.current;
+        if (!current) throw new Error("No hay datos meteorológicos");
+        iconEl.textContent = weatherIconFromCode(current.weather_code);
+        tempEl.textContent = Math.round(current.temperature_2m) + "°C";
+      })
+      .catch(function () {
+        cityEl.textContent = city;
+        iconEl.textContent = "☁️";
+        tempEl.textContent = "Clima no disponible";
+      });
+  }
+  loadWeather();
+
   /* ---------- Gestión de Tema (Claro / Oscuro con persistencia) ---------- */
   var tBtn = $("#themeToggle");
   function syncTheme() {

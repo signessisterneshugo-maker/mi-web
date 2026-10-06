@@ -125,6 +125,10 @@ html[data-style="professional"] .cursor,html[data-style="professional"] .cursor-
 .topnav a:hover,.topnav a.is-active{color:var(--text); transform: translateY(-2px)}
 .topnav a:hover::after,.topnav a.is-active::after{transform:scaleX(1)}
 .tools{display:flex;align-items:center;gap:.5rem}
+.weather-badge{display:inline-flex;align-items:center;gap:.55rem;padding:.42rem .8rem;border:1px solid var(--line-strong);background:color-mix(in srgb, var(--bg-2) 80%, transparent);border-radius:999px;color:var(--text);font-family:var(--font-label);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;box-shadow:var(--card-shadow);backdrop-filter:blur(10px)}
+.weather-badge span{display:inline-block}
+.weather-badge #weather-icon{font-size:1rem;line-height:1}
+.weather-city{color:var(--muted)}
 .style-switch{position:relative}
 .style-switch__btn{display:flex;align-items:center;gap:.5rem;height:42px;padding:0 .95rem;border:1px solid var(--line-strong);background:transparent;color:var(--text);border-radius:var(--r-btn);font-family:var(--font-label);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;transition:.3s var(--ease)}
 .style-switch__btn:hover{border-color:var(--accent);color:var(--accent);box-shadow:var(--glow); transform: translateY(-2px)}
