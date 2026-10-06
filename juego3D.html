@@ -25,6 +25,22 @@
 
   .controls-hint { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); background: rgba(10,10,15,0.9); border: 1px solid var(--line-strong); padding: 0.8rem 1.5rem; border-radius: var(--r-btn); font-size: 0.7rem; color: var(--text); letter-spacing: 0.1em; text-transform: uppercase; pointer-events: auto; text-align: center; box-shadow: var(--card-shadow); }
 
+  .mobile-controls { position: absolute; inset: 0; z-index: 15; display: none; pointer-events: none; }
+  .mobile-controls.is-active { display: block; }
+  .move-pad { position: absolute; left: 1rem; bottom: 1rem; display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(3, 48px); gap: 0.35rem; pointer-events: auto; }
+  .move-btn { border: 1px solid rgba(255,255,255,0.2); background: rgba(10,10,15,0.66); color: var(--text); border-radius: 14px; font-size: 1.1rem; font-weight: 700; backdrop-filter: blur(8px); user-select: none; touch-action: none; }
+  .move-btn[data-move="up"] { grid-column: 2; grid-row: 1; }
+  .move-btn[data-move="left"] { grid-column: 1; grid-row: 2; }
+  .move-btn[data-move="down"] { grid-column: 2; grid-row: 3; }
+  .move-btn[data-move="right"] { grid-column: 3; grid-row: 2; }
+  .move-btn.is-pressed { background: rgba(228,23,43,0.45); border-color: rgba(228,23,43,0.9); box-shadow: 0 0 18px rgba(228,23,43,0.34); }
+
+  .look-pad { position: absolute; right: 1rem; bottom: 1rem; width: 150px; height: 150px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); background: rgba(10,10,15,0.3); backdrop-filter: blur(8px); pointer-events: auto; touch-action: none; }
+  .look-pad::before { content: ""; position: absolute; inset: 22%; border: 1px solid rgba(255,255,255,0.22); border-radius: 50%; }
+  .look-pad::after { content: "MIRAR"; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 0.52rem; letter-spacing: 0.18em; color: rgba(255,255,255,0.72); }
+
+  .jump-btn { position: absolute; right: 10.5rem; bottom: 2.2rem; width: 64px; height: 64px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); background: rgba(228,23,43,0.22); color: #fff; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; pointer-events: auto; touch-action: none; }
+
   #instructions-overlay { position: absolute; inset: 0; background: rgba(5,5,8,0.92); z-index: 100; display: grid; place-items: center; text-align: center; padding: 2rem; backdrop-filter: blur(16px); transition: opacity 0.5s ease; }
   .modal-box { max-width: 540px; border: 1px solid var(--line-strong); background: var(--bg-2); padding: 2.5rem; border-radius: var(--r-lg); box-shadow: var(--card-shadow); }
   .modal-box h2 { font-size: 2rem; text-transform: uppercase; margin-bottom: 1rem; color: var(--text); }
@@ -99,6 +115,17 @@
 <!-- CONTENEDOR 3D -->
 <div id="webgl-container"></div>
 <div class="crosshair" aria-hidden="true"></div>
+
+<div class="mobile-controls" id="mobile-controls" aria-label="Controles táctiles">
+  <div class="move-pad" aria-label="Mover">
+    <button class="move-btn" type="button" data-move="up" aria-label="Mover arriba">▲</button>
+    <button class="move-btn" type="button" data-move="left" aria-label="Mover izquierda">◀</button>
+    <button class="move-btn" type="button" data-move="down" aria-label="Mover abajo">▼</button>
+    <button class="move-btn" type="button" data-move="right" aria-label="Mover derecha">▶</button>
+  </div>
+  <button class="jump-btn" type="button" id="mobile-jump-btn" aria-label="Saltar">JUMP</button>
+  <div class="look-pad" id="mobile-look-pad" aria-label="Girar cámara"></div>
+</div>
 
 <div class="game-hud">
   <div class="hud-top"></div>

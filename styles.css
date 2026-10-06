@@ -526,11 +526,52 @@ html[data-style="gamer"] .cursor-ring { display: none; }
   .cell--rock{grid-column:span 6;grid-row:auto}.cell--games,.cell--robot{grid-column:span 6}
 }
 @media(max-width:820px){
-  :root{--rail-w:0px}.rail{display:none}.topnav{display:none}.burger{display:flex}.page{padding-left:0}
-  .hero{min-height:auto;padding:6.5rem 0 3rem}
+  :root{--rail-w:0px; --wrap:min(92vw, 900px)}
+  .rail{display:none}
+  .topnav{display:none}
+  .burger{display:flex}
+  .page{padding-left:0}
+  .topbar__inner{padding:.7rem 0; gap:.5rem; flex-wrap:wrap; justify-content:space-between}
+  .logo__txt{font-size:.6rem; letter-spacing:.12em}
+  .tools{flex:1; justify-content:flex-end; gap:.4rem; flex-wrap:wrap}
+  .weather-badge{padding:.35rem .6rem; font-size:.5rem; letter-spacing:.05em}
+  .style-switch__btn,.theme-toggle{height:36px}
+  .hero{min-height:auto;padding:6.2rem 0 3rem}
+  .hero__inner{grid-template-columns:1fr; gap:1.4rem}
+  .kicker{font-size:.56rem; letter-spacing:.12em; margin-bottom:1rem}
+  .hero__name{font-size:clamp(2.5rem,16vw,5.2rem); margin-bottom:1.2rem}
+  .hero__phrase{font-size:1.03rem; margin-bottom:1.5rem}
+  .hero__cta{flex-direction:column; align-items:stretch; margin-bottom:1.5rem}
+  .hero__cta .btn{width:100%; justify-content:center}
+  .hero__chips{gap:.4rem}
+  .hero__chips li{font-size:.54rem; letter-spacing:.08em; padding:.38rem .7rem}
+  .spec{padding:1rem; max-width:none}
+  .spec__head{font-size:.52rem; letter-spacing:.12em}
+  .section{padding:4rem 0}
   .road{grid-template-columns:repeat(2,1fr);gap:1.4rem}.road::before,.road__fill{display:none}
   .tabs__btn{min-width:auto;flex:1 1 100%;border-right:0;border-bottom:1px solid var(--line)}
   .contact-grid{grid-template-columns:1fr}
+  .chat-launcher{right:.8rem; bottom:.8rem; padding:.7rem .8rem; font-size:.58rem; letter-spacing:.1em}
+  .ai-chat-panel{right:.8rem; bottom:4.3rem; width:min(88vw, 340px)}
+  .ai-chat-panel__form{flex-direction:column}
+  .ai-chat-panel__form button{width:100%}
+}
+
+@media(max-width:480px){
+  .topbar__inner{align-items:flex-start}
+  .tools{width:100%; justify-content:space-between}
+  .weather-badge{flex:1 1 100%; justify-content:center; order:3}
+  .style-switch__btn span{display:none}
+  .style-switch__btn{padding:0 .7rem}
+  .theme-toggle{flex-shrink:0}
+  .hero__name{font-size:clamp(2.2rem, 18vw, 4rem)}
+  .kicker{gap:.45rem; font-size:.5rem}
+  .hero__chips{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr));}
+  .hero__chips li{justify-self:stretch; text-align:center}
+  .spec__photo img{aspect-ratio:4/3}
+  .spec dl{grid-template-columns:1fr; gap:.2rem .5rem}
+  .spec dd{text-align:left}
+  .chat-message{max-width:100%}
 }
 
 .mnav{display:none}

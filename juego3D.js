@@ -77,6 +77,75 @@
   var skyDome = new THREE.Mesh(skyGeo, skyMat);
   scene.add(skyDome);
 
+  var nasaTextureLoader = new THREE.TextureLoader();
+  var nasaTexture = null;
+  var nasaDisplay = null;
+
+  function createNasaDisplay() {
+    var nasaScreenMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.9,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+    var nasaScreenMesh = new THREE.Mesh(new THREE.PlaneGeometry(14, 8), nasaScreenMat);
+    nasaScreenMesh.position.set(0, 8, -76);
+    nasaScreenMesh.rotation.y = 0;
+    scene.add(nasaScreenMesh);
+    nasaDisplay = nasaScreenMesh;
+  }
+
+  createNasaDisplay();
+
+  function applyNasaTexture(texture) {
+    if (!texture || !skyMat) return;
+    nasaTexture = texture;
+    texture.colorSpace = texture.colorSpace || THREE.SRGBColorSpace;
+    if (texture.colorSpace) {
+      texture.colorSpace = THREE.SRGBColorSpace;
+    }
+    if (texture.encoding) {
+      texture.encoding = THREE.sRGBEncoding;
+    }
+    skyMat.color.setHex(0xffffff);
+    skyMat.map = texture;
+    skyMat.needsUpdate = true;
+    if (nasaDisplay && nasaDisplay.material) {
+      nasaDisplay.material.map = texture;
+      nasaDisplay.material.needsUpdate = true;
+      nasaDisplay.visible = true;
+    }
+  }
+
+  async function fetchNasaApod() {
+    var apiUrl = "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY";
+
+    try {
+      var res = await fetch(apiUrl);
+      if (!res.ok) throw new Error("APOD no disponible");
+      var data = await res.json();
+      if (!data || (!data.hdurl && !data.url)) return;
+      var imageUrl = data.hdurl || data.url;
+
+      nasaTextureLoader.crossOrigin = "anonymous";
+      nasaTextureLoader.load(
+        imageUrl,
+        function (texture) {
+          applyNasaTexture(texture);
+        },
+        function (error) {
+          console.warn("No se pudo cargar la foto de la NASA para el cielo:", error);
+        },
+        function () {
+          console.warn("No se pudo cargar la foto de la NASA para el cielo.");
+        }
+      );
+    } catch (err) {
+      console.warn("APOD no disponible, usando cielo base:", err);
+    }
+  }
+
   var sunMoonMesh = new THREE.Mesh(
     new THREE.SphereGeometry(12, 32, 32),
     new THREE.MeshBasicMaterial({ color: palette.accent })
@@ -132,7 +201,7 @@
   var rainSystem = new THREE.Points(rainGeo, rainMat);
   scene.add(rainSystem);
 
-  // 6. SINCRONIZACIÓN DE CLIMA EN TIEMPO REAL (Open-Meteo)
+  // 6. SINCRONIZACIÓN DE CLIMA EN TIEMPO REAL (Open-Meteo) + NASA APOD
   var isStormy = false;
   async function syncWeatherWith3D() {
     var lat = 40.4168, lon = -3.7038; // Madrid
@@ -146,6 +215,10 @@
 
       var isDay = current.is_day === 1;
       var code = current.weather_code;
+
+      if (nasaDisplay) {
+        nasaDisplay.visible = !!nasaTexture;
+      }
 
       if (isDay) {
         skyMat.color.setHex(currentStyle === "professional" ? 0x224477 : 0x1a2b4c);
@@ -187,6 +260,8 @@
     } catch (err) {
       console.warn("Clima local en fallback:", err);
     }
+
+    await fetchNasaApod();
   }
   syncWeatherWith3D();
 
@@ -448,6 +523,13 @@
 
   if (startBtn) {
     startBtn.addEventListener("click", function () {
+      if (isTouchDevice) {
+        if (overlay) {
+          overlay.style.opacity = "0";
+          setTimeout(function () { overlay.hidden = true; }, 400);
+        }
+        return;
+      }
       if (previewModal.style.display !== "flex") controls.lock();
     });
   }
@@ -656,6 +738,91 @@
   var velocity = new THREE.Vector3(), dir = new THREE.Vector3();
   var gravity = 28.0, jumpForce = 9.5, playerVelY = 0, eyeHeight = 2.0;
   var prevTime = performance.now();
+  var isTouchDevice = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
+  var mobileControls = document.getElementById("mobile-controls");
+  var mobileLookPad = document.getElementById("mobile-look-pad");
+  var mobileJumpBtn = document.getElementById("mobile-jump-btn");
+  var mobileLookState = { active: false, pointerId: null, lastX: 0, lastY: 0 };
+
+  function setMoveState(key, active) {
+    if (key === "up") moveFwd = active;
+    if (key === "down") moveBwd = active;
+    if (key === "left") moveLft = active;
+    if (key === "right") moveRgt = active;
+  }
+
+  function bindTouchMovement() {
+    if (!mobileControls || !mobileLookPad || !mobileJumpBtn) return;
+
+    mobileControls.classList.add("is-active");
+
+    var moveButtons = document.querySelectorAll(".move-btn");
+    moveButtons.forEach(function (button) {
+      var key = button.getAttribute("data-move");
+      button.addEventListener("pointerdown", function (event) {
+        event.preventDefault();
+        button.classList.add("is-pressed");
+        setMoveState(key, true);
+      });
+      button.addEventListener("pointerup", function () {
+        button.classList.remove("is-pressed");
+        setMoveState(key, false);
+      });
+      button.addEventListener("pointerleave", function () {
+        button.classList.remove("is-pressed");
+        setMoveState(key, false);
+      });
+      button.addEventListener("pointercancel", function () {
+        button.classList.remove("is-pressed");
+        setMoveState(key, false);
+      });
+    });
+
+    mobileLookPad.addEventListener("pointerdown", function (event) {
+      mobileLookState.active = true;
+      mobileLookState.pointerId = event.pointerId;
+      mobileLookState.lastX = event.clientX;
+      mobileLookState.lastY = event.clientY;
+      mobileLookPad.setPointerCapture(event.pointerId);
+    });
+
+    mobileLookPad.addEventListener("pointermove", function (event) {
+      if (!mobileLookState.active || event.pointerId !== mobileLookState.pointerId) return;
+
+      var dx = event.clientX - mobileLookState.lastX;
+      var dy = event.clientY - mobileLookState.lastY;
+      mobileLookState.lastX = event.clientX;
+      mobileLookState.lastY = event.clientY;
+
+      var object = controls.getObject();
+      object.rotation.y -= dx * 0.004;
+      object.rotation.x -= dy * 0.003;
+      object.rotation.x = Math.max(-1.2, Math.min(1.2, object.rotation.x));
+    });
+
+    var releaseLook = function (event) {
+      if (mobileLookState.pointerId !== null && event.pointerId === mobileLookState.pointerId) {
+        mobileLookState.active = false;
+        mobileLookState.pointerId = null;
+      }
+    };
+
+    mobileLookPad.addEventListener("pointerup", releaseLook);
+    mobileLookPad.addEventListener("pointercancel", releaseLook);
+    mobileLookPad.addEventListener("pointerleave", releaseLook);
+
+    mobileJumpBtn.addEventListener("pointerdown", function (event) {
+      event.preventDefault();
+      if (canJump) {
+        playerVelY = jumpForce;
+        canJump = false;
+      }
+    });
+  }
+
+  if (isTouchDevice) {
+    bindTouchMovement();
+  }
 
   document.addEventListener("keydown", function (e) {
     if (e.code === "KeyW" || e.code === "ArrowUp") moveFwd = true;
@@ -796,7 +963,7 @@
       setTimeout(function () { flashLight.intensity = 0; }, 120);
     }
 
-    if (controls.isLocked) {
+    if (controls.isLocked || isTouchDevice) {
       velocity.x -= velocity.x * 10.0 * delta;
       velocity.z -= velocity.z * 10.0 * delta;
 

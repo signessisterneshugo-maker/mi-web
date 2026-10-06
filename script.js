@@ -3,54 +3,85 @@
    ===================================================================== */
 (function () {
   "use strict";
+  var GEMINI_API_KEY = "";
 
-    var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var $  = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
+  var knowledgeBase = [
+    {
+      keywords: ["hola", "buenas", "hey", "saludo", "que tal", "inicio"],
+      answer: "Hola, soy ECHO-AI. Estoy aquí para contarte quién es Hugo, qué stack usa y cómo funciona su proyecto 3D con estilo cyberpunk."
+    },
+    {
+      keywords: ["hugo", "quien es", "presentate", "perfil", "sobre ti"],
+      answer: "Hugo Signes Sisternes es un estudiante de DAM con base en SMX, con interés claro en la IA, el desarrollo web y la creación de experiencias digitales inmersivas. Tiene visión de producto, técnica y estética, y quiere convertir lo complejo en interfaces con carácter."
+    },
+    {
+      keywords: ["smx", "dam", "formacion", "estudios", "estudia"],
+      answer: "Su tránsito parte de SMX, donde se forma en desarrollo web, diseño y lógica de proyecto, y ahora continúa en DAM con foco en programación, arquitecturas y soluciones más complejas. Es un perfil híbrido: técnica, visual y productivo."
+    },
+    {
+      keywords: ["stack", "tecnologias", "tecnología", "tech", "languajes", "lenguajes", "stack tecnico"],
+      answer: "El stack de Hugo combina HTML, CSS, JavaScript, Three.js, APIs web, UI/UX y lógica front-end con un ojo muy fuerte hacia la experiencia de usuario. También trabaja con datos en tiempo real, integración de feeds y prototipado creativo."
+    },
+    {
+      keywords: ["three.js", "threejs", "metaverso", "3d", "juego 3d", "proyecto 3d", "juego3d"],
+      answer: "El proyecto 3D es una ciudad cyberpunk interactiva hecha con Three.js, con controles de primera persona, NPCs, hologramas, rutas urbanas y una ambientación que mezcla estética futurista con un enfoque de portafolio vivo. Es una web que funciona como experiencia, no solo como CV."
+    },
+    {
+      keywords: ["open meteo", "meteo", "weather", "clima", "api"],
+      answer: "Sí, Hugo integra APIs como Open-Meteo para traer el clima en tiempo real y mostrar una capa viva de contexto digital en la web. En ese mismo espíritu, también ha jugado con feeds RSS de Xataka para conectar el portafolio con noticias de tecnología."
+    },
+    {
+      keywords: ["xataka", "rss", "feed", "noticias", "tech news"],
+      answer: "La idea es muy clara: dar vida a la ciudad y a los NPCs con noticias reales del entorno tecnológico. Con RSS y APIs, el proyecto deja de ser estático y empieza a sentirse como un mundo conectado, un poco más vivo y narrativo."
+    },
+    {
+      keywords: ["ia", "inteligencia artificial", "ai", "agente", "chatbot"],
+      answer: "La IA para Hugo no es solo una moda; es una herramienta para crear experiencias con personalidad, automatizar contextos y dar un tono más inteligente al portafolio. Por eso el chatbot ECHO-AI tiene un punto geek, ágil y muy orientado a la narrativa del proyecto."
+    },
+    {
+      keywords: ["futuro", "objetivo", "plan", "siguiente", "proximo", "próximo"],
+      answer: "El futuro de Hugo pasa por IA aplicada, sistemas más inteligentes y una especialización más fuerte en desarrollo con impacto real. La mezcla de diseño, código y visión de producto es la que más le distingue en este momento."
+    },
+    {
+      keywords: ["porque", "por que", "valor", "diferencia", "diferente"],
+      answer: "Lo que lo hace especial es que no se limita a mostrar contenido: construye una experiencia. Hay narrativa, estética, interactividad, APIs y un enfoque muy claro de producto digital. No es un portfolio plano; es una identidad viva."
+    },
+    {
+      keywords: ["gracias", "adios", "bye", "hasta luego", "chau"],
+      answer: "Gracias por preguntar. Si quieres, puedo seguir con una versión más técnica, más creativa o más geek del proyecto de Hugo."
+    }
+  ];
+
+  function normalizeQuestion(text) {
+    return String(text || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+  }
+
   window.askHugoAI = async function askHugoAI(userQuestion) {
-    var question = String(userQuestion || "").trim();
-    if (!question) return "Pregunta corta, por favor. Te puedo hablar de mi ruta, la IA y el metaverso.";
+    var question = normalizeQuestion(userQuestion);
+    if (!question) return "Pregunta corta, por favor. Puedo hablarte de Hugo, su stack, su IA y su proyecto 3D.";
 
-    if (!GEMINI_API_KEY || GEMINI_API_KEY === "TU_API_KEY") {
-      return "ECHO-AI está listo, pero aún necesitas poner tu clave de Gemini en script.js para responder en directo.";
-    }
+    var bestMatch = null;
+    var bestScore = 0;
 
-    try {
-      var response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + GEMINI_API_KEY, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          system_instruction: {
-            parts: [{
-              text: "Eres ECHO-AI, un asistente cibernético brillante, ágil y con humor geek. Responde en 2 o 3 frases muy breves sobre Hugo Signes Sisternes: formación SMX y DAM, proyecto del Metaverso 3D con Three.js, APIs de Open-Meteo y RSS de Xataka, y su interés en IA. Sé perspicaz, útil y con un toque de ironía tecnológica."
-            }]
-          },
-          contents: [{
-            role: "user",
-            parts: [{ text: question }]
-          }]
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error("Gemini request failed");
+    for (var i = 0; i < knowledgeBase.length; i++) {
+      var entry = knowledgeBase[i];
+      var score = 0;
+      for (var j = 0; j < entry.keywords.length; j++) {
+        if (question.indexOf(entry.keywords[j]) !== -1) score += 2;
       }
-
-      var payload = await response.json();
-      var text = payload && payload.candidates && payload.candidates[0] && payload.candidates[0].content && payload.candidates[0].content.parts
-        ? payload.candidates[0].content.parts.map(function (part) { return part && part.text ? part.text : ""; }).join(" ")
-        : "";
-
-      if (!text) throw new Error("Empty Gemini response");
-
-      var cleaned = text.replace(/\s+/g, " ").trim();
-      var sentences = cleaned.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [cleaned];
-      return sentences.slice(0, 3).join(" ").trim();
-    } catch (err) {
-      console.error("askHugoAI", err);
-      return "ECHO-AI está en mantenimiento temporal. Prueba otra pregunta o vuelve en un segundo.";
+      if (question.length > 0 && entry.answer.length > 0 && score > bestScore) {
+        bestScore = score;
+        bestMatch = entry;
+      }
     }
+
+    if (bestMatch) return bestMatch.answer;
+
+    return "Estoy preparado para hablar de Hugo, su formación, su stack, la IA y el metaverso 3D. Intenta preguntarme por SMX, DAM, Three.js, APIs o IA.";
   };
 
   function bindChatWidget() {
