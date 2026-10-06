@@ -11,6 +11,35 @@
 
   if (!container) return;
 
+  var loadingOverlay = document.createElement("div");
+  loadingOverlay.id = "loading-overlay";
+  loadingOverlay.style.cssText = `
+    position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at center, rgba(12,16,28,0.85), rgba(2,3,8,1));
+    color: #fff; font-family: 'Space Grotesk', sans-serif; transition: opacity 0.5s ease, visibility 0.5s ease;
+  `;
+  loadingOverlay.innerHTML = `
+    <div style="text-align:center; letter-spacing:0.18em; text-transform:uppercase;">
+      <div style="width:110px;height:110px;margin:0 auto 1.2rem;border:2px solid rgba(255,255,255,0.2);border-radius:50%;position:relative;display:grid;place-items:center;box-shadow:0 0 30px rgba(228,23,43,0.25);">
+        <div style="width:76px;height:76px;border:2px solid rgba(255,255,255,0.18);border-top-color:#e4172b;border-radius:50%;animation:spin 1.2s linear infinite;"></div>
+      </div>
+      <div style="font-size:0.72rem; opacity:0.8; margin-bottom:0.6rem;">Cargando ciudad 3D</div>
+      <div style="font-size:1.4rem; font-weight:700; color:#e9e4d6;">HUGO METAVERSE</div>
+    </div>
+    <style>
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+  `;
+  document.body.appendChild(loadingOverlay);
+
+  function hideLoadingScreen() {
+    loadingOverlay.style.opacity = "0";
+    loadingOverlay.style.visibility = "hidden";
+    setTimeout(function () {
+      loadingOverlay.remove();
+    }, 500);
+  }
+
   // 1. Detección de tema y parámetros URL / localStorage
   var urlParams = new URLSearchParams(window.location.search);
   var currentStyle = urlParams.get('style') || localStorage.getItem('hugo-style') || document.documentElement.getAttribute("data-style") || "unico";
@@ -35,7 +64,7 @@
 
   var renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -62,8 +91,8 @@
   var mainDirLight = new THREE.DirectionalLight(palette.primary, 1.4);
   mainDirLight.position.set(60, 110, -120);
   mainDirLight.castShadow = true;
-  mainDirLight.shadow.mapSize.width = 2048;
-  mainDirLight.shadow.mapSize.height = 2048;
+  mainDirLight.shadow.mapSize.width = 1024;
+  mainDirLight.shadow.mapSize.height = 1024;
   scene.add(mainDirLight);
 
   // Luz de Relámpago (Efectos de Tormenta)
@@ -71,8 +100,21 @@
   flashLight.position.set(0, 80, -40);
   scene.add(flashLight);
 
+  // Plaza con sol localizado: un punto del mapa más cálido y luminoso
+  var sunZoneLight = new THREE.PointLight(0xffd98a, 1.4, 45, 2);
+  sunZoneLight.position.set(-20, 12, -58);
+  scene.add(sunZoneLight);
+
+  var sunZoneMarker = new THREE.Mesh(
+    new THREE.CircleGeometry(3.5, 32),
+    new THREE.MeshBasicMaterial({ color: 0xffd98a, transparent: true, opacity: 0.9 })
+  );
+  sunZoneMarker.rotation.x = -Math.PI / 2;
+  sunZoneMarker.position.set(-20, 0.05, -58);
+  scene.add(sunZoneMarker);
+
   // 5. Sistema de Partículas de Lluvia
-  var rainCount = 2200;
+  var rainCount = 1600;
   var rainGeo = new THREE.BufferGeometry();
   var rainPos = new Float32Array(rainCount * 3);
   for (var r = 0; r < rainCount * 3; r += 3) {
@@ -119,6 +161,9 @@
         sunMoonMesh.material.color.setHex(0xe9e4d6);
       }
 
+      var isSunnyZone = isDay && (code === 0 || code === 1 || code === 2 || code === 3 || code === 100 || code === 101);
+      var isRainyZone = (code >= 51 && code <= 67) || (code >= 80 && code <= 82) || code >= 95;
+
       if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
         rainMat.opacity = 0.7;
         scene.fog.density = 0.018;
@@ -136,6 +181,9 @@
         scene.fog.density = 0.011;
         isStormy = false;
       }
+
+      sunZoneLight.intensity = isSunnyZone ? 1.8 : isRainyZone ? 0.3 : 0.8;
+      sunZoneMarker.material.opacity = isSunnyZone ? 0.9 : isRainyZone ? 0.15 : 0.45;
     } catch (err) {
       console.warn("Clima local en fallback:", err);
     }
@@ -207,6 +255,22 @@
     dialogUI.style.display = "block";
     npcNameEl.textContent = npc.role + " · " + npc.name;
     npc.isTalking = true;
+
+    if (window.askHugoAI) {
+      npcTextEl.textContent = "ECHO-AI está analizando la conversación...";
+      var prompt = "Eres ECHO-AI. Habla en 2-3 frases breves y con humor geek sobre Hugo Signes Sisternes, su formación SMX y DAM, su Metaverso 3D con Three.js, y su interés en IA. Habla como si fueras el NPC " + npc.name + " y el rol " + npc.role + ".";
+
+      window.askHugoAI(prompt)
+        .then(function (reply) {
+          if (!npc.isTalking) return;
+          npcTextEl.textContent = reply;
+        })
+        .catch(function () {
+          if (!npc.isTalking) return;
+          npcTextEl.textContent = "ECHO-AI no responde ahora mismo, pero la red sigue funcionando.";
+        });
+      return;
+    }
 
     var newsFeed = npc.news || ["📰 [NPC]: Sistema de noticias en línea activo."];
     var randomMessage = newsFeed[Math.floor(Math.random() * newsFeed.length)];
@@ -284,8 +348,17 @@
       news: news,
       x: x,
       z: z,
+      homeX: x,
+      homeZ: z,
       idleOffset: Math.random() * Math.PI * 2,
-      isTalking: false
+      isTalking: false,
+      walkPhase: Math.random() * Math.PI * 2,
+      route: [
+        { x: x, z: z },
+        { x: x + (Math.random() > 0.5 ? 1.5 : -1.5), z: z + (Math.random() > 0.5 ? 1.8 : -1.8) },
+        { x: x + (Math.random() > 0.5 ? 3 : -3), z: z + (Math.random() > 0.5 ? 2.5 : -2.5) }
+      ],
+      routeIndex: 0
     };
     npcs.push(npcObj);
   }
@@ -408,13 +481,122 @@
   grid.position.y = 0.01;
   scene.add(grid);
 
+  // Decoración urbana: calles, plazas y farolas para que la ciudad parezca más real
+  var urbanDecor = [
+    { x: -18, z: -25, w: 22, h: 10, color: 0x111821, accent: 0x2b3d5e },
+    { x: 18, z: -25, w: 22, h: 10, color: 0x171d29, accent: 0x334d7a },
+    { x: -18, z: -52, w: 20, h: 12, color: 0x121923, accent: 0x3b2f69 },
+    { x: 18, z: -52, w: 20, h: 12, color: 0x111821, accent: 0x2f5b6a },
+    { x: 0, z: -78, w: 28, h: 14, color: 0x121620, accent: 0x4d3a5e }
+  ];
+
+  urbanDecor.forEach(function (plaza) {
+    var plazaMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(plaza.w, 0.2, plaza.h),
+      new THREE.MeshStandardMaterial({ color: plaza.color, roughness: 0.9, metalness: 0.2 })
+    );
+    plazaMesh.position.set(plaza.x, 0.08, plaza.z);
+    scene.add(plazaMesh);
+
+    for (var i = 0; i < 6; i++) {
+      var lamp = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.12, 0.12, 4.2, 8),
+        new THREE.MeshStandardMaterial({ color: 0x1b2333, emissive: plaza.accent, emissiveIntensity: 0.25 })
+      );
+      lamp.position.set(plaza.x - plaza.w / 2 + 3 + i * 2.4, 2.1, plaza.z - plaza.h / 2 + 2.5);
+      scene.add(lamp);
+
+      var lampGlow = new THREE.PointLight(plaza.accent, 0.6, 12, 2);
+      lampGlow.position.set(lamp.position.x, 4.2, lamp.position.z);
+      scene.add(lampGlow);
+    }
+
+    // Árboles
+    for (var t = 0; t < 4; t++) {
+      var treeTrunk = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.18, 0.22, 1.4, 8),
+        new THREE.MeshStandardMaterial({ color: 0x4d3320 })
+      );
+      treeTrunk.position.set(plaza.x - plaza.w / 2 + 3 + t * 4.8, 0.7, plaza.z + plaza.h / 2 - 2.5);
+      scene.add(treeTrunk);
+
+      var treeTop = new THREE.Mesh(
+        new THREE.SphereGeometry(0.8, 12, 12),
+        new THREE.MeshStandardMaterial({ color: 0x3f7f5a, emissive: 0x1a4d2a, emissiveIntensity: 0.16 })
+      );
+      treeTop.position.set(treeTrunk.position.x, 1.8, treeTrunk.position.z);
+      scene.add(treeTop);
+    }
+
+    // Bancos
+    for (var b = 0; b < 2; b++) {
+      var bench = new THREE.Group();
+      var benchBase = new THREE.Mesh(
+        new THREE.BoxGeometry(1.2, 0.12, 0.3),
+        new THREE.MeshStandardMaterial({ color: 0xb18d5a })
+      );
+      benchBase.position.y = 0.4;
+      bench.add(benchBase);
+      bench.position.set(plaza.x + (b === 0 ? -3 : 3), 0, plaza.z + plaza.h / 2 - 5);
+      scene.add(bench);
+    }
+
+    // Vallas pequeñas
+    var fenceMat = new THREE.MeshStandardMaterial({ color: 0x7b8fa3, metalness: 0.4, roughness: 0.8 });
+    for (var f = 0; f < 4; f++) {
+      var fence = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.6, 0.08), fenceMat);
+      fence.position.set(plaza.x - 5 + f * 3.2, 0.3, plaza.z + plaza.h / 2 - 0.8);
+      scene.add(fence);
+    }
+  });
+
   // Portales Holográficos Seccionales
   var sections = [
-    { title: "SOBRE MÍ", emoji: "🧠", sub: "Perfil y Valores", url: "sobre.html", x: -18, z: -25 },
-    { title: "TRAYECTORIA", emoji: "⚡", sub: "SMX, Erasmus y DAM", url: "trabajo.html", x: -18, z: -55 },
-    { title: "ME GUSTA", emoji: "🎮", sub: "Bento Grid e Intereses", url: "gusta.html", x: 18, z: -25 },
-    { title: "FUTURO IA", emoji: "🚀", sub: "Roadmap y Proyectos", url: "futuro.html", x: 18, z: -55 },
-    { title: "CONTACTO", emoji: "✉️", sub: "Formulario y Redes", url: "contacto.html", x: 0, z: -85 }
+    {
+      title: "SOBRE MÍ",
+      emoji: "🧠",
+      sub: "Perfil y Valores",
+      url: "sobre.html",
+      x: -18,
+      z: -25,
+      style: { bg: 0x1a1d2a, accent: 0xe4172b }
+    },
+    {
+      title: "TRAYECTORIA",
+      emoji: "⚡",
+      sub: "SMX, Erasmus y DAM",
+      url: "trabajo.html",
+      x: 18,
+      z: -25,
+      style: { bg: 0x182130, accent: 0x6ea8fe }
+    },
+    {
+      title: "ME GUSTA",
+      emoji: "🎮",
+      sub: "Bento Grid e Intereses",
+      url: "gusta.html",
+      x: -18,
+      z: -52,
+      style: { bg: 0x1e152d, accent: 0xe15eff }
+    },
+    {
+      title: "FUTURO IA",
+      emoji: "🚀",
+      sub: "Roadmap y Proyectos",
+      url: "futuro.html",
+      x: 18,
+      z: -52,
+      style: { bg: 0x132328, accent: 0x22d3ee }
+    },
+    {
+      title: "CONTACTO",
+      emoji: "✉️",
+      sub: "Formulario y Redes",
+      url: "contacto.html",
+      x: 0,
+      z: -78,
+      style: { bg: 0x1d1325, accent: 0xffb703 }
+    }
   ];
 
   var clickablePortals = [];
@@ -426,12 +608,12 @@
     canvas.width = 512; canvas.height = 256;
     var ctx = canvas.getContext("2d");
     ctx.fillStyle = "rgba(10, 10, 18, 0.95)"; ctx.fillRect(0, 0, 512, 256);
-    ctx.strokeStyle = "#" + palette.primary.toString(16); ctx.lineWidth = 10;
+    ctx.strokeStyle = "#" + (sec.style && sec.style.accent ? sec.style.accent.toString(16) : palette.primary.toString(16)); ctx.lineWidth = 10;
     ctx.strokeRect(6, 6, 500, 244);
 
     ctx.fillStyle = "#ffffff"; ctx.font = "bold 34px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillText(sec.emoji + " " + sec.title, 256, 85);
-    ctx.fillStyle = "#" + palette.secondary.toString(16); ctx.font = "20px monospace";
+    ctx.fillStyle = "#" + (sec.style && sec.style.accent ? sec.style.accent.toString(16) : palette.secondary.toString(16)); ctx.font = "20px monospace";
     ctx.fillText(sec.sub, 256, 135);
     ctx.fillStyle = "#00f0ff"; ctx.font = "bold 16px monospace";
     ctx.fillText("[ CLIC PARA ABRIR HOLOGRAMA ]", 256, 190);
@@ -441,23 +623,29 @@
       new THREE.PlaneGeometry(5.2, 2.6),
       new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide })
     );
-    portalMesh.position.set(sec.x, 3.4, sec.z);
+    portalMesh.position.set(sec.x, 3.2, sec.z);
     portalMesh.userData = { url: sec.url, title: sec.title };
 
     scene.add(portalMesh);
     clickablePortals.push(portalMesh);
   });
 
-  // Generación de Rascacielos con Ventanas e Iluminación
-  for (var bx = -80; bx <= 80; bx += 20) {
-    for (var bz = -110; bz <= 10; bz += 20) {
-      if (Math.abs(bx) < 12) continue;
-      var h = 14 + Math.abs(Math.sin(bx * bz) * 35);
-      var bGeo = new THREE.BoxGeometry(10, h, 10);
-      var bMat = new THREE.MeshStandardMaterial({ color: 0x0a0a12, roughness: 0.4, metalness: 0.85 });
+  // Generación de Rascacielos compactos y con menos carga para mejorar rendimiento
+  for (var bx = -80; bx <= 80; bx += 25) {
+    for (var bz = -110; bz <= 10; bz += 25) {
+      if (Math.abs(bx) < 16 && Math.abs(bz) < 30) continue;
+      var h = 12 + Math.abs(Math.sin(bx * 0.9 + bz) * 24);
+      var bGeo = new THREE.BoxGeometry(9, h, 9);
+      var bMat = new THREE.MeshStandardMaterial({
+        color: 0x0a0a12,
+        roughness: 0.5,
+        metalness: 0.8,
+        flatShading: true
+      });
       var bMesh = new THREE.Mesh(bGeo, bMat);
       bMesh.position.set(bx, h / 2, bz);
       bMesh.castShadow = true;
+      bMesh.receiveShadow = true;
       scene.add(bMesh);
       buildableObjects.push(bMesh);
     }
@@ -570,7 +758,7 @@
     var time = performance.now();
     var delta = (time - prevTime) / 1000;
 
-    // Animación viva de NPCs: se mueven con un idle suave y miran al jugador cuando hablan
+    // Animación más realista: cada NPC tiene una ruta propia y deja de moverse cuando habla
     npcs.forEach(function (npc) {
       var angleToPlayer = Math.atan2(camera.position.x - npc.mesh.position.x, camera.position.z - npc.mesh.position.z);
 
@@ -583,14 +771,22 @@
         return;
       }
 
-      var idleX = Math.sin(time * 0.0015 + npc.idleOffset) * 0.55;
-      var idleZ = Math.cos(time * 0.0013 + npc.idleOffset) * 0.4;
-      npc.mesh.position.x = npc.x + idleX;
-      npc.mesh.position.z = npc.z + idleZ;
-      npc.mesh.rotation.y = Math.sin(time * 0.001 + npc.idleOffset) * 0.8;
-      npc.headMesh.position.y = 2.12 + Math.sin(time * 0.003 + npc.idleOffset) * 0.12;
-      npc.headMesh.rotation.y = Math.sin(time * 0.002 + npc.idleOffset) * 0.45;
-      npc.visorMesh.rotation.y = Math.sin(time * 0.002 + npc.idleOffset) * 0.5;
+      var target = npc.route[npc.routeIndex] || { x: npc.homeX, z: npc.homeZ };
+      var dx = target.x - npc.mesh.position.x;
+      var dz = target.z - npc.mesh.position.z;
+      var dist = Math.sqrt(dx * dx + dz * dz);
+
+      if (dist < 0.6) {
+        npc.routeIndex = (npc.routeIndex + 1) % npc.route.length;
+      } else {
+        npc.mesh.position.x += dx * 0.025;
+        npc.mesh.position.z += dz * 0.025;
+      }
+
+      npc.mesh.rotation.y = Math.atan2(dx, dz) + Math.PI;
+      npc.headMesh.position.y = 2.12 + Math.sin(time * 0.004 + npc.idleOffset) * 0.12;
+      npc.headMesh.rotation.y = Math.sin(time * 0.003 + npc.idleOffset) * 0.45;
+      npc.visorMesh.rotation.y = Math.sin(time * 0.003 + npc.idleOffset) * 0.5;
       npc.ringMesh.rotation.z += 0.02;
     });
 
@@ -649,6 +845,7 @@
   }
 
   animate();
+  setTimeout(hideLoadingScreen, 900);
 
   window.addEventListener("resize", function () {
     camera.aspect = window.innerWidth / window.innerHeight;

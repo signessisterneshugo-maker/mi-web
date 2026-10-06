@@ -3,11 +3,122 @@
    ===================================================================== */
 (function () {
   "use strict";
-  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var fine   = matchMedia("(pointer:fine)").matches;
-  var root   = document.documentElement;
+
+    var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var $  = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  window.askHugoAI = async function askHugoAI(userQuestion) {
+    var question = String(userQuestion || "").trim();
+    if (!question) return "Pregunta corta, por favor. Te puedo hablar de mi ruta, la IA y el metaverso.";
+
+    if (!GEMINI_API_KEY || GEMINI_API_KEY === "TU_API_KEY") {
+      return "ECHO-AI está listo, pero aún necesitas poner tu clave de Gemini en script.js para responder en directo.";
+    }
+
+    try {
+      var response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + GEMINI_API_KEY, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [{
+              text: "Eres ECHO-AI, un asistente cibernético brillante, ágil y con humor geek. Responde en 2 o 3 frases muy breves sobre Hugo Signes Sisternes: formación SMX y DAM, proyecto del Metaverso 3D con Three.js, APIs de Open-Meteo y RSS de Xataka, y su interés en IA. Sé perspicaz, útil y con un toque de ironía tecnológica."
+            }]
+          },
+          contents: [{
+            role: "user",
+            parts: [{ text: question }]
+          }]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Gemini request failed");
+      }
+
+      var payload = await response.json();
+      var text = payload && payload.candidates && payload.candidates[0] && payload.candidates[0].content && payload.candidates[0].content.parts
+        ? payload.candidates[0].content.parts.map(function (part) { return part && part.text ? part.text : ""; }).join(" ")
+        : "";
+
+      if (!text) throw new Error("Empty Gemini response");
+
+      var cleaned = text.replace(/\s+/g, " ").trim();
+      var sentences = cleaned.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [cleaned];
+      return sentences.slice(0, 3).join(" ").trim();
+    } catch (err) {
+      console.error("askHugoAI", err);
+      return "ECHO-AI está en mantenimiento temporal. Prueba otra pregunta o vuelve en un segundo.";
+    }
+  };
+
+  function bindChatWidget() {
+    var launcher = $("#chatLauncher");
+    var panel = $("#aiChatPanel");
+    var form = $("#aiChatForm");
+    var input = $("#aiChatInput");
+    var messages = $("#aiChatMessages");
+    var closeBtn = $("[data-close-chat]");
+
+    if (!launcher || !panel || !form || !input || !messages) return;
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function () {
+        panel.hidden = true;
+      });
+    }
+
+    function appendMessage(role, text) {
+      var msg = document.createElement("div");
+      msg.className = "chat-message chat-message--" + role;
+      msg.textContent = text;
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    launcher.addEventListener("click", function () {
+      panel.hidden = !panel.hidden;
+      if (!panel.hidden) {
+        input.focus();
+      }
+    });
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+      var question = input.value.trim();
+      if (!question) return;
+
+      appendMessage("user", question);
+      input.value = "";
+      input.disabled = true;
+      appendMessage("bot", "ECHO-AI está pensando...");
+
+      try {
+        var reply = await window.askHugoAI(question);
+        var lastBotMessage = messages.lastElementChild;
+        if (lastBotMessage && lastBotMessage.classList.contains("chat-message--bot")) {
+          lastBotMessage.textContent = reply;
+        } else {
+          appendMessage("bot", reply);
+        }
+      } catch (e) {
+        var lastBotMessage = messages.lastElementChild;
+        if (lastBotMessage && lastBotMessage.classList.contains("chat-message--bot")) {
+          lastBotMessage.textContent = "ECHO-AI está en pausa técnica.";
+        } else {
+          appendMessage("bot", "ECHO-AI está en pausa técnica.");
+        }
+      } finally {
+        input.disabled = false;
+        input.focus();
+      }
+    });
+  }
+
+  var fine   = matchMedia("(pointer:fine)").matches;
+  var root   = document.documentElement;
+  bindChatWidget();
 
   /* ---------- Sincronización de enlaces y persistencia ---------- */
   function syncLinks() {

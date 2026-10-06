@@ -153,6 +153,29 @@
 </main>
 </div>
 
+<button class="chat-launcher" id="chatLauncher" type="button" aria-label="Abrir chatbot ECHO-AI">
+  <span class="chat-launcher__dot"></span>
+  <span>ECHO-AI</span>
+</button>
+
+<div class="ai-chat-panel" id="aiChatPanel" hidden aria-live="polite">
+  <div class="ai-chat-panel__header">
+    <div>
+      <span class="ai-chat-panel__eyebrow">Agente IA</span>
+      <h3>ECHO-AI</h3>
+    </div>
+    <button type="button" class="ai-chat-panel__close" data-close-chat aria-label="Cerrar chat">✕</button>
+  </div>
+  <div class="ai-chat-panel__messages" id="aiChatMessages">
+    <div class="chat-message chat-message--bot">Hola, soy ECHO-AI. Pregúntame sobre Hugo, su stack o el proyecto 3D.</div>
+  </div>
+  <form class="ai-chat-panel__form" id="aiChatForm">
+    <label class="sr-only" for="aiChatInput">Escribe tu pregunta</label>
+    <input id="aiChatInput" type="text" maxlength="180" placeholder="Pregunta sobre el metaverso o la trayectoria..." autocomplete="off" />
+    <button type="submit">Enviar</button>
+  </form>
+</div>
+
 <script src="script.js" defer></script>
 </body>
 </html>
