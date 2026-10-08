@@ -4,6 +4,12 @@
 (function () {
   "use strict";
   var GEMINI_API_KEY = "";
+  var centerApiConfig = {
+    endpoint: (window.CENTER_CHAT_API_URL || window.CENTER_API_URL || "").trim(),
+    apiKey: (window.CENTER_CHAT_API_KEY || "").trim(),
+    timeoutMs: 12000
+  };
+  var centerApiFailureMessage = "";
 
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var $  = function (s, c) { return (c || document).querySelector(s); };
@@ -60,9 +66,81 @@
     return String(text || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
   }
 
+  function buildCenterApiFailureMessage() {
+    return "La API del centro está configurada, pero este navegador rechaza el certificado HTTPS. Instala el certificado del centro en el equipo o usa una URL con certificado válido para que el chatbot pueda responder con ella.";
+  }
+
+  async function callCenterApi(question) {
+    if (!centerApiConfig.endpoint) return null;
+    centerApiFailureMessage = "";
+
+    var headers = {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    };
+
+    if (centerApiConfig.apiKey) {
+      headers.Authorization = "Bearer " + centerApiConfig.apiKey;
+    }
+
+    var controller;
+    var timeoutId;
+
+    if (typeof AbortController !== "undefined") {
+      controller = new AbortController();
+      timeoutId = setTimeout(function () {
+        controller.abort();
+      }, centerApiConfig.timeoutMs);
+    }
+
+    try {
+      var response = await fetch(centerApiConfig.endpoint, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          question: question,
+          prompt: question,
+          message: question,
+          user: "web",
+          context: "portfolio colegio"
+        }),
+        credentials: "include",
+        signal: controller ? controller.signal : undefined
+      });
+
+      if (!response.ok) return null;
+
+      var contentType = (response.headers.get("content-type") || "").toLowerCase();
+      var rawText = contentType.indexOf("application/json") !== -1 ? await response.json() : await response.text();
+
+      if (typeof rawText === "string") {
+        var cleaned = rawText.trim();
+        return cleaned || null;
+      }
+
+      if (rawText && typeof rawText.answer === "string" && rawText.answer.trim()) return rawText.answer.trim();
+      if (rawText && typeof rawText.message === "string" && rawText.message.trim()) return rawText.message.trim();
+      if (rawText && typeof rawText.response === "string" && rawText.response.trim()) return rawText.response.trim();
+      if (rawText && typeof rawText.text === "string" && rawText.text.trim()) return rawText.text.trim();
+      if (rawText && rawText.result && typeof rawText.result.answer === "string" && rawText.result.answer.trim()) return rawText.result.answer.trim();
+
+      return null;
+    } catch (error) {
+      centerApiFailureMessage = buildCenterApiFailureMessage();
+      return null;
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+    }
+  }
+
   window.askHugoAI = async function askHugoAI(userQuestion) {
-    var question = normalizeQuestion(userQuestion);
+    var rawQuestion = String(userQuestion || "").trim();
+    var question = normalizeQuestion(rawQuestion);
     if (!question) return "Pregunta corta, por favor. Puedo hablarte de Hugo, su stack, su IA y su proyecto 3D.";
+
+    var centerReply = await callCenterApi(rawQuestion);
+    if (centerReply) return centerReply;
+    if (centerApiConfig.endpoint && centerApiFailureMessage) return centerApiFailureMessage;
 
     var bestMatch = null;
     var bestScore = 0;

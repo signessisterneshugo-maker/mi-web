@@ -8,8 +8,124 @@
   var container = document.getElementById("webgl-container");
   var overlay = document.getElementById("instructions-overlay");
   var startBtn = document.getElementById("startBtn");
+  var qualityToggle = document.getElementById("qualityToggle");
+  var qualityPanel = document.getElementById("qualityPanel");
+  var qualityButtons = Array.prototype.slice.call(document.querySelectorAll(".quality-option"));
 
   if (!container) return;
+
+  var qualityProfiles = {
+    high: {
+      label: "Alta",
+      pixelRatio: Math.min(window.devicePixelRatio || 1, 1.8),
+      shadows: true,
+      rainCount: 1600,
+      fogDensity: 0.011,
+      nasaEnabled: true,
+      rainOpacity: 0.7,
+      sunLight: 1.4,
+      shadowSize: 2048
+    },
+    medium: {
+      label: "Media",
+      pixelRatio: Math.min(window.devicePixelRatio || 1, 1.2),
+      shadows: true,
+      rainCount: 700,
+      fogDensity: 0.014,
+      nasaEnabled: true,
+      rainOpacity: 0.5,
+      sunLight: 1.1,
+      shadowSize: 1024
+    },
+    low: {
+      label: "Baja",
+      pixelRatio: Math.min(window.devicePixelRatio || 1, 0.9),
+      shadows: false,
+      rainCount: 220,
+      fogDensity: 0.02,
+      nasaEnabled: false,
+      rainOpacity: 0.15,
+      sunLight: 0.8,
+      shadowSize: 512
+    }
+  };
+
+  var qualityState = {
+    current: (localStorage.getItem("hugo-3d-quality") || "high").toLowerCase()
+  };
+
+  function applyQualityProfile(profileName) {
+    var profile = qualityProfiles[profileName] || qualityProfiles.high;
+    qualityState.current = profileName;
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("hugo-3d-quality", profileName);
+    }
+
+    if (qualityToggle) {
+      qualityToggle.setAttribute("aria-expanded", qualityPanel && qualityPanel.classList.contains("is-open") ? "true" : "false");
+    }
+
+    if (qualityButtons && qualityButtons.length) {
+      qualityButtons.forEach(function (btn) {
+        var selected = btn.getAttribute("data-quality") === profileName;
+        btn.classList.toggle("is-selected", selected);
+      });
+    }
+
+    if (typeof renderer !== "undefined") {
+      renderer.setPixelRatio(profile.pixelRatio);
+      renderer.shadowMap.enabled = profile.shadows;
+      renderer.shadowMap.type = profile.shadows ? THREE.PCFSoftShadowMap : THREE.BasicShadowMap;
+    }
+
+    if (typeof mainDirLight !== "undefined") {
+      mainDirLight.intensity = profile.sunLight;
+      mainDirLight.castShadow = profile.shadows;
+      mainDirLight.shadow.mapSize.width = profile.shadowSize;
+      mainDirLight.shadow.mapSize.height = profile.shadowSize;
+    }
+
+    if (typeof flashLight !== "undefined") {
+      flashLight.intensity = profile.shadows ? flashLight.intensity || 0 : 0;
+    }
+
+    if (typeof nasaDisplay !== "undefined") {
+      nasaDisplay.visible = !!(profile.nasaEnabled && nasaTexture);
+    }
+
+    if (typeof rainMat !== "undefined") {
+      rainMat.opacity = profile.rainOpacity;
+    }
+
+    if (typeof scene !== "undefined" && typeof scene.fog !== "undefined") {
+      scene.fog.density = profile.fogDensity;
+    }
+
+    if (typeof rebuildRainSystem !== "undefined") {
+      rebuildRainSystem(profile.rainCount);
+    }
+  }
+
+  function bindQualityMenu() {
+    if (!qualityToggle || !qualityPanel) return;
+
+    qualityToggle.addEventListener("click", function () {
+      qualityPanel.classList.toggle("is-open");
+      var isOpen = qualityPanel.classList.contains("is-open");
+      qualityToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    qualityButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        var next = button.getAttribute("data-quality") || "high";
+        applyQualityProfile(next);
+        qualityPanel.classList.remove("is-open");
+        qualityToggle.setAttribute("aria-expanded", "false");
+      });
+    });
+  }
+
+  bindQualityMenu();
 
   var loadingOverlay = document.createElement("div");
   loadingOverlay.id = "loading-overlay";
@@ -184,22 +300,36 @@
 
   // 5. Sistema de Partículas de Lluvia
   var rainCount = 1600;
-  var rainGeo = new THREE.BufferGeometry();
-  var rainPos = new Float32Array(rainCount * 3);
-  for (var r = 0; r < rainCount * 3; r += 3) {
-    rainPos[r] = (Math.random() - 0.5) * 260;
-    rainPos[r + 1] = Math.random() * 95;
-    rainPos[r + 2] = (Math.random() - 0.5) * 260 - 30;
+  function rebuildRainSystem(targetCount) {
+    var safeCount = Math.max(50, Math.min(2000, targetCount || 1600));
+    rainCount = safeCount;
+
+    if (rainSystem) {
+      scene.remove(rainSystem);
+      rainSystem.geometry.dispose();
+      rainSystem.material.dispose();
+    }
+
+    var rainGeo = new THREE.BufferGeometry();
+    var rainPos = new Float32Array(rainCount * 3);
+    for (var r = 0; r < rainCount * 3; r += 3) {
+      rainPos[r] = (Math.random() - 0.5) * 260;
+      rainPos[r + 1] = Math.random() * 95;
+      rainPos[r + 2] = (Math.random() - 0.5) * 260 - 30;
+    }
+    rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+    rainMat = new THREE.PointsMaterial({
+      color: 0x88ccff,
+      size: 0.32,
+      transparent: true,
+      opacity: 0.0
+    });
+    rainSystem = new THREE.Points(rainGeo, rainMat);
+    scene.add(rainSystem);
   }
-  rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
-  var rainMat = new THREE.PointsMaterial({
-    color: 0x88ccff,
-    size: 0.32,
-    transparent: true,
-    opacity: 0.0
-  });
-  var rainSystem = new THREE.Points(rainGeo, rainMat);
-  scene.add(rainSystem);
+  var rainSystem = null;
+  var rainMat = null;
+  rebuildRainSystem(rainCount);
 
   // 6. SINCRONIZACIÓN DE CLIMA EN TIEMPO REAL (Open-Meteo) + NASA APOD
   var isStormy = false;

@@ -25,6 +25,15 @@
 
   .controls-hint { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); background: rgba(10,10,15,0.9); border: 1px solid var(--line-strong); padding: 0.8rem 1.5rem; border-radius: var(--r-btn); font-size: 0.7rem; color: var(--text); letter-spacing: 0.1em; text-transform: uppercase; pointer-events: auto; text-align: center; box-shadow: var(--card-shadow); }
 
+  .quality-toggle { position: fixed; top: 1.1rem; right: 10.5rem; z-index: 200; }
+  .quality-btn { border: 1px solid var(--line-strong); background: rgba(10,10,15,0.8); color: var(--text); border-radius: 999px; padding: 0.75rem 1rem; font-family: var(--font-label); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; backdrop-filter: blur(12px); cursor: pointer; box-shadow: var(--card-shadow); }
+  .quality-panel { position: fixed; top: 4.1rem; right: 10.5rem; z-index: 201; width: min(240px, calc(100vw - 2rem)); background: rgba(10,10,15,0.96); border: 1px solid var(--line-strong); border-radius: 16px; padding: 0.9rem; box-shadow: 0 25px 50px -30px rgba(0,0,0,0.9); display: none; }
+  .quality-panel.is-open { display: block; }
+  .quality-panel__title { font-family: var(--font-label); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.75rem; }
+  .quality-option { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 0.8rem; margin-bottom: 0.45rem; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,0.02); color: var(--text); cursor: pointer; font-family: var(--font-label); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .quality-option:hover, .quality-option.is-selected { border-color: rgba(228,23,43,.9); background: rgba(228,23,43,.12); }
+  .quality-option small { color: var(--muted); text-transform: none; letter-spacing: 0; font-size: 0.62rem; }
+
   .mobile-controls { position: absolute; inset: 0; z-index: 15; display: none; pointer-events: none; }
   .mobile-controls.is-active { display: block; }
   .move-pad { position: absolute; left: 1rem; bottom: 1rem; display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(3, 48px); gap: 0.35rem; pointer-events: auto; }
@@ -113,6 +122,15 @@
 </aside>
 
 <!-- CONTENEDOR 3D -->
+<div class="quality-toggle">
+  <button class="quality-btn" id="qualityToggle" type="button" aria-expanded="false" aria-controls="qualityPanel">Calidad</button>
+  <div class="quality-panel" id="qualityPanel" aria-label="Configuración de calidad del juego">
+    <div class="quality-panel__title">Calidad gráfica</div>
+    <button class="quality-option is-selected" type="button" data-quality="high"><span>Alta</span><small>4K / alta</small></button>
+    <button class="quality-option" type="button" data-quality="medium"><span>Media</span><small>equilibrado</small></button>
+    <button class="quality-option" type="button" data-quality="low"><span>Baja</span><small>vintage / ligero</small></button>
+  </div>
+</div>
 <div id="webgl-container"></div>
 <div class="crosshair" aria-hidden="true"></div>
 
