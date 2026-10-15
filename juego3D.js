@@ -750,6 +750,18 @@
   // 9. Controles PointerLock y Estado de Juego
   var controls = new THREE.PointerLockControls(camera, document.body);
 
+  var exitTransition = document.getElementById("exitTransition");
+  function triggerExitTransition() {
+    if (!exitTransition) {
+      window.location.href = "index.html";
+      return;
+    }
+    exitTransition.classList.add("is-active");
+    setTimeout(function () {
+      window.location.href = "index.html";
+    }, 900);
+  }
+
   if (startBtn) {
     startBtn.addEventListener("click", function () {
       if (isTouchDevice) {
@@ -760,6 +772,14 @@
         return;
       }
       if (previewModal.style.display !== "flex") controls.lock();
+    });
+  }
+
+  var exitLink = document.querySelector(".style-switch__btn");
+  if (exitLink) {
+    exitLink.addEventListener("click", function (event) {
+      event.preventDefault();
+      triggerExitTransition();
     });
   }
 

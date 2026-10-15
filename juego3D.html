@@ -57,6 +57,84 @@
   .modal-box p { color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.8rem; }
   .key-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; text-align: left; font-family: var(--font-label); font-size: 0.75rem; margin-bottom: 2rem; }
   .key-list div span { background: var(--bg-3); border: 1px solid var(--line-strong); padding: 0.2rem 0.5rem; border-radius: 4px; color: var(--accent); margin-right: 0.5rem; }
+
+  .exit-transition {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    pointer-events: none;
+    opacity: 0;
+    overflow: hidden;
+  }
+  .exit-transition.is-active {
+    opacity: 1;
+  }
+  .exit-transition__panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background: linear-gradient(135deg, #26060a 0%, #06070a 35%, #16070c 100%);
+    transition: transform 0.95s cubic-bezier(.22,1,.36,1), filter 0.8s ease;
+    filter: saturate(1.2);
+  }
+  .exit-transition__panel--left {
+    left: 0;
+    clip-path: polygon(0 0, 100% 0, 70% 100%, 0 100%);
+    transform: translateX(-105%);
+  }
+  .exit-transition__panel--right {
+    right: 0;
+    clip-path: polygon(30% 0, 100% 0, 100% 100%, 0 100%);
+    transform: translateX(105%);
+  }
+  .exit-transition.is-active .exit-transition__panel--left {
+    transform: translateX(-14%) skewX(-7deg);
+  }
+  .exit-transition.is-active .exit-transition__panel--right {
+    transform: translateX(14%) skewX(7deg);
+  }
+  .exit-transition__slash {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 128vw;
+    height: 18px;
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 18%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.1) 100%);
+    box-shadow: 0 0 16px rgba(255,255,255,0.3), 0 0 30px rgba(220,20,40,0.8);
+    transform: translate(-50%, -50%) rotate(-16deg) scaleX(0);
+    transform-origin: center;
+  }
+  .exit-transition.is-active .exit-transition__slash {
+    animation: slashCut 0.9s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  .exit-transition__knight {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 260px;
+    height: 300px;
+    transform: translate(-50%, -50%) scale(0.75) rotate(-12deg);
+    opacity: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(60,60,60,0.9));
+    clip-path: polygon(28% 0, 52% 0, 58% 12%, 72% 12%, 82% 28%, 100% 30%, 100% 44%, 80% 54%, 78% 100%, 62% 100%, 56% 64%, 44% 64%, 38% 100%, 22% 100%, 20% 54%, 0 44%, 0 30%, 18% 28%, 24% 12%);
+    filter: drop-shadow(0 0 20px rgba(255,255,255,0.35));
+  }
+  .exit-transition.is-active .exit-transition__knight {
+    animation: knightCut 0.9s ease forwards;
+  }
+  @keyframes slashCut {
+    0% { transform: translate(-50%, -50%) rotate(-16deg) scaleX(0); opacity: 0; }
+    18% { opacity: 1; }
+    40% { transform: translate(-50%, -50%) rotate(-16deg) scaleX(1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) rotate(-16deg) scaleX(1.2); opacity: 0; }
+  }
+  @keyframes knightCut {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.65) rotate(-12deg); }
+    18% { opacity: 1; }
+    48% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-8deg); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2) rotate(10deg); }
+  }
 </style>
 </head>
 <body>
@@ -150,6 +228,13 @@
   <div class="controls-hint">
     Usa <b>W, A, S, D</b> para moverte · Haz <b>Clic</b> para construir o interactuar con los hologramas
   </div>
+</div>
+
+<div class="exit-transition" id="exitTransition" aria-hidden="true">
+  <div class="exit-transition__panel exit-transition__panel--left"></div>
+  <div class="exit-transition__panel exit-transition__panel--right"></div>
+  <div class="exit-transition__slash"></div>
+  <div class="exit-transition__knight"></div>
 </div>
 
 <!-- Scripts Three.js y Lógica 3D -->
