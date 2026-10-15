@@ -298,6 +298,105 @@
   sunZoneMarker.position.set(-20, 0.05, -58);
   scene.add(sunZoneMarker);
 
+  // Modelo 3D low-poly de presentación del proyecto
+  var heroModel = new THREE.Group();
+  var heroBase = new THREE.Mesh(
+    new THREE.CylinderGeometry(2.6, 3.2, 0.8, 22),
+    new THREE.MeshStandardMaterial({
+      color: 0x111827,
+      emissive: palette.primary,
+      emissiveIntensity: 0.18,
+      metalness: 0.7,
+      roughness: 0.4
+    })
+  );
+  heroBase.position.y = 0.4;
+  heroBase.castShadow = true;
+  heroBase.receiveShadow = true;
+  heroModel.add(heroBase);
+
+  var heroCore = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(1.35, 1),
+    new THREE.MeshStandardMaterial({
+      color: 0xe9e4d6,
+      emissive: palette.primary,
+      emissiveIntensity: 0.9,
+      metalness: 0.35,
+      roughness: 0.2,
+      transparent: true,
+      opacity: 0.96
+    })
+  );
+  heroCore.position.y = 2.2;
+  heroCore.castShadow = true;
+  heroModel.add(heroCore);
+
+  var heroRingA = new THREE.Mesh(
+    new THREE.TorusGeometry(2.2, 0.08, 16, 70),
+    new THREE.MeshBasicMaterial({ color: palette.secondary, transparent: true, opacity: 0.75 })
+  );
+  heroRingA.rotation.x = Math.PI / 2;
+  heroRingA.position.y = 2.2;
+  heroModel.add(heroRingA);
+
+  var heroRingB = new THREE.Mesh(
+    new THREE.TorusGeometry(2.8, 0.06, 10, 60),
+    new THREE.MeshBasicMaterial({ color: palette.accent, transparent: true, opacity: 0.7 })
+  );
+  heroRingB.rotation.y = Math.PI / 2;
+  heroRingB.position.y = 2.2;
+  heroModel.add(heroRingB);
+
+  heroModel.position.set(0, 0, 18);
+  scene.add(heroModel);
+
+  var lowPolyKnight = null;
+  var knightLoader = typeof THREE.FBXLoader !== "undefined" ? new THREE.FBXLoader() : null;
+
+  function loadLowPolyKnight() {
+    if (!knightLoader) {
+      console.warn("FBXLoader no disponible; se mantiene el modelo fallback.");
+      return;
+    }
+
+    knightLoader.load(
+      "assets/low poly roaring knight.fbx",
+      function (object) {
+        object.name = "lowPolyKnight";
+        object.scale.setScalar(0.0165);
+        object.rotation.y = Math.PI * 0.5;
+        object.position.set(0, 0.3, 18);
+
+        object.userData.isKnight = true;
+        object.traverse(function (child) {
+          child.userData.isKnight = true;
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            if (child.material) {
+              child.material.needsUpdate = true;
+            }
+          }
+        });
+
+        heroModel.clear();
+        heroModel.add(object);
+        lowPolyKnight = object;
+        if (interactiveObjects.indexOf(object) === -1) {
+          interactiveObjects.push(object);
+        }
+      },
+      function (xhr) {
+        console.log("Cargando caballero low poly:", (xhr.loaded / xhr.total * 100) + "%");
+      },
+      function (error) {
+        console.warn("No se pudo cargar el caballero low poly:", error);
+      }
+    );
+  }
+
+  loadLowPolyKnight();
+
   // 5. Sistema de Partículas de Lluvia
   var rainCount = 1600;
   function rebuildRainSystem(targetCount) {
@@ -812,6 +911,7 @@
   ];
 
   var clickablePortals = [];
+  var interactiveObjects = [];
   var buildableObjects = [floor];
   var builtBlocks = [];
 
@@ -1007,10 +1107,15 @@
     }
 
     raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
-    var intersects = raycaster.intersectObjects(clickablePortals.concat(buildableObjects).concat(builtBlocks));
+    var interactables = clickablePortals.concat(interactiveObjects, buildableObjects, builtBlocks);
+    var intersects = raycaster.intersectObjects(interactables, true);
 
     if (intersects.length > 0) {
       var hit = intersects[0];
+      if (hit.object.userData && hit.object.userData.isKnight) {
+        window.open('https://shadowcrystal.dev/DEVICE_KNIGHT/', '_blank', 'noopener,noreferrer');
+        return;
+      }
       if (hit.object.userData && hit.object.userData.url) {
         openHologram(hit.object.userData.url, hit.object.userData.title);
         return;
@@ -1086,6 +1191,25 @@
       npc.visorMesh.rotation.y = Math.sin(time * 0.003 + npc.idleOffset) * 0.5;
       npc.ringMesh.rotation.z += 0.02;
     });
+
+    // Animación del modelo 3D central del proyecto
+    if (heroModel) {
+      heroModel.rotation.y += 0.006;
+      heroModel.position.y = 0.15 + Math.sin(time * 0.002) * 0.25;
+      if (heroCore) {
+        heroCore.rotation.x += 0.01;
+        heroCore.rotation.y += 0.012;
+      }
+      if (heroRingA) {
+        heroRingA.rotation.z += 0.01;
+      }
+      if (heroRingB) {
+        heroRingB.rotation.x += 0.009;
+      }
+      if (lowPolyKnight) {
+        lowPolyKnight.rotation.y += 0.005;
+      }
+    }
 
     // Relámpagos dinámicos si hay tormenta
     if (isStormy && Math.random() < 0.008) {
