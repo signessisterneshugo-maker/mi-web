@@ -65,6 +65,7 @@
     pointer-events: none;
     opacity: 0;
     overflow: hidden;
+    background: rgba(2, 3, 8, 0.12);
   }
   .exit-transition.is-active {
     opacity: 1;
@@ -74,66 +75,82 @@
     top: 0;
     bottom: 0;
     width: 50%;
-    background: linear-gradient(135deg, #26060a 0%, #06070a 35%, #16070c 100%);
-    transition: transform 0.95s cubic-bezier(.22,1,.36,1), filter 0.8s ease;
-    filter: saturate(1.2);
+    background: linear-gradient(135deg, #1a070a 0%, #06070a 36%, #12080f 100%);
+    transition: transform 1s cubic-bezier(.22,1,.36,1), filter 0.85s ease, opacity 0.7s ease;
+    filter: saturate(1.4);
+    opacity: 0.95;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
   }
   .exit-transition__panel--left {
     left: 0;
-    clip-path: polygon(0 0, 100% 0, 70% 100%, 0 100%);
-    transform: translateX(-105%);
+    width: 50%;
+    transform: translateX(0) scaleX(1);
+    clip-path: polygon(0 0, 100% 0, 82% 100%, 0 100%);
+    border-right: 1px solid rgba(255,255,255,0.08);
   }
   .exit-transition__panel--right {
     right: 0;
-    clip-path: polygon(30% 0, 100% 0, 100% 100%, 0 100%);
-    transform: translateX(105%);
+    left: auto;
+    width: 50%;
+    transform: translateX(0) scaleX(1);
+    clip-path: polygon(18% 0, 100% 0, 100% 100%, 0 100%);
+    border-left: 1px solid rgba(255,255,255,0.08);
   }
   .exit-transition.is-active .exit-transition__panel--left {
-    transform: translateX(-14%) skewX(-7deg);
+    animation: panelLeftBreak 1.2s cubic-bezier(.18,.8,.2,1) 0.12s forwards;
   }
   .exit-transition.is-active .exit-transition__panel--right {
-    transform: translateX(14%) skewX(7deg);
+    animation: panelRightBreak 1.2s cubic-bezier(.18,.8,.2,1) 0.12s forwards;
   }
   .exit-transition__slash {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 128vw;
-    height: 18px;
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 18%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.1) 100%);
-    box-shadow: 0 0 16px rgba(255,255,255,0.3), 0 0 30px rgba(220,20,40,0.8);
-    transform: translate(-50%, -50%) rotate(-16deg) scaleX(0);
+    width: 200vmax;
+    height: 14px;
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.96) 18%, rgba(255,255,255,0.96) 50%, rgba(255,255,255,0.12) 100%);
+    box-shadow: 0 0 18px rgba(255,255,255,0.5), 0 0 38px rgba(220,20,40,0.85);
+    transform: translate(-50%, -50%) rotate(-28deg) scaleX(0);
     transform-origin: center;
+    border-radius: 999px;
   }
   .exit-transition.is-active .exit-transition__slash {
-    animation: slashCut 0.9s cubic-bezier(.2,.8,.2,1) forwards;
+    animation: slashCut 1.2s cubic-bezier(.2,.8,.18,1) forwards;
   }
-  .exit-transition__knight {
+  .exit-transition__sprite {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 260px;
-    height: 300px;
-    transform: translate(-50%, -50%) scale(0.75) rotate(-12deg);
+    width: min(32vw, 340px);
+    height: min(32vw, 340px);
+    object-fit: contain;
+    transform: translate(-50%, -50%) scale(0.82) rotate(14deg);
     opacity: 0;
-    background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(60,60,60,0.9));
-    clip-path: polygon(28% 0, 52% 0, 58% 12%, 72% 12%, 82% 28%, 100% 30%, 100% 44%, 80% 54%, 78% 100%, 62% 100%, 56% 64%, 44% 64%, 38% 100%, 22% 100%, 20% 54%, 0 44%, 0 30%, 18% 28%, 24% 12%);
-    filter: drop-shadow(0 0 20px rgba(255,255,255,0.35));
+    pointer-events: none;
+    filter: drop-shadow(0 0 28px rgba(255,255,255,0.5));
+    image-rendering: pixelated;
+    transition: opacity 0.12s linear;
   }
-  .exit-transition.is-active .exit-transition__knight {
-    animation: knightCut 0.9s ease forwards;
+  .exit-transition.is-active .exit-transition__sprite {
+    opacity: 1;
   }
   @keyframes slashCut {
-    0% { transform: translate(-50%, -50%) rotate(-16deg) scaleX(0); opacity: 0; }
-    18% { opacity: 1; }
-    40% { transform: translate(-50%, -50%) rotate(-16deg) scaleX(1); opacity: 1; }
-    100% { transform: translate(-50%, -50%) rotate(-16deg) scaleX(1.2); opacity: 0; }
+    0% { transform: translate(-50%, -50%) rotate(-28deg) scaleX(0); opacity: 0; }
+    14% { opacity: 1; }
+    40% { transform: translate(-50%, -50%) rotate(-28deg) scaleX(1.08); opacity: 1; }
+    100% { transform: translate(-50%, -50%) rotate(-28deg) scaleX(1.3); opacity: 0; }
   }
-  @keyframes knightCut {
-    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.65) rotate(-12deg); }
-    18% { opacity: 1; }
-    48% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-8deg); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2) rotate(10deg); }
+  @keyframes panelLeftBreak {
+    0% { transform: translateX(0) scaleX(1); opacity: 0.95; }
+    18% { transform: translateX(0) scaleX(1); opacity: 0.95; }
+    55% { transform: translateX(-42%) scaleX(1.08); opacity: 0.98; }
+    100% { transform: translateX(-112%) scaleX(1.12); opacity: 0.92; }
+  }
+  @keyframes panelRightBreak {
+    0% { transform: translateX(0) scaleX(1); opacity: 0.95; }
+    18% { transform: translateX(0) scaleX(1); opacity: 0.95; }
+    55% { transform: translateX(42%) scaleX(1.08); opacity: 0.98; }
+    100% { transform: translateX(112%) scaleX(1.12); opacity: 0.92; }
   }
 </style>
 </head>
@@ -234,7 +251,7 @@
   <div class="exit-transition__panel exit-transition__panel--left"></div>
   <div class="exit-transition__panel exit-transition__panel--right"></div>
   <div class="exit-transition__slash"></div>
-  <div class="exit-transition__knight"></div>
+  <img class="exit-transition__sprite" id="exitKnightSprite" src="sprites/1.png" alt="" aria-hidden="true" />
 </div>
 
 <!-- Scripts Three.js y Lógica 3D -->

@@ -364,6 +364,52 @@ html[data-theme="light"] .theme-toggle__ico--moon{opacity:1;transform:none}
 .work__media .tag{position:absolute;top:1rem;right:1rem;z-index:2;font-family:var(--font-label);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.5);border:1px solid var(--line);padding:.35rem .6rem;border-radius:var(--r-btn); backdrop-filter: blur(4px)}
 
 /* ---------- ME GUSTA (BENTO GRID) ---------- */
+.video-spotlight {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  background: var(--bg-2);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  max-width: 760px;
+  margin-inline: auto;
+}
+.video-spotlight__meta {
+  display: grid;
+  gap: .45rem;
+  margin-bottom: .9rem;
+}
+.video-spotlight__label {
+  font-family: var(--font-label);
+  font-size: .62rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.video-spotlight__meta p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .92rem;
+  line-height: 1.6;
+}
+.video-spotlight__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: calc(var(--r-lg) - 8px);
+  overflow: hidden;
+}
+.video-spotlight__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #000;
+}
+
 .likes { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; }
 .cell {
   position: relative; border: 1px solid var(--line); background: var(--bg-3);

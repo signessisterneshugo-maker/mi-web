@@ -356,6 +356,10 @@
   function loadLowPolyKnight() {
     if (!knightLoader) {
       console.warn("FBXLoader no disponible; se mantiene el modelo fallback.");
+      lowPolyKnight = new THREE.Group();
+      heroModel.clear();
+      heroModel.add(lowPolyKnight);
+      heroModel.visible = true;
       return;
     }
 
@@ -379,9 +383,10 @@
           }
         });
 
+        lowPolyKnight = object;
         heroModel.clear();
         heroModel.add(object);
-        lowPolyKnight = object;
+        heroModel.visible = true;
         if (interactiveObjects.indexOf(object) === -1) {
           interactiveObjects.push(object);
         }
@@ -391,6 +396,10 @@
       },
       function (error) {
         console.warn("No se pudo cargar el caballero low poly:", error);
+        lowPolyKnight = new THREE.Group();
+        heroModel.clear();
+        heroModel.add(lowPolyKnight);
+        heroModel.visible = true;
       }
     );
   }
@@ -751,15 +760,65 @@
   var controls = new THREE.PointerLockControls(camera, document.body);
 
   var exitTransition = document.getElementById("exitTransition");
+  var exitSprite = document.getElementById("exitKnightSprite");
+  var exitSpriteFrames = [
+    "sprites/1.png",
+    "sprites/2.png",
+    "sprites/3.png",
+    "sprites/4.png",
+    "sprites/5.png"
+  ];
+
   function triggerExitTransition() {
     if (!exitTransition) {
       window.location.href = "index.html";
       return;
     }
+
+    document.body.classList.add("is-transitioning-out");
     exitTransition.classList.add("is-active");
+
+    if (exitSprite) {
+      var spriteStart = performance.now();
+      var totalDuration = 1200;
+
+      function tickSpriteFrame(now) {
+        var progress = Math.min(1, (now - spriteStart) / totalDuration);
+        var visibleProgress = Math.max(0, progress - 0.08) / 0.92;
+        var eased = 1 - Math.pow(1 - visibleProgress, 2.2);
+
+        var frameIndex = 0;
+        if (progress < 0.18) frameIndex = 0;
+        else if (progress < 0.34) frameIndex = 1;
+        else if (progress < 0.54) frameIndex = 2;
+        else if (progress < 0.74) frameIndex = 3;
+        else frameIndex = 4;
+
+        exitSprite.src = exitSpriteFrames[frameIndex];
+
+        if (progress < 0.08) {
+          exitSprite.style.opacity = "0";
+        } else {
+          exitSprite.style.opacity = "1";
+        }
+
+        var x = -12 + eased * 110;
+        var y = 14 - eased * 118;
+        var rotate = 12 - eased * 34;
+        var scale = 0.82 + eased * 0.52;
+
+        exitSprite.style.transform = "translate(-50%, -50%) translate(" + x + "px, " + y + "px) scale(" + scale + ") rotate(" + rotate + "deg)";
+
+        if (progress < 1) {
+          requestAnimationFrame(tickSpriteFrame);
+        }
+      }
+      requestAnimationFrame(tickSpriteFrame);
+    }
+
     setTimeout(function () {
       window.location.href = "index.html";
-    }, 900);
+    }, 1300);
   }
 
   if (startBtn) {
@@ -1225,9 +1284,6 @@
       }
       if (heroRingB) {
         heroRingB.rotation.x += 0.009;
-      }
-      if (lowPolyKnight) {
-        lowPolyKnight.rotation.y += 0.005;
       }
     }
 
