@@ -29,6 +29,13 @@ Repositorio oficial del sitio web personal y portfolio académico, desarrollado 
    - Uso de tokens CSS mediante variables personalizadas.
    - Soporte completo para navegación por teclado, enlaces de salto rápido (`skip links`) y gestión de atributos ARIA.
 
+## 🧭 Decisiones Técnicas y Evidencia de Arquitectura
+
+- **Contacto real:** el formulario de contacto usa un endpoint de envío real con `FormSubmit` y un fallback `mailto` si el servicio no está disponible, con validación HTML y feedback al usuario.
+- **Persistencia visual:** los cambios de estilo y tema se guardan en `localStorage` y se sincronizan con la URL para preservar contexto al navegar entre páginas.
+- **Contenido propio y contextualizado:** la marca no se limita a plantillas genéricas; el copy incorpora trayectoria académica, experiencia internacional y un caso de uso real del proyecto personal.
+- **Estructura escalable:** la lógica del sitio está separada en `HTML`, `CSS` y `JS`, con documentación técnica en el repositorio para facilitar mantenimiento y futuras iteraciones.
+
 ---
 
 ## 📌 Historial de Actualizaciones (Changelog)

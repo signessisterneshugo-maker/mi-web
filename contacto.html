@@ -120,7 +120,7 @@
         </div>
 
         <div class="contact-form-wrap" data-reveal data-d="2">
-          <form class="real-form" action="https://formspree.io/f/TU_ID_AQUI" method="POST">
+          <form class="real-form" action="https://formsubmit.co/ajax/hugsigsis@alu.edu.gva.es" method="POST">
             <div class="form-group">
               <label for="name">Tu Nombre / Empresa</label>
               <input type="text" id="name" name="name" required placeholder="Ej. Juan Pérez">
@@ -133,7 +133,12 @@
               <label for="message">Mensaje</label>
               <textarea id="message" name="message" required placeholder="Cuéntame los detalles de la propuesta..."></textarea>
             </div>
-            <!-- Honeypot antispam -->
+            <div class="form-group">
+              <label for="subject">Asunto</label>
+              <input type="text" id="subject" name="_subject" required placeholder="Ej. Demanda de prácticas / proyecto / colaboración">
+            </div>
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table">
             <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off">
             
             <button type="submit" class="btn btn--solid">Enviar Mensaje ✉</button>
