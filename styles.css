@@ -48,6 +48,7 @@ html[data-quality="low"] .btn::before,
 html[data-quality="low"] .work__card::before,
 html[data-quality="low"] .hero__glow{ display:none !important; }
 html[data-quality="low"] .hero__name{ text-shadow:none !important; }
+html[data-quality="low"] .hero__name-line{ clip-path:inset(0 0 0 0) !important; transform:none !important; }
 html[data-quality="low"] .hero__bg{ opacity:.9; }
 html[data-quality="low"] .style-switch__panel{ animation:none !important; }
 html[data-quality="low"] body{ overflow-x:hidden; }
