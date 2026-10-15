@@ -272,6 +272,37 @@ html[data-theme="light"] .theme-toggle__ico--moon{opacity:1;transform:none}
 .case-study__card h3{font-size:clamp(1.1rem, 2vw, 1.55rem);margin-bottom:.7rem;line-height:1.15}
 .case-study__card p{color:var(--muted);margin:0;font-size:.98rem}
 
+.architecture__hero{display:grid;grid-template-columns:1.15fr .85fr;align-items:center;gap:clamp(2rem,5vw,4rem)}
+.architecture__visual{display:grid;place-items:center;padding:1.4rem;border:1px solid var(--line);background:radial-gradient(circle at center, var(--accent-soft), transparent 58%), var(--bg-2);border-radius:var(--r-lg);min-height:360px;overflow:hidden;position:relative}
+.architecture__orbit{position:relative;width:min(340px,80vw);height:280px;border-radius:50%;border:1px solid var(--line);background:radial-gradient(circle, rgba(255,255,255,.03), transparent 60%)}
+.architecture__core{position:absolute;inset:50% auto auto 50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:120px;height:120px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-family:var(--font-label);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 0 30px var(--accent-soft)}
+.architecture__node{position:absolute;display:grid;place-items:center;border:1px solid var(--line-strong);background:color-mix(in srgb, var(--bg-3) 85%, transparent);color:var(--text);font-family:var(--font-label);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;padding:.7rem .8rem;border-radius:999px;box-shadow:var(--card-shadow);animation:floatOrbit 7s ease-in-out infinite}
+.architecture__node--1{top:10%;left:15%}
+.architecture__node--2{top:12%;right:12%}
+.architecture__node--3{bottom:12%;left:22%}
+.architecture__node--4{bottom:14%;right:18%}
+@keyframes floatOrbit{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.architecture__steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin-top:2.5rem}
+.architecture__card{padding:1.3rem;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--bg-2);box-shadow:var(--card-shadow);transition:transform .35s var(--ease), border-color .35s}
+.architecture__card:hover{border-color:var(--accent);transform:translateY(-6px)}
+.architecture__index{display:inline-block;margin-bottom:.8rem;padding:.35rem .6rem;border:1px solid var(--accent);border-radius:999px;color:var(--accent);font-family:var(--font-label);font-size:.62rem;letter-spacing:.12em}
+.architecture__card h3{font-size:1.2rem;margin:0 0 .7rem}
+.architecture__card p{margin:0;color:var(--muted);line-height:1.7}
+.architecture__diagram{margin-top:3rem;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.architecture__layer{position:relative;padding:1.4rem 1.5rem;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--bg-2);overflow:hidden;min-height:200px}
+.architecture__layer::before{content:"";position:absolute;inset:auto 0 0 0;height:3px;background:linear-gradient(90deg,var(--accent),transparent)}
+.architecture__layer--top{grid-column:1 / -1}
+.architecture__label{display:inline-block;margin-bottom:.8rem;font-family:var(--font-label);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.architecture__layer h3{margin:0 0 .8rem;font-size:clamp(1.3rem,2vw,1.9rem)}
+.architecture__layer ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.7rem .9rem;padding:0;margin:0}
+.architecture__layer li{padding:.75rem .85rem;border:1px solid var(--line);border-radius:calc(var(--r) - 2px);background:rgba(255,255,255,.02);color:var(--muted)}
+.architecture__stack{margin-top:3rem}
+.architecture__features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1.5rem}
+.architecture__feature{padding:1.2rem;border:1px solid var(--line);border-radius:var(--r-lg);background:linear-gradient(180deg, rgba(255,255,255,.02), transparent);transition:transform .3s var(--ease), border-color .3s}
+.architecture__feature:hover{transform:translateY(-5px);border-color:var(--accent)}
+.architecture__feature span{display:inline-block;margin-bottom:.8rem;font-family:var(--font-label);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.architecture__feature p{margin:0;color:var(--muted);line-height:1.7}
+
 /* ---------- Trayectoria / Work ---------- */
 .work__stack{display:flex;flex-direction:column;gap:2rem}
 .work__card{position:sticky;top:100px;border:1px solid var(--line);background:var(--bg-2);border-radius:var(--r-lg);clip-path:var(--clip);overflow:hidden;box-shadow:var(--card-shadow);display:grid;grid-template-columns:1.1fr .9fr;min-height:60vh;transform:scale(var(--sc,1));transform-origin:top center;transition:border-color .4s, transform .2s ease-out;will-change:transform}

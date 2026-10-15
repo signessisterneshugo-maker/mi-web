@@ -162,6 +162,109 @@
     return "Estoy preparado para hablar de Hugo, su formación, su stack, la IA y el metaverso 3D. Intenta preguntarme por SMX, DAM, Three.js, APIs o IA.";
   };
 
+  function renderGitActivity() {
+    var container = document.getElementById("gitActivity");
+    if (!container) return;
+
+    var owner = (container.getAttribute("data-owner") || "hugsigsis").trim();
+    var repo = (container.getAttribute("data-repo") || "mi-web").trim();
+    var repoName = document.getElementById("gitRepoName");
+    var branchesEl = document.getElementById("gitBranches");
+    var commitsEl = document.getElementById("gitCommits");
+
+    if (!repoName || !branchesEl || !commitsEl) return;
+
+    repoName.textContent = owner + " / " + repo;
+
+    function renderFallback(message) {
+      branchesEl.innerHTML = '<div class="git-activity__empty">' + message + '</div>';
+      commitsEl.innerHTML = '<div class="git-activity__empty">' + message + '</div>';
+    }
+
+    function formatDate(dateString) {
+      var d = new Date(dateString);
+      if (Number.isNaN(d.getTime())) return "Fecha no disponible";
+      return d.toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+      });
+    }
+
+    Promise.all([
+      fetch("https://api.github.com/repos/" + owner + "/" + repo + "/branches"),
+      fetch("https://api.github.com/repos/" + owner + "/" + repo + "/commits?per_page=5")
+    ])
+      .then(function (responses) {
+        var branchResponse = responses[0];
+        var commitResponse = responses[1];
+
+        if (!branchResponse.ok || !commitResponse.ok) {
+          throw new Error("No hay repositorio público disponible");
+        }
+
+        return Promise.all([
+          branchResponse.json(),
+          commitResponse.json()
+        ]);
+      })
+      .then(function (data) {
+        var branches = data[0] || [];
+        var commits = data[1] || [];
+
+        branchesEl.innerHTML = "";
+        if (!branches.length) {
+          branchesEl.innerHTML = '<div class="git-activity__empty">Sin ramas públicas</div>';
+        } else {
+          branches.forEach(function (branch) {
+            var chip = document.createElement("span");
+            chip.className = "git-branch";
+            chip.textContent = branch.name;
+            branchesEl.appendChild(chip);
+          });
+        }
+
+        commitsEl.innerHTML = "";
+        if (!commits.length) {
+          commitsEl.innerHTML = '<div class="git-activity__empty">Sin commits recientes</div>';
+          return;
+        }
+
+        commits.forEach(function (commit) {
+          var item = document.createElement("div");
+          item.className = "git-commit";
+
+          var dot = document.createElement("span");
+          dot.className = "git-commit__dot";
+
+          var meta = document.createElement("div");
+          meta.className = "git-commit__meta";
+
+          var message = document.createElement("div");
+          message.className = "git-commit__message";
+          message.textContent = (commit.commit && commit.commit.message ? String(commit.commit.message).split("\n")[0] : "Commit");
+
+          var date = document.createElement("div");
+          date.className = "git-commit__date";
+          date.textContent = formatDate(commit.commit && commit.commit.author ? commit.commit.author.date : null);
+
+          var hash = document.createElement("div");
+          hash.className = "git-commit__hash";
+          hash.textContent = (commit.sha || "").slice(0, 7);
+
+          meta.appendChild(message);
+          meta.appendChild(date);
+          item.appendChild(dot);
+          item.appendChild(meta);
+          item.appendChild(hash);
+          commitsEl.appendChild(item);
+        });
+      })
+      .catch(function () {
+        renderFallback("Repo público no disponible o no configurado.");
+      });
+  }
+
   function bindChatWidget() {
     var launcher = $("#chatLauncher");
     var panel = $("#aiChatPanel");
@@ -227,6 +330,7 @@
 
   var fine   = matchMedia("(pointer:fine)").matches;
   var root   = document.documentElement;
+  renderGitActivity();
   bindChatWidget();
 
   /* ---------- Sincronización de enlaces y persistencia ---------- */
@@ -547,7 +651,8 @@
       if (!form.checkValidity()) { form.reportValidity(); return; }
       var d = new FormData(form);
       if (d.get("website")) return; // Honeypot antispam
-      var to = mailEl ? mailEl.textContent.trim() : "";
+      var to = "hugsigsis@alu.edu.gva.es";
+      if (mailEl) mailEl.textContent = to;
       var endpoint = form.getAttribute("action") || "";
       if (/TU_ID_AQUI/.test(endpoint)) {
         location.href = "mailto:" + to + "?subject=" + encodeURIComponent("Mensaje de " + d.get("name")) +

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark" data-style="unico">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Cómo funciona — Hugo Signes Sisternes</title>
+<meta name="theme-color" content="#0A0A0C">
+<meta property="og:title" content="Cómo funciona — Hugo Signes Sisternes">
+<meta property="og:type" content="website">
+<meta name="description" content="Descripción de la arquitectura, contenido y lógica de la web personal de Hugo Signes Sisternes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script>
+(function(){
+  try{
+    var url = new URLSearchParams(window.location.search);
+    var t = url.get('theme') || localStorage.getItem('hugo-theme') || (matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+    var s = url.get('style') || localStorage.getItem('hugo-style') || 'unico';
+    document.documentElement.setAttribute('data-theme',t);
+    document.documentElement.setAttribute('data-style',s);
+  }catch(e){}
+})();
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="wing" viewBox="0 0 120 120">
+    <path d="M60 14 L16 58 L60 58 Z"/><path d="M60 106 L16 62 L60 62 Z"/>
+    <path d="M60 14 L104 58 L60 58 Z"/><path d="M60 106 L104 62 L60 62 Z"/>
+    <rect x="50" y="50" width="20" height="20" transform="rotate(45 60 60)"/>
+  </symbol>
+</svg>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="trail" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a href="index.html" class="logo" data-magnetic>
+      <svg class="logo__mark" aria-hidden="true"><use href="#wing"/></svg>
+      <span class="logo__txt"><b>hugo</b>.signes</span>
+    </a>
+    <nav class="topnav" aria-label="Secciones">
+      <a href="sobre.html">Sobre</a>
+      <a href="trabajo.html">Trayectoria</a>
+      <a href="gusta.html">Me gusta</a>
+      <a href="como-funciona.html" class="is-active">Cómo funciona</a>
+      <a href="futuro.html">Futuro</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <div class="tools">
+      <div class="style-switch">
+        <button class="style-switch__btn" id="styleToggle" aria-haspopup="true" aria-expanded="false">
+          <svg aria-hidden="true"><use href="#wing"/></svg><span>Estilo</span>
+        </button>
+        <div class="style-switch__panel" id="stylePanel" hidden>
+          <button data-set-style="unico"><i class="sw sw--unico"></i>Único</button>
+          <button data-set-style="professional"><i class="sw sw--pro"></i>Profesional</button>
+          <button data-set-style="gamer"><i class="sw sw--gamer"></i>Undertale</button>
+          <button data-set-style="retro"><i class="sw sw--retro"></i>Retro</button>
+        </div>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+        <span class="theme-toggle__ico theme-toggle__ico--sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></g></svg></span>
+        <span class="theme-toggle__ico theme-toggle__ico--moon"><svg viewBox="0 0 24 24"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z"/></svg></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<aside class="rail" aria-hidden="true">
+  <span class="rail__top">Hugo Signes · 2024→2026</span>
+  <nav class="rail__nav">
+    <a href="index.html" data-label="Inicio">00<i class="rail__dot"></i></a>
+    <a href="sobre.html" data-label="Sobre mí">01<i class="rail__dot"></i></a>
+    <a href="trabajo.html" data-label="Trayectoria">02<i class="rail__dot"></i></a>
+    <a href="gusta.html" data-label="Me gusta">03<i class="rail__dot"></i></a>
+    <a href="como-funciona.html" data-label="Cómo funciona" class="is-active">04<i class="rail__dot"></i></a>
+    <a href="futuro.html" data-label="Futuro IA">05<i class="rail__dot"></i></a>
+    <a href="contacto.html" data-label="Contacto">06<i class="rail__dot"></i></a>
+  </nav>
+  <div class="rail__bottom"><span class="rail__line"></span><svg class="rail__wing"><use href="#wing"/></svg></div>
+</aside>
+
+<div class="page">
+<main id="main">
+  <section class="section architecture" id="como-funciona">
+    <div class="section__inner">
+      <div class="architecture__hero" data-reveal>
+        <div>
+          <span class="section__num">06 // Arquitectura</span>
+          <h1 class="section__title">Cómo funciona esta web</h1>
+          <p class="section__sub">No es una sola página bonita: es un sistema. Cada sección, cada estilo, cada interacción y cada dato responden a una idea de marca y de producto.</p>
+          <div class="hero__cta" style="margin-top: 1.6rem;">
+            <a href="index.html" class="btn btn--solid" data-magnetic>↩ Volver al inicio</a>
+            <a href="contacto.html" class="btn btn--ghost" data-magnetic>💬 Contactar</a>
+          </div>
+        </div>
+        <div class="architecture__visual">
+          <div class="architecture__orbit">
+            <span class="architecture__core">marca</span>
+            <span class="architecture__node architecture__node--1">HTML</span>
+            <span class="architecture__node architecture__node--2">CSS</span>
+            <span class="architecture__node architecture__node--3">JS</span>
+            <span class="architecture__node architecture__node--4">API</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="architecture__steps" data-reveal>
+        <article class="architecture__card">
+          <span class="architecture__index">01</span>
+          <h3>Contenido</h3>
+          <p>Cada página representa una parte de mi identidad: perfil, trayectoria, intereses, futuro, contacto. La estructura está pensada para que la marca se entienda por secciones.</p>
+        </article>
+        <article class="architecture__card">
+          <span class="architecture__index">02</span>
+          <h3>Estilo</h3>
+          <p>Las variables CSS y los temas visuales hacen que la web cambie de personalidad sin perder coherencia. El sistema visual está centralizado y se reutiliza.</p>
+        </article>
+        <article class="architecture__card">
+          <span class="architecture__index">03</span>
+          <h3>Interactividad</h3>
+          <p>Cursores, animaciones, menú móvil, cambio de tema, chatbot y controles del 3D aportan vida útil. La interactividad no es decorativa: explica la experiencia.</p>
+        </article>
+        <article class="architecture__card">
+          <span class="architecture__index">04</span>
+          <h3>Datos reales</h3>
+          <p>La web consume APIs, sincroniza información del clima y del repositorio de GitHub, y se conecta con el contacto para hacerla sentir viva y operativa.</p>
+        </article>
+      </div>
+
+      <div class="architecture__diagram" data-reveal>
+        <div class="architecture__layer architecture__layer--top">
+          <span class="architecture__label">Capa 4</span>
+          <h3>Experiencia y servicio</h3>
+          <ul>
+            <li>Chatbot ECHO-AI</li>
+            <li>Formulario de contacto</li>
+            <li>GitHub, clima y narrativa visual</li>
+          </ul>
+        </div>
+        <div class="architecture__layer architecture__layer--mid">
+          <span class="architecture__label">Capa 3</span>
+          <h3>Logica y comportamiento</h3>
+          <ul>
+            <li>JavaScript de navegación</li>
+            <li>Temas y estilos persistentes</li>
+            <li>Animaciones, carrito de estado y UI</li>
+          </ul>
+        </div>
+        <div class="architecture__layer architecture__layer--low">
+          <span class="architecture__label">Capa 2</span>
+          <h3>Diseño y sistema visual</h3>
+          <ul>
+            <li>Tokens CSS</li>
+            <li>4 estilos distintos</li>
+            <li>Layout responsive y accesible</li>
+          </ul>
+        </div>
+        <div class="architecture__layer architecture__layer--base">
+          <span class="architecture__label">Capa 1</span>
+          <h3>Contenido y estructura</h3>
+          <ul>
+            <li>HTML semántico</li>
+            <li>Páginas independientes</li>
+            <li>SEO y meta tags por página</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="architecture__stack" data-reveal>
+        <div class="section__head" style="margin-bottom:1.5rem;">
+          <span class="section__num">Qué la compone</span>
+          <h2 class="section__title" style="font-size: clamp(2rem, 4vw, 3rem);">Un sistema pensado como marca</h2>
+        </div>
+
+        <div class="architecture__features">
+          <div class="architecture__feature">
+            <span>HTML</span>
+            <p>Contenido semántico y páginas dedicadas a cada etapa del portfolio.</p>
+          </div>
+          <div class="architecture__feature">
+            <span>CSS</span>
+            <p>Design tokens, responsive, animaciones, hover states y diferencias por estilo.</p>
+          </div>
+          <div class="architecture__feature">
+            <span>JavaScript</span>
+            <p>Interacciones reales: tema, menú, clima, GitHub, chatbot y animaciones de movimiento.</p>
+          </div>
+          <div class="architecture__feature">
+            <span>APIs</span>
+            <p>GitHub y Open-Meteo aportan contenido dinámico que da sensación de web viva.</p>
+          </div>
+          <div class="architecture__feature">
+            <span>3D</span>
+            <p>El metaverso transforma el portfolio en experiencia inmersiva y demuestra técnica.</p>
+          </div>
+          <div class="architecture__feature">
+            <span>Accesibilidad</span>
+            <p>Skip links, foco visible, contraste, navegación clara y comportamiento cuidada.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+</div>
+
+<script src="script.js" defer></script>
+</body>
+</html>
