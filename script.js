@@ -337,14 +337,40 @@
   function syncLinks() {
     var t = root.getAttribute("data-theme");
     var s = root.getAttribute("data-style");
+    var q = root.getAttribute("data-quality") || "alta";
     
     $$(".logo, .topnav a, .rail__nav a, .hero__cta a, .mnav a").forEach(function(a) {
       var href = a.getAttribute("href");
       if (!href || href.startsWith("http") || href.startsWith("mailto:")) return;
       var base = href.split("?")[0].split("#")[0];
       var hash = href.includes("#") ? "#" + href.split("#")[1] : "";
-      if (base) a.setAttribute("href", base + "?theme=" + t + "&style=" + s + hash);
+      if (base) a.setAttribute("href", base + "?theme=" + t + "&style=" + s + "&quality=" + q + hash);
     });
+  }
+
+  function applyQuality(q) {
+    var value = (q === "media" || q === "low") ? q : "alta";
+    root.setAttribute("data-quality", value);
+    try { localStorage.setItem("hugo-quality", value); } catch (e) {}
+    try {
+      var urlObj = new URL(window.location);
+      urlObj.searchParams.set('quality', value);
+      window.history.replaceState({}, '', urlObj);
+    } catch (e) {}
+
+    $$("[data-set-quality]").forEach(function (b) {
+      var on = b.dataset.setQuality === value;
+      b.classList.toggle("is-active", on);
+      b.setAttribute("aria-checked", String(on));
+    });
+
+    if (value === "low") {
+      document.body.classList.add("quality-low");
+    } else {
+      document.body.classList.remove("quality-low");
+    }
+
+    syncLinks();
   }
 
   /* ---------- Menú Superior dinámico ---------- */
@@ -453,6 +479,10 @@
   var initialStyle = urlParams.get('style') || localStorage.getItem('hugo-style') || "unico";
   applyStyle(initialStyle);
 
+  var qParams = new URLSearchParams(window.location.search);
+  var initialQuality = qParams.get('quality') || localStorage.getItem('hugo-quality') || "alta";
+  applyQuality(initialQuality);
+
   if(sBtn) {
     sBtn.addEventListener("click", function (e) {
       e.stopPropagation();
@@ -464,6 +494,14 @@
     b.addEventListener("click", function () {
       applyStyle(b.dataset.setStyle);
       if(sPanel) sPanel.hidden = true; 
+      if(sBtn) sBtn.setAttribute("aria-expanded", "false");
+    });
+  });
+
+  $$("[data-set-quality]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      applyQuality(b.dataset.setQuality);
+      if(sPanel) sPanel.hidden = true;
       if(sBtn) sBtn.setAttribute("aria-expanded", "false");
     });
   });

@@ -15,7 +15,42 @@
   --clip:none; --scan:0; --glow:0 0 0 0 transparent;
   --card-shadow:0 30px 60px -30px rgba(0,0,0,.6); --rail-w:76px;
   --img-filter:grayscale(.3) contrast(1.05); --media-shadow:none; --media-overlay:none;
+  --motion-scale:1;
 }
+
+html[data-quality="medium"]{ --motion-scale:.7; --grain:.03; }
+html[data-quality="low"]{ --motion-scale:0; --grain:.012; --scan:0; }
+html[data-quality="medium"] *{ transition-duration: calc(0.35s * var(--motion-scale)) !important; }
+html[data-quality="low"] *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+html[data-quality="low"] .grain,
+html[data-quality="low"] .scanlines,
+html[data-quality="low"] .vignette,
+html[data-quality="low"] .cursor,
+html[data-quality="low"] .cursor-ring,
+html[data-quality="low"] .trail,
+html[data-quality="low"] .hero__wing,
+html[data-quality="low"] .rail__wing,
+html[data-quality="low"] .logo__mark,
+html[data-quality="low"] .architecture__orbit,
+html[data-quality="low"] .architecture__node,
+html[data-quality="low"] .theme-toggle__ico,
+html[data-quality="low"] .hero__name-line{ animation:none !important; }
+html[data-quality="low"] .topbar,
+html[data-quality="low"] .work__card,
+html[data-quality="low"] .cell,
+html[data-quality="low"] .spec,
+html[data-quality="low"] .chat-launcher,
+html[data-quality="low"] .ai-chat-panel,
+html[data-quality="low"] .architecture__card,
+html[data-quality="low"] .architecture__feature,
+html[data-quality="low"] .architecture__layer{ box-shadow:none !important; }
+html[data-quality="low"] .btn::before,
+html[data-quality="low"] .work__card::before,
+html[data-quality="low"] .hero__glow{ display:none !important; }
+html[data-quality="low"] .hero__name{ text-shadow:none !important; }
+html[data-quality="low"] .hero__bg{ opacity:.9; }
+html[data-quality="low"] .style-switch__panel{ animation:none !important; }
+html[data-quality="low"] body{ overflow-x:hidden; }
 
 /* ===== 1) ÚNICO · YVELTAL ===== */
 html[data-style="unico"]{
@@ -135,10 +170,12 @@ html[data-style="professional"] .cursor,html[data-style="professional"] .cursor-
 .style-switch__btn svg{width:16px;height:16px;color:var(--accent)}
 .style-switch__panel{position:absolute;top:calc(100% + 10px);right:0;width:230px;background:color-mix(in srgb,var(--bg-2) 90%,transparent); backdrop-filter:blur(10px); border:1px solid var(--line-strong);border-radius:var(--r);padding:.5rem;box-shadow:var(--card-shadow);display:flex;flex-direction:column;gap:.15rem;transform-origin:top right;animation:pop .3s var(--ease-b)}
 @keyframes pop{from{opacity:0;transform:scale(.9) translateY(-10px)}to{opacity:1;transform:none}}
+.style-switch__divider{height:1px;background:var(--line);margin:.2rem 0 .3rem}
 .style-switch__panel button{display:flex;align-items:center;gap:.7rem;width:100%;padding:.75rem .8rem;border:0;background:transparent;color:var(--muted);border-radius:calc(var(--r) - 4px);font-family:var(--font-label);font-size:.72rem;text-align:left;transition:all .25s var(--ease)}
 .style-switch__panel button:hover{background:var(--bg-3);color:var(--text);transform:translateX(5px)}
 .style-switch__panel button.is-active{background:var(--accent-soft);color:var(--text)}
 .sw{width:16px;height:16px;border-radius:5px;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
+.quality-opt{justify-content:center !important;text-align:center !important;padding-left:0 !important;padding-right:0 !important}
 .sw--unico{background:linear-gradient(135deg,#E4172B,#0A0A0C)}
 .sw--pro{background:linear-gradient(135deg,#2E5FA3,#E03A4C)}
 .sw--gamer{background:linear-gradient(135deg,#FF1E45,#21E6C1)}
