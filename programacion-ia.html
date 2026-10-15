@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark" data-style="unico">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Programación con IA — Hugo Signes Sisternes</title>
+  <meta name="description" content="Guía completa para empezar a programar con IA: herramientas, videotutoriales, prompts, flujo de trabajo y recursos prácticos.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page--wide {
+      width: min(1200px, calc(100vw - 2rem));
+      margin: 0 auto;
+      padding: 2rem 0 5rem;
+    }
+
+    .hero-ia {
+      position: relative;
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--bg-2) 80%, transparent), rgba(228, 23, 43, 0.12));
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      padding: clamp(1.5rem, 4vw, 3rem);
+      margin-top: 2rem;
+    }
+
+    .hero-ia__eyebrow {
+      font-family: var(--font-label);
+      font-size: .68rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+
+    .hero-ia h1 {
+      font-size: clamp(2.3rem, 6vw, 5rem);
+      line-height: .95;
+      margin: 0 0 1rem;
+      max-width: 700px;
+      text-transform: uppercase;
+    }
+
+    .hero-ia__lead {
+      max-width: 760px;
+      font-size: 1.08rem;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-ia__badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .8rem;
+      margin-top: 1.2rem;
+    }
+
+    .hero-ia__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      padding: .7rem .95rem;
+      font-family: var(--font-label);
+      font-size: .64rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .section-block {
+      margin-top: 2rem;
+      border: 1px solid var(--line);
+      background: var(--bg-2);
+      border-radius: var(--r-lg);
+      padding: clamp(1.2rem, 3vw, 2rem);
+      box-shadow: var(--card-shadow);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: end;
+      margin-bottom: 1.4rem;
+      flex-wrap: wrap;
+    }
+
+    .section-head__label {
+      font-family: var(--font-label);
+      font-size: .64rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .section-head h2 {
+      font-size: clamp(1.6rem, 3vw, 2.7rem);
+      line-height: 1.1;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .grid-3,
+    .grid-4 {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--bg-3) 90%, transparent);
+      border-radius: 18px;
+      padding: 1.2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent 70%);
+      opacity: .9;
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      margin: 0 0 .7rem;
+    }
+
+    .card p,
+    .card li {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: .96rem;
+    }
+
+    .card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: .5rem;
+    }
+
+    .card li::before {
+      content: "✦";
+      color: var(--accent);
+      margin-right: .6rem;
+    }
+
+    .tiny {
+      font-family: var(--font-label);
+      font-size: .62rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .video-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .video-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--bg-3);
+    }
+
+    .video-card__thumb {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(135deg, rgba(228,23,43,.25), rgba(110,168,254,.18));
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      font-family: var(--font-label);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-size: .7rem;
+    }
+
+    .video-card__thumb::before {
+      content: "▶";
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      border: 1px solid rgba(255,255,255,.5);
+      background: rgba(0,0,0,.35);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      box-shadow: 0 0 30px rgba(228,23,43,.28);
+    }
+
+    .video-card__body {
+      padding: 1rem 1rem 1.1rem;
+    }
+
+    .video-card__body h3 {
+      font-size: 1.08rem;
+      margin: 0 0 .45rem;
+      text-transform: uppercase;
+    }
+
+    .video-card__body p {
+      margin: 0 0 .75rem;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: .92rem;
+    }
+
+    .video-card__body a {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      font-family: var(--font-label);
+      font-size: .63rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .tool-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      width: fit-content;
+      padding: .35rem .7rem;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      background: rgba(255,255,255,0.02);
+      font-family: var(--font-label);
+      font-size: .6rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: .8rem;
+    }
+
+    .prompt-tool {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.02);
+      padding: 1.2rem;
+      display: grid;
+      gap: 1rem;
+      min-height: 100%;
+    }
+
+    .prompt-tool textarea {
+      width: 100%;
+      min-height: 140px;
+      resize: vertical;
+      border: 1px solid var(--line-strong);
+      border-radius: 14px;
+      background: rgba(0,0,0,0.18);
+      color: var(--text);
+      font: inherit;
+      padding: 1rem;
+    }
+
+    .prompt-tool__actions {
+      display: flex;
+      gap: .8rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--line-strong);
+      background: transparent;
+      color: var(--text);
+      border-radius: 999px;
+      padding: .8rem 1.2rem;
+      font-family: var(--font-label);
+      font-size: .68rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .btn--primary {
+      background: rgba(228,23,43,.12);
+      border-color: rgba(228,23,43,.7);
+      color: var(--text);
+    }
+
+    .prompt-output {
+      min-height: 150px;
+      border: 1px solid var(--line-strong);
+      border-radius: 14px;
+      background: rgba(0,0,0,0.18);
+      padding: 1rem;
+      color: var(--muted);
+      white-space: pre-wrap;
+      line-height: 1.7;
+    }
+
+    .timeline {
+      display: grid;
+      gap: .9rem;
+      margin-top: 1rem;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 1rem;
+      border-left: 2px solid var(--line);
+      padding-left: 1rem;
+      position: relative;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -7px;
+      top: .2rem;
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--accent);
+      background: var(--bg-2);
+      border-radius: 50%;
+      box-shadow: 0 0 0 5px rgba(228,23,43,0.14);
+    }
+
+    .timeline-item__day {
+      font-family: var(--font-label);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding-top: .15rem;
+    }
+
+    .timeline-item__content h3 {
+      margin: 0 0 .4rem;
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+
+    .timeline-item__content p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .resource-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .resource-item {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1rem;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .resource-item h3 {
+      margin: 0 0 .35rem;
+      text-transform: uppercase;
+      font-size: 1rem;
+    }
+
+    .resource-item p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .quick-nav {
+      position: sticky;
+      top: 4.8rem;
+      z-index: 25;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem;
+      margin: 1.4rem 0 0;
+      padding: .75rem 1rem;
+      border: 1px solid var(--line);
+      background: rgba(10,10,16,0.7);
+      border-radius: 999px;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--card-shadow);
+    }
+
+    .quick-nav a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: .55rem .9rem;
+      border-radius: 999px;
+      color: var(--muted);
+      text-decoration: none;
+      font-family: var(--font-label);
+      font-size: .62rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      transition: all .2s ease;
+    }
+
+    .quick-nav a:hover,
+    .quick-nav a.is-active {
+      background: rgba(228,23,43,0.12);
+      border: 1px solid rgba(228,23,43,0.5);
+      color: var(--text);
+    }
+
+    .hero-ia__meta {
+      display: flex;
+      gap: .8rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 1.2rem;
+    }
+
+    .live-clock {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      border: 1px solid var(--line-strong);
+      background: rgba(255,255,255,0.02);
+      border-radius: 999px;
+      padding: .55rem .8rem;
+      font-family: var(--font-label);
+      font-size: .62rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .tool-panel {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      border-radius: 18px;
+      padding: 1.1rem;
+      display: grid;
+      gap: .9rem;
+      min-height: 100%;
+    }
+
+    .tool-panel__title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .7rem;
+      font-family: var(--font-label);
+      font-size: .65rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .tool-panel input,
+    .tool-panel textarea,
+    .tool-panel select {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      background: rgba(0,0,0,0.18);
+      color: var(--text);
+      border-radius: 12px;
+      padding: .8rem .9rem;
+      font: inherit;
+    }
+
+    .tool-panel textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .tool-panel__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+    }
+
+    .tool-panel__result {
+      min-height: 86px;
+      border: 1px solid var(--line-strong);
+      background: rgba(0,0,0,0.18);
+      border-radius: 12px;
+      padding: .8rem .9rem;
+      color: var(--muted);
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .checklist {
+      display: grid;
+      gap: .65rem;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: .7rem .8rem;
+      color: var(--text);
+      background: rgba(255,255,255,0.014);
+    }
+
+    .check-item input {
+      width: 1rem;
+      height: 1rem;
+      accent-color: var(--accent);
+    }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+
+    [data-reveal].is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 960px) {
+      .grid-3,
+      .grid-4,
+      .tool-grid,
+      .resource-list,
+      .video-list {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .grid-3,
+      .grid-4,
+      .tool-grid,
+      .resource-list,
+      .video-list {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Saltar al contenido</a>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="wing" viewBox="0 0 120 120">
+      <path d="M60 14 L16 58 L60 58 Z"/><path d="M60 106 L16 62 L60 62 Z"/>
+      <path d="M60 14 L104 58 L60 58 Z"/><path d="M60 106 L104 62 L60 62 Z"/>
+      <rect x="50" y="50" width="20" height="20" transform="rotate(45 60 60)"/>
+    </symbol>
+  </svg>
+
+  <div class="grain" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a href="index.html" class="logo" data-magnetic>
+        <svg class="logo__mark" aria-hidden="true"><use href="#wing"/></svg>
+        <span class="logo__txt"><b>hugo</b>.signes</span>
+      </a>
+      <nav class="topnav" aria-label="Secciones">
+        <a href="sobre.html">Sobre</a>
+        <a href="trabajo.html">Trayectoria</a>
+        <a href="gusta.html">Me gusta</a>
+        <a href="programacion-ia.html" class="is-active">IA & Código</a>
+        <a href="como-funciona.html">Cómo funciona</a>
+        <a href="futuro.html">Futuro</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+      <div class="tools">
+        <div id="weather-widget" class="weather-badge" aria-live="polite">
+          <span id="weather-icon" aria-hidden="true">⏳</span>
+          <span id="weather-temp">Cargando clima...</span>
+          <span id="weather-city" class="weather-city">Madrid</span>
+        </div>
+        <div class="style-switch">
+          <button class="style-switch__btn" id="styleToggle" aria-haspopup="true" aria-expanded="false">
+            <svg aria-hidden="true"><use href="#wing"/></svg><span>Estilo</span>
+          </button>
+          <div class="style-switch__panel" id="stylePanel" hidden>
+            <button data-set-style="unico"><i class="sw sw--unico"></i>Único</button>
+            <button data-set-style="professional"><i class="sw sw--pro"></i>Profesional</button>
+            <button data-set-style="gamer"><i class="sw sw--gamer"></i>Undertale</button>
+            <button data-set-style="retro"><i class="sw sw--retro"></i>Retro</button>
+            <div class="style-switch__divider" aria-hidden="true"></div>
+            <button data-set-quality="alta" class="quality-opt">Alta</button>
+            <button data-set-quality="media" class="quality-opt">Media</button>
+            <button data-set-quality="low" class="quality-opt">Baja</button>
+          </div>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+          <span class="theme-toggle__ico theme-toggle__ico--sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></g></svg></span>
+          <span class="theme-toggle__ico theme-toggle__ico--moon"><svg viewBox="0 0 24 24"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <aside class="rail" aria-hidden="true">
+    <span class="rail__top">Hugo Signes · 2024→2026</span>
+    <nav class="rail__nav">
+      <a href="index.html" data-label="Inicio">00<i class="rail__dot"></i></a>
+      <a href="sobre.html" data-label="Sobre mí">01<i class="rail__dot"></i></a>
+      <a href="trabajo.html" data-label="Trayectoria">02<i class="rail__dot"></i></a>
+      <a href="gusta.html" data-label="Me gusta">03<i class="rail__dot"></i></a>
+      <a href="programacion-ia.html" data-label="IA & Código" class="is-active">04<i class="rail__dot"></i></a>
+      <a href="como-funciona.html" data-label="Cómo funciona">05<i class="rail__dot"></i></a>
+      <a href="futuro.html" data-label="Futuro IA">06<i class="rail__dot"></i></a>
+      <a href="contacto.html" data-label="Contacto">07<i class="rail__dot"></i></a>
+    </nav>
+    <div class="rail__bottom"><span class="rail__line"></span><svg class="rail__wing"><use href="#wing"/></svg></div>
+  </aside>
+
+  <div class="page page--wide">
+    <main id="main">
+      <section class="hero-ia" data-reveal>
+        <div class="hero-ia__eyebrow">Nuevo camino // Empieza con IA</div>
+        <h1>Programación con IA</h1>
+        <p class="hero-ia__lead">
+          La mejor manera de aprender a programar no es memorizar sintaxis, sino construir proyectos reales con herramientas inteligentes,
+          hacer preguntas buenas y aprender a validar cada resultado. Aquí tienes una guía práctica para empezar de verdad.
+        </p>
+        <div class="hero-ia__badges">
+          <span class="hero-ia__badge">Aprender rápido</span>
+          <span class="hero-ia__badge">Proyectos reales</span>
+          <span class="hero-ia__badge">IA como compañero</span>
+        </div>
+        <div class="hero-ia__meta">
+          <span class="live-clock" id="liveClock">00:00:00</span>
+          <span class="tiny">Sesión activa · versión práctica</span>
+        </div>
+      </section>
+
+      <nav class="quick-nav" aria-label="Navegación rápida de la guía">
+        <a href="#idea" class="is-active">Idea</a>
+        <a href="#ruta">Ruta</a>
+        <a href="#videos">Videos</a>
+        <a href="#tools">Herramientas</a>
+        <a href="#plan">Plan</a>
+        <a href="#recursos">Recursos</a>
+      </nav>
+
+      <section class="section-block" id="idea" data-reveal>
+        <div class="section-head">
+          <div>
+            <span class="section-head__label">Idea principal</span>
+            <h2>Qué cambia al aprender con IA</h2>
+          </div>
+        </div>
+        <div class="grid-3">
+          <article class="card">
+            <div class="tiny">01 // Velocidad</div>
+            <h3>Genera dudas y pistas</h3>
+            <p>La IA te ayuda a entender conceptos de forma rápida: explicación, ejemplos, errores comunes y alternativas.</p>
+          </article>
+          <article class="card">
+            <div class="tiny">02 // Producción</div>
+            <h3>Crea sin miedo</h3>
+            <p>Necesitas un proyecto para aprender. La IA te acompaña en la ideación, la estructura y la depuración del código.</p>
+          </article>
+          <article class="card">
+            <div class="tiny">03 // Critical thinking</div>
+            <h3>Aprende a validar</h3>
+            <p>La IA puede equivocarse. Tu trabajo es comprobar, pedir por qué, comparar resultados y construir criterio propio.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" id="ruta" data-reveal>
+        <div class="section-head">
+          <div>
+            <span class="section-head__label">Ruta</span>
+            <h2>Ruta de aprendizaje recomendada</h2>
+          </div>
+        </div>
+        <div class="grid-4">
+          <article class="card">
+            <div class="tiny">Semana 1</div>
+            <h3>Fundamentos</h3>
+            <ul>
+              <li>Variables, tipos, condiciones</li>
+              <li>Bucles y funciones</li>
+              <li>Cómo pensar en algoritmos</li>
+            </ul>
+          </article>
+          <article class="card">
+            <div class="tiny">Semana 2</div>
+            <h3>Web básica</h3>
+            <ul>
+              <li>HTML, CSS y JavaScript</li>
+              <li>DOM y eventos</li>
+              <li>Mini proyectos sencillos</li>
+            </ul>
+          </article>
+          <article class="card">
+            <div class="tiny">Semana 3</div>
+            <h3>Trabajo real</h3>
+            <ul>
+              <li>Git y GitHub</li>
+              <li>APIs y fetch</li>
+              <li>Organizar archivos y lógica</li>
+            </ul>
+          </article>
+          <article class="card">
+            <div class="tiny">Semana 4+</div>
+            <h3>Automatización</h3>
+            <ul>
+              <li>IA para generar código</li>
+              <li>Testing y depuración</li>
+              <li>Construir tu portfolio</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" id="videos" data-reveal>
+        <div class="section-head">
+          <div>
+            <span class="section-head__label">Video tutoriales</span>
+            <h2>Recursos para empezar bien</h2>
+          </div>
+        </div>
+        <div class="video-list">
+          <article class="video-card">
+            <div class="video-card__thumb">Intro</div>
+            <div class="video-card__body">
+              <h3>JavaScript para principiantes</h3>
+              <p>La base más útil si quieres convertirte en creador web y aprender a usar IA como apoyo.</p>
+              <a href="https://www.youtube.com/results?search_query=javascript+principiantes+curso+completo" target="_blank" rel="noreferrer">Abrir tutorial →</a>
+            </div>
+          </article>
+          <article class="video-card">
+            <div class="video-card__thumb">IA</div>
+            <div class="video-card__body">
+              <h3>Aprender programación con ChatGPT</h3>
+              <p>Cómo usar modelos de IA para entender conceptos, pedir explicaciones y generar ejemplos útiles.</p>
+              <a href="https://www.youtube.com/results?search_query=programar+con+chatgpt+principiante" target="_blank" rel="noreferrer">Abrir tutorial →</a>
+            </div>
+          </article>
+          <article class="video-card">
+            <div class="video-card__thumb">Git</div>
+            <div class="video-card__body">
+              <h3>Git y GitHub</h3>
+              <p>Un paso imprescindible para guardar avances, colaborar y mostrar tu trabajo profesionalmente.</p>
+              <a href="https://www.youtube.com/results?search_query=git+github+para+principiantes" target="_blank" rel="noreferrer">Abrir tutorial →</a>
+            </div>
+          </article>
+          <article class="video-card">
+            <div class="video-card__thumb">VS Code</div>
+            <div class="video-card__body">
+              <h3>Configura tu editor</h3>
+              <p>Ideal para trabajar con IA, extensiones, terminal, depuración y productividad diaria.</p>
+              <a href="https://www.youtube.com/results?search_query=visual+studio+code+principiantes" target="_blank" rel="noreferrer">Abrir tutorial →</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" id="tools" data-reveal>
+        <div class="section-head">
+          <div>
+            <span class="section-head__label">Herramientas rápidas</span>
+            <h2>Kit esencial + conversores útiles</h2>
+          </div>
+        </div>
+        <div class="tool-grid">
+          <article class="tool-panel">
+            <div class="tool-panel__title"><span>Conversor</span><span>Binario</span></div>
+            <input id="binaryInput" type="text" value="101101" placeholder="Escribe un valor binario o decimal" aria-label="Valor binario o decimal">
+            <div class="tool-panel__actions">
+              <button class="btn btn--primary" id="binToDecBtn" type="button">Bin → Dec</button>
+              <button class="btn" id="decToBinBtn" type="button">Dec → Bin</button>
+            </div>
+            <div class="tool-panel__result" id="binaryResult">Resultado: 45</div>
+          </article>
+
+          <article class="tool-panel">
+            <div class="tool-panel__title"><span>Checklist</span><span>15 min</span></div>
+            <div class="checklist">
+              <label class="check-item"><input type="checkbox"> Comprendo el objetivo del proyecto</label>
+              <label class="check-item"><input type="checkbox"> He hecho una prueba pequeña</label>
+              <label class="check-item"><input type="checkbox"> He revisado errores y respuestas</label>
+              <label class="check-item"><input type="checkbox"> He guardado el avance en Git</label>
+            </div>
+          </article>
+
+          <article class="tool-panel">
+            <div class="tool-panel__title"><span>Prompt</span><span>IA</span></div>
+            <textarea id="quickPromptInput" placeholder="Quiero crear una app con HTML, CSS y JS sin saber por dónde empezar...">Quiero crear una app con HTML, CSS y JS sin saber por dónde empezar, y necesito un plan paso a paso.</textarea>
+            <div class="tool-panel__actions">
+              <button class="btn btn--primary" id="quickPromptBtn" type="button">Mejorar prompt</button>
+            </div>
+            <div class="tool-panel__result" id="quickPromptOutput">Resultado: rol + objetivo + tareas + validación + próximos pasos.</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" data-reveal>
+        <div class="section-head">
+          <div>
+            <span class="section-head__label">Herramientas</span>
+            <h2>Kit esencial para empezar</h2>
+          </div>
+        </div>
+        <div class="tool-grid">
+          <article class="card">
+            <span class="tool-badge">Editor</span>
+            <h3>VS Code</h3>
+            <p>Tu base para programar. Con extensiones de IA, Git y depuración te hace más productivo.</p>
+          </article>
+          <article class="card">
+            <span class="tool-badge">IA</span>
+            <h3>Copilot / ChatGPT / Claude</h3>
+            <p>Usar IA no es “copiar código”, es aprender con preguntas, refinar código y aclarar dudas.</p>
+          </article>
+          <article class="card">
+            <span class="tool-badge">Repositorio</span>
+            <h3>GitHub</h3>
+            <p>Guardar tus proyectos es parte del aprendizaje y te ayuda a construir una presencia profesional.</p>
+          </article>
+          <article class="card">
+            <span class="tool-badge">Terminal</span>
+            <h3>Git + terminal</h3>
+            <p>Comandos básicos como ls, cd, git status, git add y git commit te dan control real sobre tu flujo.</p>
+          </article>
+          <article class="card">
+            <span class="tool-badge">Aprender</span>
+            <h3>MDN / W3Schools</h3>
+            <p>La documentación oficial es una de las mejores herramientas para comprender la verdad del lenguaje.</p>
+          </article>
+          <article class="card">
+            <span class="tool-badge">Prompt</span>
+            <h3>Transformador de prompts</h3>
+            <p>Convierte ideas vagas en peticiones útiles para la IA: contexto, objetivo, salida, restricciones y validación.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" data-reveal>
+        <div class="section-head">
+          <div>
+            <span class="section-head__label">Herramienta</span>
+            <h2>Transformador de prompts</h2>
+          </div>
+        </div>
+        <div class="prompt-tool">
+          <textarea id="promptInput" placeholder="Escribe algo como: 'Quiero crear una web para vender camisetas de diseño minimalista y necesito un proyecto con HTML, CSS y JS'">Quiero crear una pequeña página web para un portafolio personal con estilo moderno, con una sección de proyectos, contacto y un diseño limpio. Ayúdame a estructurar la idea y a crear el plan de trabajo.</textarea>
+          <div class="prompt-tool__actions">
+            <button class="btn btn--primary" id="transformPromptBtn" type="button">Transformar prompt</button>
+            <button class="btn" id="clearPromptBtn" type="button">Limpiar</button>
+          </div>
+          <div class="prompt-output" id="promptOutput" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="section-block" data-reveal>
+        <div class="section-head">
+          <div>
+            <span class="section-head__label">Trucos</span>
+            <h2>Curiosidades que aceleran el aprendizaje</h2>
+          </div>
+        </div>
+        <div class="grid-3">
+          <article class="card">
+            <div class="tiny">Truco 01</div>
+            <h3>Pide explicaciones paso a paso</h3>
+            <p>En lugar de “hazme una app”, pídele una explicación de cada bloque y por qué se hace así.</p>
+          </article>
+          <article class="card">
+            <div class="tiny">Truco 02</div>
+            <h3>Haz que te critique</h3>
+            <p>Pregúntale a la IA: “¿Qué hay mal en este código?”, “¿Qué mejoraría?” y “¿Qué partes son más frágiles?”</p>
+          </article>
+          <article class="card">
+            <div class="tiny">Truco 03</div>
+            <h3>Pequeños proyectos, mucho aprendizaje</h3>
+            <p>Un proyecto sencillo bien hecho enseña más que cinco tutoriales incompletos. Finaliza, prueba y mejora.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" id="plan" data-reveal>
+        <div class="section-head">
+          <div>
+            <span class="section-head__label">Plan</span>
+            <h2>Plan de 30 días</h2>
+          </div>
+        </div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-item__day">Días 1-7</div>
+            <div class="timeline-item__content">
+              <h3>Fundamentos</h3>
+              <p>Variables, funciones, condiciones, arrays, DOM, HTML, CSS y JS básico.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-item__day">Días 8-14</div>
+            <div class="timeline-item__content">
+              <h3>Mini proyectos</h3>
+              <p>Calculadora, lista de tareas, reloj, landing page y mini juego sencillo.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-item__day">Días 15-21</div>
+            <div class="timeline-item__content">
+              <h3>Git y APIs</h3>
+              <p>Subir a GitHub, consumir JSON, trabajar con fetch y construir una pequeña app.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-item__day">Días 22-30</div>
+            <div class="timeline-item__content">
+              <h3>Portfolio y automatización</h3>
+              <p>Crear tu primer portfolio real con IA como asistente y mejorar cada detalle con validación.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-block" id="recursos" data-reveal>
+        <div class="section-head">
+          <div>
+            <span class="section-head__label">Recursos</span>
+            <h2>Fuentes útiles</h2>
+          </div>
+        </div>
+        <div class="resource-list">
+          <article class="resource-item">
+            <h3>MDN Docs</h3>
+            <p>La referencia más fiable para JavaScript, CSS, HTML y APIs web.</p>
+          </article>
+          <article class="resource-item">
+            <h3>W3Schools</h3>
+            <p>Muy útil para aprender sintaxis y conceptos básicos de forma visual y clara.</p>
+          </article>
+          <article class="resource-item">
+            <h3>GitHub</h3>
+            <p>Observa proyectos reales, lee código ajeno y aprende de ejemplos de la industria.</p>
+          </article>
+          <article class="resource-item">
+            <h3>FreeCodeCamp</h3>
+            <p>Aprendizaje práctico con proyectos y ejercicios para consolidar cada paso.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="cursor" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+
+  <script src="script.js" defer></script>
+  <script>
+    (function () {
+      const btn = document.getElementById('transformPromptBtn');
+      const clearBtn = document.getElementById('clearPromptBtn');
+      const input = document.getElementById('promptInput');
+      const output = document.getElementById('promptOutput');
+
+      function transformPrompt(text) {
+        const cleaned = text.trim();
+        if (!cleaned) return 'Escribe primero una idea o un objetivo para transformar el prompt.';
+
+        const base = cleaned
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        return [
+          'Rol: Eres un mentor de programación experto, didáctico y práctico.',
+          'Objetivo: ayudarme a convertir esta idea en un plan de trabajo claro y ejecutable.',
+          'Tarea: ' + base,
+          'Contexto: quiero aprender con un enfoque realista, paso a paso, y con ejemplos concretos.',
+          'Restricciones: explica conceptos simples, usa lenguaje claro, prioriza la práctica y recomienda herramientas útiles.',
+          'Formato de salida: 1) resumen del proyecto, 2) objetivos, 3) tecnologías, 4) pasos de implementación, 5) retos comunes y 6) próximos pasos.',
+          'Validación: pide también pruebas, errores comunes y cómo comprobar que funciona bien.'
+        ].join('\n\n');
+      }
+
+      btn.addEventListener('click', function () {
+        output.textContent = transformPrompt(input.value);
+      });
+
+      clearBtn.addEventListener('click', function () {
+        input.value = '';
+        output.textContent = '';
+        input.focus();
+      });
+
+      output.textContent = transformPrompt(input.value);
+
+      const clock = document.getElementById('liveClock');
+      function updateClock() {
+        if (!clock) return;
+        const now = new Date();
+        const time = now.toLocaleTimeString('es-ES', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
+        clock.textContent = time;
+      }
+      updateClock();
+      setInterval(updateClock, 1000);
+
+      const revealEls = document.querySelectorAll('[data-reveal]');
+      const revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.14 });
+
+      revealEls.forEach(function (el) {
+        revealObserver.observe(el);
+      });
+
+      const binaryInput = document.getElementById('binaryInput');
+      const binaryResult = document.getElementById('binaryResult');
+      const binToDecBtn = document.getElementById('binToDecBtn');
+      const decToBinBtn = document.getElementById('decToBinBtn');
+
+      function parseBinaryToDecimal(value) {
+        if (!/^[01]+$/.test(value.trim())) return null;
+        return parseInt(value.trim(), 2);
+      }
+
+      function parseDecimalToBinary(value) {
+        if (!/^\d+$/.test(value.trim())) return null;
+        return parseInt(value.trim(), 10).toString(2);
+      }
+
+      function updateBinaryTool(mode) {
+        const value = binaryInput.value.trim();
+        if (!value) {
+          binaryResult.textContent = 'Resultado: escribe un valor.';
+          return;
+        }
+
+        let result;
+        if (mode === 'bin-to-dec') {
+          result = parseBinaryToDecimal(value);
+          binaryResult.textContent = result === null
+            ? 'Resultado: solo se aceptan 0 y 1.'
+            : 'Resultado: ' + result;
+        } else {
+          result = parseDecimalToBinary(value);
+          binaryResult.textContent = result === null
+            ? 'Resultado: solo se aceptan números enteros.'
+            : 'Resultado: ' + result;
+        }
+      }
+
+      binToDecBtn.addEventListener('click', function () { updateBinaryTool('bin-to-dec'); });
+      decToBinBtn.addEventListener('click', function () { updateBinaryTool('dec-to-bin'); });
+      binaryInput.addEventListener('input', function () { updateBinaryTool('bin-to-dec'); });
+
+      const quickPromptInput = document.getElementById('quickPromptInput');
+      const quickPromptOutput = document.getElementById('quickPromptOutput');
+      const quickPromptBtn = document.getElementById('quickPromptBtn');
+
+      function improvePrompt(text) {
+        const cleaned = text.trim();
+        if (!cleaned) return 'Escribe la idea para convertirla en un prompt útil.';
+
+        return [
+          'Rol: Eres un mentor de programación.',
+          'Objetivo: ayudarte a avanzar con claridad.',
+          'Tarea: ' + cleaned,
+          'Contexto: quiero aprender paso a paso y entender cada decisión.',
+          'Resultado esperado: un plan claro, tecnologías sugeridas y ejemplos prácticos.',
+          'Validación: incluye pasos de prueba y cómo comprobar si funciona.'
+        ].join('\n\n');
+      }
+
+      quickPromptBtn.addEventListener('click', function () {
+        quickPromptOutput.textContent = improvePrompt(quickPromptInput.value);
+      });
+
+      quickPromptOutput.textContent = improvePrompt(quickPromptInput.value);
+      updateBinaryTool('bin-to-dec');
+    })();
+  </script>
+</body>
+</html>
