@@ -8,7 +8,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <script>
+    (function(){
+      try{
+        var url = new URLSearchParams(window.location.search);
+        var t = url.get('theme') || localStorage.getItem('hugo-theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        var s = url.get('style') || localStorage.getItem('hugo-style') || 'unico';
+        document.documentElement.setAttribute('data-theme', t);
+        document.documentElement.setAttribute('data-style', s);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/css/styles.css">
   <style>
     body {
       background: var(--bg);
@@ -19,6 +30,11 @@
       width: min(1200px, calc(100vw - 2rem));
       margin: 0 auto;
       padding: 2rem 0 5rem;
+      box-sizing: border-box;
+    }
+
+    main {
+      width: 100%;
     }
 
     .hero-ia {
@@ -253,6 +269,7 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 1rem;
+      align-items: stretch;
     }
 
     .tool-badge {
@@ -383,6 +400,7 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1rem;
+      align-items: stretch;
     }
 
     .resource-item {
@@ -992,7 +1010,7 @@
   <div class="cursor" aria-hidden="true"></div>
   <div class="cursor-ring" aria-hidden="true"></div>
 
-  <script src="script.js" defer></script>
+  <script src="assets/js/script.js" defer></script>
   <script>
     (function () {
       const btn = document.getElementById('transformPromptBtn');

@@ -87,13 +87,22 @@ mi-web/
 ├── programacion-ia.html
 ├── juego3D.html
 ├── device-knight.html
-├── styles.css
-├── script.js
-├── juego3D.js
-├── img/
-│   └── yveltal.jpeg
 ├── assets/
-├── sprites/
+│   ├── css/
+│   │   └── styles.css
+│   ├── js/
+│   │   ├── script.js
+│   │   └── juego3D.js
+│   ├── img/
+│   │   └── yveltal.jpeg
+│   ├── sprites/
+│   │   ├── 1.png
+│   │   ├── 2.png
+│   │   ├── 3.png
+│   │   ├── 4.png
+│   │   ├── 5.png
+│   │   └── 6.png
+│   └── ...
 ├── docs/
 │   └── adr/
 │       ├── 0001-portfolio-architecture.md

@@ -762,11 +762,11 @@
   var exitTransition = document.getElementById("exitTransition");
   var exitSprite = document.getElementById("exitKnightSprite");
   var exitSpriteFrames = [
-    "sprites/1.png",
-    "sprites/2.png",
-    "sprites/3.png",
-    "sprites/4.png",
-    "sprites/5.png"
+    "assets/sprites/1.png",
+    "assets/sprites/2.png",
+    "assets/sprites/3.png",
+    "assets/sprites/4.png",
+    "assets/sprites/5.png"
   ];
 
   function triggerExitTransition() {
