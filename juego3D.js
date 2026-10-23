@@ -780,34 +780,37 @@
 
     if (exitSprite) {
       var spriteStart = performance.now();
-      var totalDuration = 1200;
+      var totalDuration = 1800;
 
       function tickSpriteFrame(now) {
         var progress = Math.min(1, (now - spriteStart) / totalDuration);
-        var visibleProgress = Math.max(0, progress - 0.08) / 0.92;
-        var eased = 1 - Math.pow(1 - visibleProgress, 2.2);
+        var visibleProgress = Math.max(0, (progress - 0.1) / 0.9);
+        var eased = 1 - Math.pow(1 - visibleProgress, 2.8);
 
         var frameIndex = 0;
         if (progress < 0.18) frameIndex = 0;
         else if (progress < 0.34) frameIndex = 1;
-        else if (progress < 0.54) frameIndex = 2;
-        else if (progress < 0.74) frameIndex = 3;
+        else if (progress < 0.52) frameIndex = 2;
+        else if (progress < 0.7) frameIndex = 3;
         else frameIndex = 4;
 
         exitSprite.src = exitSpriteFrames[frameIndex];
 
         if (progress < 0.08) {
-          exitSprite.style.opacity = "0";
-        } else {
+          exitSprite.style.opacity = "0.2";
+        } else if (progress < 0.86) {
           exitSprite.style.opacity = "1";
+        } else {
+          exitSprite.style.opacity = String(Math.max(0, 1 - (progress - 0.86) / 0.2));
         }
 
-        var x = -12 + eased * 110;
-        var y = 14 - eased * 118;
-        var rotate = 12 - eased * 34;
-        var scale = 0.82 + eased * 0.52;
+        var x = -18 + eased * 122;
+        var y = 28 + eased * 110;
+        var rotate = 18 - eased * 40;
+        var scale = 0.82 + eased * 0.68;
 
-        exitSprite.style.transform = "translate(-50%, -50%) translate(" + x + "px, " + y + "px) scale(" + scale + ") rotate(" + rotate + "deg)";
+        exitSprite.style.transform = "translate(-50%, -50%) translate3d(" + x + "px, " + y + "px, 0) scale(" + scale + ") rotate(" + rotate + "deg)";
+        exitSprite.style.filter = "drop-shadow(0 0 28px rgba(255,255,255,0.5)) brightness(" + (1.12 + eased * 0.18) + ") saturate(" + (1.2 + eased * 0.35) + ")";
 
         if (progress < 1) {
           requestAnimationFrame(tickSpriteFrame);
@@ -818,7 +821,7 @@
 
     setTimeout(function () {
       window.location.href = "index.html";
-    }, 1300);
+    }, 1800);
   }
 
   if (startBtn) {

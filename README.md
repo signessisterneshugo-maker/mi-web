@@ -1,75 +1,84 @@
 # 🚀 Portfolio Profesional e Interactivo — Hugo Signes Sisternes
 
-Repositorio oficial del sitio web personal y portfolio académico, desarrollado bajo estrictos estándares de excelencia técnica, diseño modular y experiencias inmersivas avanzadas.
+Repositorio del portfolio personal con enfoque académico y tecnológico. La web combina identidad visual propia, contenido contextualizado y una capa de interactividad para que funcione como una marca digital más que como un simple CV.
 
-- **Autor:** Hugo Signes Sisternes  
-- **Perfil Técnico:** Desarrollo de Aplicaciones Multiplataforma (DAM), Sistemas y Redes (SMX) e Inteligencia Artificial (IA).
-
----
-
-## ✨ Características Principales & Criterios de Excelencia
-
-1. **Arquitectura Multipágina Independiente:**
-   - Estructura limpia y semántica compuesta por páginas especializadas: `index.html` (Inicio), `sobre.html` (Perfil), `trabajo.html` (Trayectoria y Hitos), `gusta.html` (Bento Grid de intereses), `futuro.html` (Proyección en IA y Roadmap) y `contacto.html` (Formulario funcional).
-
-2. **Sistema Avanzado de Estilos y Temas Dinámicos:**
-   - 4 estilos visuales independientes y con identidad propia: **Único** (Yveltal/Oscuro), **Profesional** (Corporativo con tipografía Serif), **Gamer** (Estética clásica estilo *Undertale*) y **Retro** (CRT Pixelado).
-   - Selector en tiempo real con persistencia de estado mediante `localStorage` y sincronización completa de paletas de color con el entorno 3D.
-
-3. **Consumo de API Externa (GitHub REST API):**
-   - Integración asíncrona en tiempo real (`fetch`) con la API pública de GitHub para obtener y renderizar dinámicamente los repositorios y proyectos activos del autor.
-
-4. **Metaverso 3D Interactivo (`juego3D.html` & `juego3D.js`):**
-   - Entorno gráfico en 3D desarrollado con **Three.js** integrado mediante un botón de acceso exclusivo en la página de inicio.
-   - **Controles en Primera Persona & Físicas:** Movimiento libre con teclado (`WASD`), rotación de cámara con el ratón (`PointerLockControls`), gravedad realista y salto con la barra espaciadora (`Space`).
-   - **Sistema de Construcción y Destrucción Tipo Minecraft:** Colocación precisa de bloques tecnológicos pequeños (`1x1x1`) mediante cuadrícula (*grid snapping*) con clic izquierdo, y eliminación de estructuras con clic derecho.
-   - **Portales Holográficos y Señalización:** Ciudad ciberpunk orgánica e irregular con carteles indicadores orientativos (situados en postes traseros para no obstaculizar la visión) y paneles holográficos flotantes interactivos situados en plazas abiertas que actúan como portales clicables hacia cada sección.
-
-5. **Accesibilidad y Rendimiento (WCAG):**
-   - Uso de tokens CSS mediante variables personalizadas.
-   - Soporte completo para navegación por teclado, enlaces de salto rápido (`skip links`) y gestión de atributos ARIA.
-
-## 🧭 Decisiones Técnicas y Evidencia de Arquitectura
-
-- **Contacto real:** el formulario de contacto usa un endpoint de envío real con `FormSubmit` y un fallback `mailto` si el servicio no está disponible, con validación HTML y feedback al usuario.
-- **Persistencia visual:** los cambios de estilo y tema se guardan en `localStorage` y se sincronizan con la URL para preservar contexto al navegar entre páginas.
-- **Contenido propio y contextualizado:** la marca no se limita a plantillas genéricas; el copy incorpora trayectoria académica, experiencia internacional y un caso de uso real del proyecto personal.
-- **Estructura escalable:** la lógica del sitio está separada en `HTML`, `CSS` y `JS`, con documentación técnica en el repositorio para facilitar mantenimiento y futuras iteraciones.
+- Autor: Hugo Signes Sisternes
+- Perfil técnico: DAM, SMX, IA y desarrollo web
 
 ---
 
-## 📌 Historial de Actualizaciones (Changelog)
+## ✨ Qué está bien hecho
 
-A continuación se detalla la cronología de mejoras técnicas implementadas en el desarrollo:
+1. Arquitectura multipágina clara.
+   - Hay una estructura por secciones y rutas distintas para presentar la identidad digital, la trayectoria, los intereses y el contacto.
 
-- **Fase 1: Reestructuración y Semántica (Arquitectura Base)**
-  - Corrección y reconstrucción independiente de los 6 archivos HTML principales (`index`, `sobre`, `trabajo`, `gusta`, `futuro`, `contacto`) para garantizar una navegación fluida, eliminación de duplicidades y marcado activo correcto de pestañas.
+2. Sistema visual completo.
+   - La web incluye varias propuestas visuales y un selector de estilo con persistencia, lo que refuerza la idea de marca y la exploración del producto.
 
-- **Fase 2: Sistema Visual de 4 Temas**
-  - Implementación de la hoja de estilos centralizada (`styles.css`) basada en tokens de variables CSS, soportando los temas *Único*, *Profesional*, *Gamer* y *Retro*, junto con persistencia en `localStorage`.
+3. Interactividad y componente 3D.
+   - El acceso a un metaverso, la capa de chat y la lógica de piezas dinámicas ayudan a diferenciarlo de una plantilla estática.
 
-- **Fase 3: Datos Dinámicos (API Externa)**
-  - Adición del módulo de consumo asíncrono (`fetch`) para la API REST de GitHub, permitiendo listar repositorios públicos en tiempo real de forma segura y tolerante a fallos.
-
-- **Fase 4: Desarrollo del Metaverso 3D y Ciberciudad**
-  - Creación de la vista `juego3D.html` y del motor gráfico `juego3D.js`.
-  - Evolución del plano plano a una **gran ciudad irregular** con edificios asimétricos y distribución orgánica.
-  - Sincronización automática de las paletas de color y niebla 3D con el estilo visual activo de la web.
-  - Integración de **físicas de gravedad, colisión y salto**.
-  - Programación de las mecánicas completas de **construcción (clic izquierdo)** y **destrucción (clic derecho)** de bloques escala `1x1x1` ajustados a rejilla.
-  - Diseño de carteles orientativos con emojis y hologramas portales posicionados en áreas abiertas.
+4. Contacto real.
+   - El formulario habilita un flujo funcional con validación y fallback para correo.
 
 ---
 
-## 🛠️ Estructura del Repositorio
+## ⚠️ Qué seguiría mejorando según la rúbrica
+
+La mayor diferencia está en estos puntos:
+
+- Contenido más propio y específico en la home: todavía hace falta reforzar la narrativa con casos reales, problema → solución → resultado.
+- Evidencia técnica más visible: conviene dejar claro el origen de cada decisión, no solo el resultado final.
+- Proceso de iteración: el historial de commits y las decisiones tomadas deben quedar documentadas para sostener la parte de "git + evidencia de trabajo".
+
+---
+
+## 🧭 Decisiones de arquitectura y evidencia
+
+Se recomienda documentar dos decisiones clave en el repositorio:
+
+- ADR 1: mantener la interfaz en un CSS centralizado con tokens de color, tipo y espaciado para que todas las páginas compartan la misma identidad.
+- ADR 2: separar la capa visual, la lógica de interacción y el contenido narrativo para facilitar mantenimiento y evolución del portfolio.
+
+Puedes ver la referencia en la carpeta `docs/adr/`.
+
+---
+
+## 📁 Estructura del repositorio
 
 ```text
-├── index.html        # Página principal de presentación
-├── sobre.html        # Perfil personal y biografía técnica
-├── trabajo.html      # Experiencia (SMX, Erasmus en Italia, The Challenge, DAM)
-├── gusta.html        # Bento grid con intereses, música y stack
-├── futuro.html       # Terminal interactiva y roadmap hacia la IA
-├── contacto.html     # Formulario de contacto y enlaces corporativos
-├── juego3D.html      # Vista del entorno 3D y HUD del metaverso
-├── styles.css        # Hojas de estilo centralizadas y sistema de temas
-└── juego3D.js        # Motor gráfico 3D, físicas, colisiones y lógica de juego
+├── index.html        # Presentación principal y narrativa visual
+├── sobre.html        # Bio y perfil personal
+├── trabajo.html      # Trayectoria y proyectos
+├── gusta.html        # Intereses y referencias
+├── futuro.html       # Roadmap e IA
+├── contacto.html     # Contacto y formulario
+├── juego3D.html      # Entorno 3D
+├── styles.css        # Estilos globales y sistema de temas
+├── script.js         # Lógica, validación y UI
+├── juego3D.js        # Motor 3D y experiencia inmersiva
+├── docs/
+│   └── adr/         # Decisiones históricas de arquitectura
+├── README.md         # Esta guía de contexto
+└── assets/           # Recursos y multimedia
+```
+
+---
+
+## 🧪 Cómo probarlo localmente
+
+```bash
+cd /home/hugsigsis/Documents/mi-web
+python3 -m http.server 8000
+```
+
+Luego abre `http://localhost:8000` en el navegador.
+
+---
+
+## 🔍 Qué haría yo como siguiente paso
+
+1. Reforzar la home con un bloque de proyectos con contexto real.
+2. Añadir una pequeña nota técnica en la web con dos decisiones de arquitectura y por qué se eligieron.
+3. Mantener el historial de cambios con commits más atómicos y mensajes con sentido.
+4. Revisar que el contacto real se explique claramente: qué ocurre al enviar el formulario y dónde llega el mensaje.
